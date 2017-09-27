@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ADO\\": "src/"
+            "Admin\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ADO\\": "src/"
+            "Admin\\": "src/"
         }
     },
     "extra": {
@@ -37,8 +37,8 @@
             "dev-develop": "1.0.1-dev"
         },
         "zf": {
-            "component": "ADO",
-            "config-provider": "masterflash-ru\\ADO\\ConfigProvider"
+            "component": "Admin",
+            "config-provider": "masterflash-ru\\Admin\\ConfigProvider"
         }
     }
 }
