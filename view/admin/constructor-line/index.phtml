@@ -1,0 +1,1215 @@
+<?php
+/*
+перекочевало из старой версии
+
+
+8.5.17 - перенесено в пространство имен old - для временной миграции на ZF3
+
+17.4.15 - изменен алгоритм обработки настроек из ini файлов
+
+
+
+убрана таблица config, вместо нее данных записываются сразу имена констант
+если указан файл настроек, то он инициализируется и его данные становятся константами
+
+
+
+version=
+build=19.01.2010
+Наведен порядок с ошибками типа Notice
+
+*/
+use Admin\Lib\Formitem as form_item;
+use Admin\Lib\Simba;
+
+//\Zend\Debug\Debug::dump($this);exit;
+
+$GLOBALS["form_item"]=new form_item($this);
+
+
+
+
+
+$save_enable='disabled="disabled"';
+//удаление всей структуры в конструкторе
+if (isset($_POST['tab_constr']))
+	{simba::query("delete from design_tables_text_interfase where table_type=0 and interface_name='".$_POST['interface_name']."' ");
+	simba::query('delete from design_tables where table_type=0 and interface_name="'.$_POST['del_interface'].'"');
+	}
+
+
+//создание нового интерфейса
+if (isset($_POST['interface_create']))
+	{simba::replaceRecord (array(
+		'row_type'=>0,
+		'table_name'=>$_POST['tab_list'],
+		'table_type'=>0,
+		'interface_name'=>$_POST['new_interface']),
+		'design_tables');
+		$_POST['interface_name']=$_POST['new_interface'];//сделать созданный интерфейс текущим
+	}
+
+//удаление выьранного дополн. поля
+if (isset($_POST['pole_dop_numb_del_b']) && isset($_POST['id']) &&  $_POST['id']>0) 
+		{		//удалить старое значение
+		simba::query("delete from design_tables_text_interfase where 
+					(item_name='coment0' or item_name='caption0' or item_name='caption_dop_".$_POST['pole_dop_numb']."') 
+					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+
+		simba::query('delete from design_tables where table_type=0 and  id="'.$_POST['id'].'"');
+		}
+
+
+//уничтожение одной структыры, что выбрана
+if (isset($_POST['del_struct'])){ //надо доработать!!!!!!!!!!!==============
+				simba::query ('delete from design_tables where table_type=0 and  interface_name="'.$_POST['interface_name'].'" and col_name="'.$_POST['cols'].'" and row_type="'.$_POST['row_type'].'"');
+				 					}
+if (!isset($_POST['row_type']))$_POST['row_type']=2;
+
+if (isset($_POST['pole_dop_create'])) simba::replaceRecord (array('table_name'=>$_POST['interface_tabl_tek'],
+														'interface_name'=>$_POST['interface_name'],
+														'table_type'=>0,'row_type'=>1),
+													'design_tables');
+
+
+if (isset($_POST['save_all']))
+{//запись
+	if ($_POST['interface_razdel']==0)
+		{//запись общих настроек
+		if ($_POST['form_input_type']==2) $form_spis_=implode(',',$_POST['form_spis']); else $form_spis_=$_POST['form_spis'][0];
+		simba::replaceRecord (array('id'=>$_POST['id'],
+					'row_type'=>0,
+					'table_name'=>$_POST['interface_tabl_tek'],
+					'pole_global_const'=>$_POST['pole_global_const0'],
+					'caption_style'=>$_POST['file_setting'],
+					'pole_style'=>$_POST['imp_exp'],
+					'col_name'=>$_POST['col_name0'],
+					'pole_name'=>$_POST['col___id'],
+					'default_sql'=>$_POST['del_record'],
+					'pole_prop'=>implode(',',$_POST['enable_multi_action']),
+					'col_por'=>$_POST['form_input_type'],
+					'pole_type'=>$form_spis_,
+					'interface_name'=>$_POST['interface_name'],
+					'table_type'=>0,
+					'value'=>serialize(array('form_elements_new_record'=>$_POST['form_elements_new_record'],'form_elements_jmp_record'=>$_POST['form_elements_jmp_record'])),
+					'properties'=>$_POST['functions_save_interface'],
+					'functions_befo_out'=>$_POST['functions_load_interface'],
+					'functions_befo_del'=>$_POST['functions_del_interface'],
+					'validator'=>$_POST['cache_tags'],
+					'sort_item_flag'=>$_POST['cache_clear'],
+					'pole_spisok_sql'=>$_POST['pole_spisok_sql0']
+					),
+				'design_tables');
+				
+		//удалить старое значение
+		simba::query("delete from design_tables_text_interfase where  (item_name='coment0' or item_name='caption0') 
+					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+		//запишем текст интерфейса
+		if ($_POST['coment0']) simba::replaceRecord (array('item_name'=>'coment0',
+									'interface_name'=>$_POST['interface_name'],
+									'table_type'=>0,
+									'language'=>"ru_RU",
+									'text'=>$_POST['coment0']),
+							'design_tables_text_interfase');
+		if ($_POST['caption0']) simba::replaceRecord (array('item_name'=>'caption0',
+									'interface_name'=>$_POST['interface_name'],
+									'table_type'=>0,
+									'language'=>"ru_RU",
+									'text'=>$_POST['caption0']),
+							'design_tables_text_interfase');
+		}
+
+
+	if ($_POST['interface_razdel']==1)
+		{//запись дополнительных полей
+		$pole_spisok_sql=$_POST['pole_spisok_sql'];
+		if ($_POST['tab_select']) $pole_spisok_sql='select id,name from '.$_POST['tab_select'];
+		simba::replaceRecord (
+			array(
+			'id'=>$_POST['id'],
+			'row_type'=>1,
+			'table_type'=>0,
+			'table_name'=>$_POST['interface_tabl_tek'],
+			'pole_type'=>$_POST['pole_type'],
+			'caption_style'=>"",//$_POST['caption_style'],
+			'pole_style'=>"",//(is_array($_POST['pole_style'])) ? implode(',',$_POST['pole_style']):$_POST['pole_style'],
+			'pole_prop'=>(is_array($_POST['pole_prop'])) ? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
+			'default_sql'=>$_POST['default_sql'],
+			//properties=>(is_array($_POST['properties1']))? implode (',',str_replace(',',' ',$_POST['properties1'])):'',
+			'properties'=>serialize((isset($_POST['properties']))?$_POST['properties']:NULL),
+			'pole_spisok_sql'=>$pole_spisok_sql,
+			'value'=>$_POST['value'],
+			'interface_name'=>$_POST['interface_name'],
+			'functions_befo_out'=>$_POST['functions_befo_out'],
+			'col_por'=>$_POST['col_por']
+			
+			),'design_tables');
+		//удалить старое значение
+		simba::query("delete from design_tables_text_interfase where item_name='caption_dop_".$_POST['pole_dop_numb']."'
+					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+		//запишем текст интерфейса
+		if ($_POST['caption'])simba::replaceRecord (array('item_name'=>'caption_dop_'.$_POST['pole_dop_numb'],
+									'table_type'=>0,
+									'interface_name'=>$_POST['interface_name'],
+									'language'=>"ru_RU",
+									'text'=>$_POST['caption']),
+							'design_tables_text_interfase');		
+
+		}
+
+	if (isset($_POST['cols']))
+ 		{//if ($_POST['row_type']==2) $tab_message[$_POST['cols']]=$_POST['caption2'];//сохранить текст описание в файл
+		if ($_POST['row_type']==2)
+		{
+		//удалить старое значение
+		simba::query("delete from design_tables_text_interfase where item_name='caption_col_".$_POST['cols']."'
+					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+		
+		
+		if ($_POST['caption'])simba::replaceRecord (array('item_name'=>'caption_col_'.$_POST['cols'],
+										'interface_name'=>$_POST['interface_name'],
+										'language'=>"ru_RU",
+										'text'=>$_POST['caption']),
+								'design_tables_text_interfase');
+		
+		
+		}
+		//удалить старое значение
+		simba::query("delete from design_tables_text_interfase where 
+				 item_name='values_message_".$_POST['cols']."' and interface_name='".$_POST['interface_tabl_tek']."' and table_type=0");
+		//запишем текст интерфейса
+		
+			if ($_POST['values_message'])simba::replaceRecord (array('item_name'=>'values_message_'.$_POST['cols'].$_POST['row_type'],
+										'interface_name'=>$_POST['interface_name'],
+										'language'=>"ru_RU",
+										'table_type'=>0,
+										'text'=>$_POST['values_message']),
+								'design_tables_text_interfase');
+	
+	
+		if (!isset($_POST['pole_style'])) $_POST['pole_style']=NULL;
+		if (is_array($_POST['pole_style'])) $p__s=implode(',',$_POST['pole_style']); else $p__s=$_POST['pole_style'];
+		//$row_type=2 это область первой и остальных строки и заголовков таблицы
+		$pole_spisok_sql=$_POST['pole_spisok_sql'];
+		if ($_POST['tab_select']) $pole_spisok_sql='select id,name from '.$_POST['tab_select'];
+		//удалим обратные слеши, если они вдруг есть 
+		/*if (isset($_POST['properties']))
+			{
+			if (is_array($_POST['properties'])) foreach ($_POST['properties'] as $k=>$v) $_POST['properties'][$k]=simba::stripslash($v);
+				else $_POST['properties']=simba::stripslash($_POST['properties']);
+			
+			
+			}*/
+		simba::$flag=false;
+		if (!isset($_POST['pole_global_const'])) $_POST['pole_global_const']=NULL;
+		if (!isset($_POST['_selected_validator'])) $_POST['_selected_validator']=NULL;
+		if (!isset($_POST['pole_prop'])) $_POST['pole_prop']=NULL;
+		simba::replaceRecord (
+			array(
+				'id'=>$_POST['id'],
+				'row_type'=>$_POST['row_type'],
+				'table_name'=>$_POST['interface_tabl_tek'],
+				'table_type'=>0,
+				'col_name'=>$_POST['cols'],
+				'functions_befo_out'=>$_POST['functions_befo_out'],
+				'pole_type'=>$_POST['pole_type'],
+				'col_por'=>(isset($_POST['col_por']))?$_POST['col_por']:NULL,
+				'functions_befo'=>$_POST['functions_befo'],
+				'functions_after'=>$_POST['functions_after'],
+				'functions_befo_del'=>$_POST['functions_befo_del'],
+				'pole_style'=>$p__s,
+				'pole_spisok_sql'=>$pole_spisok_sql,
+				'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
+				'pole_name'=>$_POST['pole_name'],
+				//caption_style
+				'validator'=>serialize($_POST['_selected_validator']),
+				'pole_prop'=>(is_array($_POST['pole_prop']))? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
+				'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
+				//properties=>(is_array($_POST['properties']))? implode (',',str_replace(',',' ',$_POST['properties'])):'',
+				'properties'=> serialize((isset($_POST['properties'])?$_POST['properties']:NULL)),
+				'value'=>(isset($_POST['value']))?$_POST['value']:NULL,
+				'sort_item_flag'=>(isset($_POST['sort_item_flag']))?$_POST['sort_item_flag']:NULL,
+				'interface_name'=>(isset($_POST['interface_name']))?$_POST['interface_name']:NULL,
+				'col_function_array'=>serialize((isset($_POST['col_function_array']))? $_POST['col_function_array']:NULL )
+				),'design_tables');//print_r( strlen( serialize( $_POST['properties'])));
+				
+		} 
+}
+
+//ролучить список доступных линейных интерфейсов
+$interface_sp=simba::queryAllRecords("select distinct(interface_name) as interface_name from design_tables where table_type=0 and row_type=0 order by interface_name");
+simba::$null_simvol='';
+$interface_sp1=simba::getSpValue ($interface_sp['interface_name'],$interface_sp['interface_name'],0);
+$interface_sp=simba::getSpValue ($interface_sp['interface_name'],$interface_sp['interface_name'],(isset($_POST['interface_name']))?$_POST['interface_name']:NULL);
+
+//получить список таблиц вооьбще
+$tab_all=simba::queryAllRecords ('show tables');
+
+$tab_create_del=simba::getSpValue ($tab_all['Tables_in_'.DBNAME],$tab_all['Tables_in_'.DBNAME],9999);
+$tab_list1=simba::getSpValue ($tab_all['Tables_in_'.DBNAME],$tab_all['Tables_in_'.DBNAME],999);//это список таблиц,
+
+$tab_list=simba::getSpValue ($tab_all['Tables_in_'.DBNAME],$tab_all['Tables_in_'.DBNAME],(isset($_POST['interface_tabl_tek']))?$_POST['interface_tabl_tek']:NULL);
+//получить список стилей
+//$style=simba::queryAllRecords('select id,name from style where modul_type=0');
+
+//считаем текущие настройки и структуру таблицы
+//===============настройки для ывсей таблицы row_type==0
+if (!isset($_POST['interface_name']))$_POST['interface_name'] ='';
+$struct0=simba::queryOneRecord ('select * from design_tables where table_type=0 and row_type=0  and interface_name="'.$_POST['interface_name'].'"');
+
+
+
+//получить отдельно инструкцию создания в зависимости от выбора
+$tab='';
+if (isset($_POST['col___id']) && $struct0['table_name']>'') $tab=simba::queryOneRecord ('show create table '.$struct0['table_name']);//================$tab используется в HTML коде!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+//$pole_dop_numb_sp1=simba::getSpValue1 ($a,$a,-1);
+
+if(!isset($cols_sp_id)) {$cols_sp_id="";}
+
+//получить список полей когда выьрана таблица
+if ($_POST['interface_name']) 
+	{$cols=array();$cols['Field']=array();
+	$dis='';//активировать поля ввода
+		if ($struct0['table_name']>'') 
+			{$cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
+			$cols_sp_id=simba::getSpValue ($cols['Field'],$cols['Field'],$struct0['pole_name']);//это для выбора уникального идентификатора
+			
+			$fields_arr=explode(",",$struct0['col_name']);
+			$fields_arr=array_merge($fields_arr,$cols['Field']);
+			
+			$cols_sp_for_form=simba::getSpValueMulti ($fields_arr,$fields_arr,$struct0['pole_type']);//это для выбора списка колонок или одной колонки
+			}
+			else 
+				{//если у нас загрузка данных из функции, тогда сделаем фиктивный идентификатор id
+				$alias=explode(',',$struct0['col_name']);
+				$cols_sp_id=simba::getSpValue ($alias,$alias,$struct0['pole_name']);
+				}
+		
+		
+		if ($struct0['col_name']) 
+					{//проверим псевдонимы, если они есть, тогда их добавить к основному списку
+					$alias=explode(',',$struct0['col_name']);
+					for ($i=0;$i<count($alias);$i++) $cols['Field'][]=$alias[$i];
+					}
+		$cols_id['Field']=$cols['Field'];//идентификаторы это и есть имена полей и спевдонимов
+		$cols['Field'][]='buttons0';//$cols['Field'][]='кнопки2';$cols['Field'][]='кнопки3';$cols['Field'][]='кнопки4';
+		$cols_id['Field'][]=1;//$cols_id['Field'][]=2;$cols_id['Field'][]=3;$cols_id['Field'][]=4;
+				//добавить в массив столбцов дополнительные поля, не принадлежащие самой таблице
+		if (!isset($_POST['cols'])) $_POST['cols']=NULL;
+		$cols_sp=simba::getSpValue ($cols['Field'],$cols_id['Field'],$_POST['cols']);
+		//загрузим данные из языковой таблицы сопровождения 
+		$c=simba::queryAllRecords("select item_name,text from design_tables_text_interfase where 
+							table_type=0  and interface_name='".$_POST['interface_name']."'");
+		for ($i=0;$i<simba::numRows();$i++)
+			$design_tables_text_interfase[$c['item_name'][$i]]=$c['text'][$i];
+			
+	//if ($_POST['cols']) $dis1='';
+	}
+
+//получить массив структуры полей, т.е. получить каким полям какие константы и стили и их кол-во требуется
+$pole_consts_styles=$GLOBALS["form_item"]->get_pole_consts_styles();
+
+//получить список глобальных констатн
+//$conf=simba::queryAllRecords('select sysname,name from config');
+$tab_constr=simba::queryAllRecords('SELECT DISTINCT (table_name) FROM design_tables where table_type=0');
+
+
+
+
+function get_style_list($tek)
+//получить список стилей HTML функций
+{
+return "";
+}
+
+function create_pole_item_list($tek)
+{//генерирует сложную структуру выпадающего списка касаемо полей ввода
+
+$aa=$GLOBALS["form_item"]->get_items_name_id();
+$item_=[];
+$cc=count($aa['category_list']);
+$ccc=count($aa['id']);
+//for ($i=0; $i<$cc;$i++)
+foreach ($aa['category_list'] as $i=>$category_list)
+	{
+	//for ($j=0;$j<$ccc;$j++)
+	foreach ($aa['id'] as $j=>$id)
+		{
+			if ($aa['category'][$j]==$aa['category_list'][$i]) 
+				{
+				$item_['id'][$i][]=$aa['id'][$j];
+				$item_['name'][$i][]=$aa['name'][$j];
+				}
+		}
+	$item_['gr'][]=$aa['category_list_name'][$i];
+	}
+return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
+}
+
+?>
+<form name="form1" method="post" action="#">
+  <div align="center" style="color:#FF0000; font-size:18px; font-weight:bold">Конструктор линейных интерфейсов</font> </div>
+    
+
+        <span class="zagolov">
+        <input name="interface_tabl_tek" id="interface_tabl_tek" type="hidden" value="<?=$struct0['table_name'];?>">
+        </span>
+        <!--касаемо интерфеса -->
+ 
+  <fieldset ><legend style="color:#FF0000; font-weight:bold">Интерфейс</legend>
+       Текущий интерфейс
+          <select name="interface_name"  id="interface_name"  onchange="this.form.submit()">
+            <?=$interface_sp;?>
+          </select>
+          <br />
+          Уничтожить интерфейс:
+          <select name="del_interface" class="txt1" id="del_interface">
+            <?=$interface_sp1;?>
+          </select>
+          <input name="tab_constr" type="submit" class='del' id="tab_constr" value="Уничтожить" />
+          <br />
+          Новый интерфейс
+          <input name="new_interface" type="text" id="new_interface" value="new_interface"  />
+          для таблицы:
+          <select name="tab_list"  id="tab_list">
+            <?=$tab_list?>
+          </select>
+          <input name="interface_create" type="submit"  id="interface_create" value="Создать" />
+          <br />
+          Раздел интерфейса
+          <select name="interface_razdel"  id="interface_razdel"  onchange="this.form.submit()">
+            <?=simba::getSpValue1 (["Общие установки","Поля вначале таблицы (дополнительные)","Колонки таблицы"],array(0,1,2),(isset($_POST['interface_razdel']))?$_POST['interface_razdel']:""); ?>
+          </select>
+  </fieldset>   
+
+
+<!--Общие параметры инетрфейса -->
+<?  if ( !isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
+		{ ?>
+<fieldset  style="background-color:#e2e2e2"><legend style="font-weight:bold; color:#FF0000">Множественные операции</legend>
+            <?
+			if ($struct0['table_name']>'') $save_enable='';
+			  $q=explode(',',$struct0['pole_prop']);
+			  $global_action_name_=["Удалить выбранное","Сохранить все","Оптимизировать таблицу","Очистить кэш"];
+			  for ($i=0;$i<count($global_action_name_);$i++)
+			  {
+			  echo "<input name=\"enable_multi_action[$i]\" type=\"hidden\" value=\"0\">";
+              if (isset($q[$i]) && $q[$i]>0) echo "<input name=\"enable_multi_action[$i]\" type=\"checkbox\" value=\"1\" checked>".$global_action_name_[$i].';';
+			  	else echo "<input name=\"enable_multi_action[$i]\" type=\"checkbox\" value=\"1\">".$global_action_name_[$i].';';
+				echo '&nbsp;';
+			  }
+
+?>
+<input name="id" type="hidden" value="<?=$struct0['id'];?>">
+
+<input name="imp_exp" type="hidden" id="imp_exp" value="0">
+            <input name="imp_exp" type="checkbox" id="imp_exp" value="1" <? if ($struct0['pole_style']>0) echo 'checked ';?>>
+            Импорт/Экспорт
+  </fieldset> 
+  <fieldset   style="background-color:#e2e2e2"><legend  style="font-weight:bold; color:#FF0000">Внешний вид:</legend>
+          Стиль ввода данных:
+            <select name="form_input_type"  id="form_input_type"  onChange="_msg_(this.value)">
+              <?=simba::getSpValue1 (["Табличная","Форма с полями"],array(0,1,2),$struct0['col_por']);?>
+            </select>
+            &nbsp;&nbsp;Для формы выводить элементы:<?php $form_elements_=unserialize($struct0['value'])?> 
+            <input name="form_elements_new_record" type="hidden" id="form_elements_new_record" value="0">
+            <input name="form_elements_new_record" type="checkbox" id="form_elements_new_record" value="1" <? if ($form_elements_['form_elements_new_record']>0) echo 'checked ';?>>
+            Создать запись
+
+            <input name="form_elements_jmp_record" type="hidden" id="form_elements_jmp_record" value="0">
+            <input name="form_elements_jmp_record" type="checkbox" id="form_elements_jmp_record" value="1" <? if ($form_elements_['form_elements_jmp_record']>0) echo 'checked ';?>>
+            Переходы по записям
+            
+            
+            <br>
+           <span id="msg__">Список полей взять из поля:</span>
+            <select name="form_spis[]"  id="form_spis[]" >
+             <?=$cols_sp_for_form;?>
+        </select>
+<script language="JavaScript" type="text/JavaScript">
+if (<?=(int)$struct0['col_por'];?>==2) 
+	{document.getElementById("msg__").innerHTML="Список полей (для упрощ. таблицы) взять из поля:";
+	document.getElementById("form_spis[]").multiple=true
+	document.getElementById("form_spis[]").size=6; 
+	} else document.getElementById("form_spis[]").multiple=false
+function _msg_(value)
+{
+if (value==2)  
+	{document.getElementById("form_spis[]").size=6; document.getElementById("msg__").innerHTML="Список полей (для упрощ. таблицы) взять из поля:"
+	document.getElementById("form_spis[]").multiple=true}
+	else {document.getElementById("form_spis[]").size=0;document.getElementById("msg__").innerHTML="Список полей взять из поля:"
+	document.getElementById("form_spis[]").multiple=false}
+}
+
+</script>
+
+            (если пусто, то просто нумерация записей)<br>
+           
+  </fieldset> 
+      
+<fieldset   style="background-color:#e2e2e2"><legend style="font-weight:bold; color:#FF0000">Общие установки:</legend>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" >
+
+      <tr>
+        <td>Использовать файл настроек:</td>
+        <td colspan="2"><input type="text" name="file_setting"  value="<?php echo $struct0['caption_style']; ?>"></td>
+      </tr>
+
+
+      <tr>
+        <td>Уникальный идентификатор:</td>
+        <td colspan="2"><select name="col___id"  id="col__id" >
+          <?=$cols_sp_id;?>
+        </select></td>
+      </tr>
+      <tr>
+        <td>Краткий HELP</td>
+        <td colspan="2"><textarea name="coment0" id="coment0" cols="135" rows="3" wrap="VIRTUAL" ><?
+			if (isset($design_tables_text_interfase['coment0'])) echo $design_tables_text_interfase['coment0']; 
+			 ?></textarea></td>
+      </tr>
+      <tr>
+        <td>Выводить по:</td>
+        <td colspan="2"><input name="pole_global_const0" type="text" id="pole_global_const0"  value="<?=$struct0['pole_global_const'];?>">
+строк</td>
+      </tr>
+      <tr>
+        <td>общий заголовок таблицы:</td>
+        <td colspan="2"><textarea name="caption0" id="caption0" cols="135" rows="4" wrap="VIRTUAL" ><? 
+			if (isset($design_tables_text_interfase['caption0']) ) echo $design_tables_text_interfase['caption0']; 
+			?></textarea></td>
+      </tr>
+      <tr>
+        <td>SQL создания табл.</td>
+        <td colspan="2"><pre><? if ($struct0['table_name']>'') {$tab=simba::queryOneRecord('show create table '.$struct0['table_name']); echo $tab['Create Table'];} ?></pre></td>
+      </tr>
+      <tr>
+        <td><? if(!isset($_POST['col___id'])) $_POST['col___id']=NULL ;?>SQL удаления,<strong style="color='#FF0000'">$id</strong>уникальный идентификатор <?php echo ' <b>$'.$_POST['col___id'].'</b>';?></td>
+        <td colspan="2"><textarea name="del_record" cols="135" rows="3" wrap="VIRTUAL"  id="del_record" ><?=stripslashes ($struct0['default_sql'])?></textarea></td>
+      </tr>
+      <tr>
+        <td>Выборка (SQL)</td>
+        <td colspan="2"><textarea name="pole_spisok_sql0" cols="135" rows="5" wrap="VIRTUAL"  ><?=stripslashes ($struct0['pole_spisok_sql'])?></textarea></td>
+      </tr>
+      <tr>
+        <td>Список псевдонимов</td>
+        <td colspan="2"><input name="col_name0" type="text"   size="135" value="<?=stripslashes ($struct0['col_name'])?>"></td>
+      </tr>
+      <tr>
+        <td>При изменении данных очистить кеш</td>
+        <td colspan="2"><input name="cache_clear" type="hidden" value="0" />
+        <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <? if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
+      </tr>
+      <tr>
+        <td>Теги для поиска в кеше</td>
+        <td colspan="2"><input name="cache_tags" type="text"  id="cache_tags" value="<?=stripslashes ($struct0['validator']); ?>" size="135"  /></td>
+      </tr>
+            
+      <tr>
+        <td colspan="3">				  <fieldset><legend><strong>Глобальные функции интерфейса</strong></legend>
+              <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
+                <tr>
+                  <td>Обработчик записи интерфейса (функция)</td>
+                  <td><input type="text" value="<?=$struct0['properties'];?>" name="functions_save_interface" /></td>
+                  <td >Функция получения данных (пусто-SQL)</td>
+                  <td ><input type="text" value="<?=$struct0['functions_befo_out'];?>" name="functions_load_interface" /></td>
+                </tr>
+                <tr>
+                  <td>Обработчик удаления записей</td>
+                  <td><input type="text" value="<?=$struct0['functions_befo_del'];?>" name="functions_del_interface" /></td>
+                  <td ><? /*echo $interface['msg']['-----'];*/ ?>  </td>
+                  <td >-</td>
+                </tr>
+              </table>
+
+            </fieldset></td>
+      </tr>
+    </table>
+</fieldset>
+<!--Общие параметры инетрфейса КОНЕЦ -->
+  <? 
+  }
+  ?>
+
+
+
+   <!--описатель колонок -->
+<? 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+ if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==2)  
+		{ 
+//===============настройки для 1-я строка до вывода всей таблицы row_type==2
+$struct2=simba::queryOneRecord ('select * from design_tables where table_type=0 and row_type="'.$_POST['row_type'].'" and interface_name="'.$_POST['interface_name'].'" and col_name="'.$_POST['cols'].'"');
+if ($struct0['table_name']>'' && $_POST['cols']>'') $save_enable='';
+if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="disabled"';
+		?>
+<input name="id" type="hidden" value="<?=$struct2['id'];?>">
+<fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Колонки</legend>
+	      Имя колонки
+	        <select name="cols" id="cols"  onChange="this.form.submit()" >
+              <?=$cols_sp?>
+        </select>
+&nbsp;&nbsp;&nbsp;&nbsp;	         
+<input type="checkbox" name="sort_item_flag" value="1" <? if ($struct2['sort_item_flag']>0) echo 'checked ';?> >Разрешить сортировку колонки<br>
+	        Настройка для:
+	        <select name="row_type" id="row_type"  onChange="this.form.submit()" <?=$save_enable_cols;?> >
+	          <?=simba::getSpValue1 (["первой строки таблицы","Середина таблицы","Последняя строка таблицы"],array(2,3,4),$_POST['row_type']);?>
+        </select>
+	        <br>
+<fieldset ><legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+	      Порядок вывода:
+	        <select name="col_por" id="col_por"  <?=$save_enable_cols; if ($_POST['row_type']==3) echo 'disabled="disabled"';   ?>>
+              <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
+            </select>
+            Порядок вывода<br>
+	        Заголовок:
+            <textarea name="caption"  cols="60" rows="1" wrap="VIRTUAL"  id="caption" <?=$save_enable_cols;?>><?
+			if (isset($design_tables_text_interfase['caption_col_'.$_POST['cols']]) ) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']]; 
+			   ?></textarea>
+	        <br />
+          Тип ввода:
+	        <select name="pole_type" id="pole_type"  onChange="ch_item(this.value,2);" <?=$save_enable_cols;?>>
+              <?
+					echo create_pole_item_list($struct2['pole_type']); 
+					?>
+</select>
+            <br>
+          Значение (умолчание)
+	        <textarea name="value" cols="135" rows="1"  id="value" <?=$save_enable_cols;?> ><?=$struct2['value'];?></textarea><br />
+          Текст (умолчание)
+	        <textarea name="values_message" cols="135" rows="1"  id="values_message" <?=$save_enable_cols;?> ><? 
+			if (isset($design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']])) echo $design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']];
+			?></textarea><br />
+
+<br />
+	        <span class="zagolov"><strong>имя:</strong></span>
+	        <input name="pole_name" id="pole_name" type="text" <?=$save_enable_cols;?>  value="<?=$struct2['pole_name'];?>">
+&lt;-
+<select name="pole_name_" id="pole_name_"  onChange="document.getElementById('pole_name').value=this.value">
+  <?
+$cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
+if ($struct0['col_name']) 
+			{//проверим псевдонимы, если они есть, тогда их добавить к основному списку
+			$alias=explode(',',$struct0['col_name']);
+			for ($i=0;$i<count($alias);$i++) $cols['Field'][]=$alias[$i];
+					}
+$cols_['Field']=$cols['Field'];
+if ($_POST['row_type']==2)
+	{//первая строка
+	if (is_numeric ($_POST['cols'])) {$cols_['Field'][]='save'.$_POST['cols'];$cols['Field'][]='save'.$_POST['cols'];}
+	}
+	else 
+	{//остальное
+	if (is_numeric ($_POST['cols'])) {$cols_['Field'][]='save'.$_POST['cols'].',del'.$_POST['cols'];$cols['Field'][]='save'.$_POST['cols'].',del'.$_POST['cols'];}
+	}
+
+//добавить в массив столбцов дополнительные поля, не принадлежащие самой таблице
+echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
+
+?>
+</select>
+ <br>(Тип имен:$pole_dopN - имя дополнительного поля N=0-9; save,del - сохранение/удаление записи; exec - произвольное выполнение, get_interface_input - специальный
+входной параметр (см. документацию); любое другое - просто имя поля)</fieldset>
+ 
+   <fieldset >
+                  <legend style="color:#FF0000; font-weight:bold">-</legend>
+                    <span id='st_validator'></span>
+  </fieldset> 
+ 
+ 
+ 
+  <fieldset >
+                  <legend style="color:#FF0000; font-weight:bold">-</legend>
+                    <span id="st_out"></span>
+  </fieldset>
+
+				  <fieldset >
+                  <legend style="color:#FF0000; font-weight:bold">Атрибуты:</legend>
+                    <span id="prop_out"></span>
+                  </fieldset>		  
+<fieldset >
+                  <legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+                    <span id=list_out style="display:none"> таблицы:
+                      <select name="tab_select" id="tab_select"  >
+                        <?=$tab_list1;?>
+                    </select>
+                      или SQL
+                      <textarea name="pole_spisok_sql" id="pole_spisok_sql" cols="95" rows="2" wrap="VIRTUAL" ><?=stripslashes ($struct2['pole_spisok_sql'])?></textarea>
+                    </span>
+</fieldset>
+<fieldset >
+                  
+                    <legend style="color:#FF0000; font-weight:bold">Константы для поля:</legend>
+                    <span id="const_out"></span>
+  </fieldset>
+<fieldset >
+                  
+                    <legend style="color:#FF0000; font-weight:bold">Параметры</legend>
+        <span id="properties_out"></span>
+  </fieldset>
+				  <fieldset><legend style="color:#FF0000; font-weight:bold">Вызываемые функции</legend>
+                    <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
+                      <tr>
+                        <td>До записи поля:</td>
+                        <td><input type="text" name="functions_befo" value="<?= $struct2['functions_befo'];?>" /></td>
+                        <td >После записи поля:</td>
+                        <td ><input type="text" name="functions_after" value="<?=$struct2['functions_after'];?>" /></td>
+                      </tr>
+                      <tr>
+                        <td nowrap>Перед выводом значения на экран:</td>
+                        <td nowrap><input type="text" name="functions_befo_out" value="<?=$struct2['functions_befo_out'];?>"  /></td>
+                        <td>Перед удалением записи:</td>
+                        <td><input type="text"  name="functions_befo_del" value="<?=$struct2['functions_befo_del'];?>" /></td>
+                      </tr>
+                    </table>
+                  </fieldset>
+<? if ($_POST['row_type']==3)
+{//внутренние функции применяемые для всей колонке
+	?>
+<fieldset >
+                    <legend style="color:#FF0000; font-weight:bold">Внутренние функции применяемые для всей колонки</legend>
+        <?
+		$f_array=unserialize($struct2['col_function_array']);
+		$checked='';
+		foreach (["sum"=>"Сумма (sum)","count"=>"Кол-во строк (count)","min"=>"Минимум (min)","max"=>"Максимум (max)"] as $k=>$v) 
+			{if (is_array($f_array)) if (in_array($k,$f_array)) $checked='checked'; else $checked='';
+			echo '<input name="col_function_array[]" type="checkbox" value="'.$k.'" '.$checked.' />'.$v."\n";
+			
+			
+			}
+		
+		
+		?>
+  </fieldset>
+<? } ?>
+
+<div align="right"><input name="del_struct" type="submit" id="del_struct" <?=$save_enable_cols;?> style="font-size: xx-small;color: #FFFFFF;	background-color: #FF0000;" value="Удалить выбранную структуру">
+                                  </div>
+</fieldset>
+
+<!--конец описателя колонок -->
+<?  
+}
+?>
+
+
+<?  
+//--------------------------------------------------------------------------------------------------------------------------------------
+if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==1)  
+		
+		{
+		$pole_dop_numb=0;
+	if (isset($_POST['pole_dop_numb'])) $pole_dop_numb=(int)$_POST['pole_dop_numb'];//номер дополнительного поля (нумерация с 0)
+//===============настройки для дополнительного поля до вывода всей таблицы row_type==1
+$struct2=simba::queryOneRecord ('select  * from design_tables where table_type=0 and row_type=1 and 	interface_name="'.$_POST['interface_name'].'" order by id limit '.$pole_dop_numb.',1');
+//$tab=simba::queryOneRecord("select found_rows() as count_pole_dop_numb");
+$tab=simba::queryOneRecord('select count(*) as  count_pole_dop_numb from design_tables where table_type=0 and row_type=1 and 	interface_name="'.$_POST['interface_name'].'"');
+
+$struct2['count_pole_dop_numb']=$tab['count_pole_dop_numb'];//кол-во дополнительных полей
+
+if ($struct0['table_name']>'') $save_enable='';
+
+//генерируем выпадающий список с номерами полей, для выбора
+$a=array();
+for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
+
+		
+		
+		 ?>
+    <!--Начало дополнительного поля -->
+<input name="id" type="hidden" value="<?=$struct2['id'];?>">
+<fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Дополнительные поля в заголовке:</legend>
+    Конструируем поле номер:
+          <select name="pole_dop_numb" id="pole_dop_numb"   onChange=this.form.submit()>
+            <?=simba::getSpValue1 ($a,$a,$pole_dop_numb);?>
+          </select>
+          <input name="pole_dop_create" type="submit"   id="pole_dop_create" value="Создать новое пустое поле">
+          <span class="zagolov"><br>
+     Поле получает имя<strong>$pole_dop<?=$pole_dop_numb;?></strong>и будет доступно из PHP (можно вставить в SQL инструкцию)</span>
+
+	  <fieldset >
+                    
+                      <legend style="color:#FF0000; font-weight:bold">Заголовок доп. поля</legend>
+                    
+				Текст:
+                    <textarea name="caption" id="caption" cols="115" rows="1"   ><?
+			if (isset($design_tables_text_interfase['caption_dop_'.$pole_dop_numb])) echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb]; 
+			 ?></textarea>
+                    <br>
+                    Стиль
+                    <select name="caption_style"  id="caption_style">
+                      <?=get_style_list($struct2['caption_style']) ;?>
+</select>
+                    <br />
+                    Порядок вывода
+      <select name="col_por" id="col_por"  >
+                      <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
+                    </select>
+  </fieldset>
+	<fieldset ><legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+Тип:<select id="pole_type" name="pole_type"  onChange="ch_item(this.value,1);">
+                          <?=create_pole_item_list($struct2['pole_type']); ?>
+                          </select>
+  
+<br>
+Значение (умолчание)
+	<textarea name="value" cols="135" rows="1"  id="value" ><? if (isset($struct2['value'])) echo $struct2['value'];?></textarea>
+	</fieldset>
+<fieldset >
+                          <legend style="color:#FF0000; font-weight:bold">Стиль</legend>
+                          <span id=st_out></span>
+  </fieldset>
+
+<fieldset >
+                          <legend style="color:#FF0000; font-weight:bold">Атрибуты:</legend>
+                          <span id=prop_out></span>
+  </fieldset>
+	  
+<span id="list_out">
+                          <fieldset >
+                              <legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+                            <span id=list_out><table width="100%" border="0" cellpadding="0" cellspacing="0" >
+                              <tr>
+                                <td>Умолчание:<br>SQL</td>
+                              <td><textarea name="default_sql" id="default_sql" cols="137" rows="2" wrap="VIRTUAL"  ><? if (isset($struct2['default_sql'])) echo stripslashes ($struct2['default_sql'])?></textarea></td>
+                            </tr>
+                              <tr>
+                                <td>Таблицы:</td>
+                              <td><select name="tab_select" id="tab_select" >
+                                <?=$tab_list1?>
+                                </select></td>
+                            </tr>
+                              <tr>
+                                <td>или SQL:</td>
+                              <td><textarea name="pole_spisok_sql" id="pole_spisok_sql" cols="138" rows="2"  wrap="VIRTUAL" ><? if(isset($struct2['pole_spisok_sql'])) echo stripslashes ($struct2['pole_spisok_sql'])?></textarea></td>
+                            </tr>
+                          </table></span>
+  </fieldset>
+  </span> 	  
+
+<fieldset >
+                          <strong>
+                            <legend style="color:#FF0000; font-weight:bold">Константы:</legend><br>
+                    </strong><span id="const_out"></span>
+  </fieldset>
+
+<fieldset >
+                          
+                            <legend style="color:#FF0000; font-weight:bold">Параметры</legend>
+                    <span id="properties_out"></span>
+  </fieldset>
+  </fieldset>
+<!-- вызываемые функции -->
+				  <fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Вызываемые функции</legend>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0" >
+                      <tr>
+                        <td nowrap>Перед выводом значения на экран:</td>
+                        <td width="72%" nowrap><input type="text" name="functions_befo_out" value="<?=$struct2['functions_befo_out']?>" size="80" /></td>
+                        <td width="12%">&nbsp;</td>
+                        <td width="12%">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td width="4%" nowrap>&nbsp;</td>
+                        <td colspan="3" align="right" nowrap>
+                        <input type="submit" name="pole_dop_numb_del_b" value="Уничтожить поле"  class="del" /></td>
+                      </tr>
+                    </table>
+  </fieldset>
+<!-- конец вызываемые функции -->
+<?
+}
+
+?><!-- конец Дополнительного поля -->
+<input name="save_all" type="submit"  id="save_all" <?=$save_enable;  ?> style="background-color:#00CC66; color:#000000; font-weight:bold" value="Записать все">	  </td>
+</form>
+<script language="JavaScript" type="text/JavaScript">
+var pole_consts_styles=new Array();
+var style_sp="<?=get_style_list(0); ?>";
+var struct2=new Array();//текущие описания поля (все)
+var validator=Array();//касааемо валидатора
+var selected_validator=null;
+<? 
+
+//массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
+echo "pole_consts_styles=unserialize('".str_replace("'","\'",serialize($pole_consts_styles))."');\n";
+echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'validator_parametrs'=>[]]  ))."');";//получить все что есть валидатору
+
+
+//print_r($pole_consts_styles);
+/*
+array(itemcount=>$this->_get_item_atr($this->items,'itemCount'),
+			listflag=>$this->_get_item_atr($this->items,'listFlag',true),
+			constcount=>$a,
+			const_count_msg=>$const_count_msg,
+			properties_listid=>$properties_listid,
+			properties_listtext=>$properties_listtext,
+			properties_text=>$properties_text
+			);
+			*/
+//все по структуре поля (того, что выбранор в данный момент)
+
+if (isset($struct2)) echo "\n struct2=unserialize('".addslashes(serialize($struct2))."');\n";
+ else echo "\n struct2=Array();\n";
+//print_r(unserialize($struct2['properties']));
+ //получить список глобальных констатн
+//$conf=array();$j=0;
+//foreach ($interface['constype'] as $i=>$v)
+	
+		//$c=simba::queryAllRecords('select sysname,name from config ');
+		$c=get_defined_constants(true);
+		$c=array_keys($c['user']);
+		$c1=$c;
+		//если аказан файл с настройками, читаем его и делаем из него константы
+		if ($struct0['caption_style'])
+			{
+				if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']))
+					{
+						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']);
+					}
+					else 
+					{
+						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']);
+						}
+				
+				foreach ($config->toArray() as $items) 
+					foreach ($items as $sysname=>$v)
+						{
+								$c[]=$sysname;
+						}
+				$c1=$c;
+
+			}
+		
+		
+			
+
+echo "var const_sp=\"".simba::getSpValue ($c1,$c,'')."\";\n";
+if (!empty($_POST['interface_razdel']))   echo 'ch_item('.$struct2['pole_type'].')';
+ ?>
+
+function ch_item(value)
+{
+//value - тип (код) поля ввода
+//************************ стили
+out='';
+if (!value) return
+//это цикл по кол-ву элементов внутри поля
+for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
+	out=out+"Element"+i+"<select name='pole_style["+i+"]' id='pole_style["+i+"]' >"+style_sp+"</select><br>";//генерируем списки стилей
+  document.getElementById("st_out").innerHTML=out;//выводим в контейнер
+	if (struct2['pole_style'])
+		{_pole_style=struct2['pole_style'].split(',');
+			for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
+					if (_pole_style[i]) document.getElementById("pole_style["+i+"]").value=_pole_style[i];
+		}
+//************************* конец стилей
+//************************* начало атрибутов
+
+out='';
+if (struct2['pole_prop']) _pole_prop=struct2['pole_prop'].split(',');//поэлементное разложение (внутри поля)
+	else _pole_prop=Array();
+for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
+		{
+		if (_pole_prop[i]) o=_pole_prop[i]; else o='';
+		out=out+"Element"+i+'<textarea name="pole_prop['+i+']"  id="pole_prop['+i+']" cols="135" rows="1" wrap="VIRTUAL" >'+o+'</textarea><br>';
+		}
+document.getElementById("prop_out").innerHTML=out
+//************************* конец атрибутов
+//************************* начало вывода спец данных для выпадающих списков
+ if (pole_consts_styles['itemtype'][parseInt(value)]>0)  document.getElementById("list_out").style.display=''
+ 	else document.getElementById("list_out").style.display='none'
+//************************* конец вывода спец данных для выпадающих списков
+
+//************************* начало вывода констант
+
+out='';
+//сами элементы для ыбора
+
+for (i=0;i<pole_consts_styles['constcount'][parseInt(value)];i++)
+	out=out+"<strong>"+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br></strong><select name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' >"+const_sp+"</select><br>";
+	document.getElementById("const_out").innerHTML=out;
+//установим их в текущие состояния
+if (struct2['pole_global_const'])
+	{
+	_pole_global_const=struct2['pole_global_const'].split(',');
+	for (i=0;i<pole_consts_styles['constcount'][parseInt(value)];i++)
+		if (_pole_global_const[i]>'') document.getElementById("pole_global_const["+i+"]").value=_pole_global_const[i];
+	}
+//************************* конец вывода констант
+
+//************************* начало вывода свойств поля
+
+out='';
+ii=0;
+if (struct2['properties']) p=unserialize(struct2['properties']);//получим маасив параметров 
+  else p=Array();
+if(p==null) p=Array();
+//пройдемся по ассоциативному массиву, если он не пуст
+//pole_consts_styles['properties_item_type'][value][t] - содержит код типа поля ввода параметров, 0-однострочный,1-список,2-многострочное
+for (t in pole_consts_styles['properties_text'][value]) 
+	{//в t имена свойств
+	if (p[ii]) data=p[ii]; else data='';//текущее значение если есть
+	
+	//проверим, есть ли элменты в массиве properties_listid[value], если нет, тогда это строка ввода, иначе генерим список
+	if (pole_consts_styles['properties_listid'][value] && pole_consts_styles['properties_item_type'][value][t]==1)
+		{//alert(pole_consts_styles['properties_item_type'][value][t])
+			if (pole_consts_styles['properties_listid'][value][t] && pole_consts_styles['properties_item_type'][value][t]==1) 
+			{
+			html='<select name="properties['+ii+']" >';//<option value=""></option>';
+			i=0;
+				for (tt in pole_consts_styles['properties_listid'][value][t])
+						{if (data==pole_consts_styles['properties_listid'][value][t][tt]) flag= 'selected'; else flag='';
+						html=html+'<option value="'+pole_consts_styles['properties_listid'][value][t][i]+'"'+flag+'>'+pole_consts_styles['properties_listtext'][value][t][i]+'</option>';
+						i++;
+						}
+			html=html+'</select>';
+			}
+			else 
+				{
+					if (pole_consts_styles['properties_item_type'][value][t]==2) html='<br /><textarea name="properties['+ii+']"  cols="100" rows="2">'+data+'</textarea>';
+						else html='<br /><input name="properties['+ii+']"  size="100" value="'+data+'">';
+				}
+		}
+		else {
+					if (pole_consts_styles['properties_item_type'][value][t]==2) html='<br /><textarea name="properties['+ii+']"  cols="100" rows="2">'+data+'</textarea>';
+						else html='<br /><input name="properties['+ii+']"  size="100" value="'+data+'">';
+
+			}
+		out=out+pole_consts_styles['properties_text'][value][t]+html+'<br>';
+		ii++;
+	}
+document.getElementById("properties_out").innerHTML=out;//alert(out)
+//************************* конец вывода свойств поля
+
+
+if (struct2['validator']) selected_validator=unserialize(struct2['validator']);//поэлементное разложение (внутри поля)
+
+validator_f();
+}
+
+//**************************** начало вывода касаемо валидатора
+
+
+function validator_f()
+{//value в данном случае не имеет сысла, т.к. к коду кодя валидатор не привязан, type так же
+/*
+
+*/
+value='';
+s='<input name="validator_item_add" type="button" value="+"  title="Добавить правило" onClick="validator_add()" /><select id="validator_type_list" name="validator_type_list" >';
+for (ss in validator['validator_list'])
+		{//генерируем выпадающий список только для первой строки
+		s+='<option value="'+ss+'" >'+validator['validator_list'][ss]+'</option>';
+		}
+s+="</select><br />";
+//пройдемся по ассоциативному массиву selected_validator['name'] для генерации отдельных элементов
+if (selected_validator)
+for (t in selected_validator['name']) 
+	{
+	for (ss in validator['validator_list'])
+		{//генерируем выпадающий список
+		if (ss==selected_validator['name'][t]) 
+			{s+='<input name="_selected_validator[name][]" type="hidden" value="'+selected_validator['name'][t]+'" />'
+			s+='<input name="'+selected_validator['name'][t]+'" type="button" value="-"  title="Удалить правило" onClick="validator_del(this.name)" /> '
+			s+=validator['validator_list'][ss]+' '
+			}
+		}
+
+		//генерируем параметры, если они есть
+		if (validator['validator_parametrs'][selected_validator['name'][t]]) 
+			parametrs_text=validator['validator_parametrs'][selected_validator['name'][t]].split("~");//получить массив текстов к параметров, если они есть
+			else parametrs_text=Array();
+	
+	
+		selected_validator_=Array();
+
+		if (selected_validator['parametrs']!== undefined && selected_validator['parametrs'][selected_validator['name'][t]]!== undefined) 
+			for (ttt in selected_validator['parametrs'][selected_validator['name'][t]]) 
+				{
+					if (selected_validator['parametrs'][selected_validator['name'][t]][ttt]) selected_validator_[ttt]=selected_validator['parametrs'][selected_validator['name'][t]][ttt];
+					else selected_validator_[ttt]='';
+				}
+	
+		for (pp in parametrs_text)
+			{
+			if (parametrs_text[pp]) 
+				{if (selected_validator_[pp]) vvv=selected_validator_[pp]; else vvv='';
+				s+=parametrs_text[pp]+'<input name="_selected_validator[parametrs]['+selected_validator['name'][t]+'][]" type="text" value="'+vvv+'" size="15"  />';
+				}
+			}
+		s+='<br />';
+
+	}
+if (document.getElementById("st_validator"))document.getElementById("st_validator").innerHTML=s
+}
+
+function validator_add()
+{/*добавляет новый элемент путем добавления в массивы и перерисовкой всего 
+selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
+selected_validator['name']=Array('has_metas','str_len','between_str_len')
+selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
+*/
+if (!selected_validator) 
+	{//если в начале все было совсем пусто, назначим массив
+	selected_validator=Array();selected_validator['name']=Array();selected_validator['parametrs']=Array();
+	}
+selected_validator['name']=makeArray(selected_validator['name'])
+selected_validator['name'].push(document.getElementById('validator_type_list').value);
+selected_validator['parametrs']=makeArray(selected_validator['parametrs'])
+selected_validator['parametrs'].push('')
+validator_f()
+}
+
+function validator_del(value)
+{/*удаляет элемент путем добавления в массивы и перерисовкой всего 
+selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
+selected_validator['name']=Array('has_metas','str_len','between_str_len')
+selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
+//путем перебора сравгим имена, если совпадает, просто удалим в параллельных массивах данные
+*/
+
+for (k in selected_validator['name'])
+	if (selected_validator['name'][k]==value)
+		{delete(selected_validator['name'][k])
+		delete(selected_validator['parametrs'][k])
+		}
+validator_f()
+}
+
+function stripslashes( str ) 
+{
+ return (str+'').replace(/\0/g, '0').replace(/\\([\\'"])/g, '$1');
+}
+
+function unserialize(data)
+{data=stripslashes( data );
+    if (!data) return new Array();
+	//определим кодировку
+	var charset_;
+	if (document.all) charset_=document.charset.toLowerCase(); else charset_=document.characterSet.toLowerCase();
+	
+	var error = function (type, msg, filename, line){throw new window[type](msg, filename, line);};
+    var read_until = function (data, offset, stopchr){//('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+        var buf = [];
+        var chr = data.slice(offset, offset + 1);
+        var i = 2;
+        while (chr != stopchr) {
+            if ((i+offset) > data.length) {
+                error('Error', 'Invalid');
+            }
+            buf.push(chr);
+            chr = data.slice(offset + (i - 1),offset + i);
+            i += 1;
+        }
+        return [buf.length, buf.join('')];
+    };
+    var read_chrs = function (data, offset, length){
+        var buf;
+        var i = 0;
+        buf = [];
+        while (i < length)
+			{
+    	        var chr = data.slice(offset + (i - 1),offset + i);
+        	    buf.push(chr);
+				i++;
+				
+				if (chr.search(/[а-яА-Я]/)>-1 && charset_=='utf-8') length--;//коррекция, в utf-8 русские буквы кодируются 2-мя символами в РНР, здесь - одним
+        	}
+        return [buf.length, buf.join('')];
+    };
+    var _unserialize = function (data, offset){
+        var readdata;
+        var readData;
+        var chrs = 0;
+        var ccount;
+        var stringlength;
+        var keyandchrs;
+        var keys;
+ 
+        if(!offset) offset = 0;
+        var dtype = (data.slice(offset, offset + 1)).toLowerCase();
+        
+        var dataoffset = offset + 2;
+        var typeconvert = new Function('x', 'return x');
+        
+        switch(dtype){
+            case "i":
+                typeconvert = new Function('x', 'return parseInt(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "b":
+                typeconvert = new Function('x', 'return (parseInt(x) == 1)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "d":
+                typeconvert = new Function('x', 'return parseFloat(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "n":
+                readdata = null;
+            break;
+            case "s"://var aaa=unserialize('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+                ccount = read_until(data, dataoffset, ':');
+                chrs = ccount[0];
+                stringlength = ccount[1];//длина строки которая, т.е. число которое есть в s:6
+                dataoffset += chrs + 2;
+                
+                readData = read_chrs(data, dataoffset+1, parseInt(stringlength));
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 2;
+                if(chrs != parseInt(stringlength) && chrs != readdata.length){
+                    error('SyntaxError', 'String length mismatch');
+                }
+            break;
+            case "a":
+                readdata = {};
+                
+                keyandchrs = read_until(data, dataoffset, ':');
+                chrs = keyandchrs[0];
+                keys = keyandchrs[1];
+                dataoffset += chrs + 2;
+                
+                for(var i = 0;i < parseInt(keys);i++){
+                    var kprops = _unserialize(data, dataoffset);
+                    var kchrs = kprops[1];
+                    var key = kprops[2];
+                    dataoffset += kchrs;
+                    
+                    var vprops = _unserialize(data, dataoffset);
+                    var vchrs = vprops[1];
+                    var value = vprops[2];
+                    dataoffset += vchrs;
+                    
+                    readdata[key] = value;
+                }
+                
+                dataoffset += 1;
+            break;
+            default: alert(data);
+                error('SyntaxError', 'Unknown / Unhandled data type(s): ' + dtype+' strItem:'+dataoffset);
+            break;
+        }
+        return [dtype, dataoffset - offset, typeconvert(readdata)];
+    };
+    return _unserialize(data, 0)[2];
+}
+	function makeArray ( array ) {
+		var ret = Array();
+		for (k in array ) ret[k]=array[k]
+
+		return ret;
+	}
+
+ </script>

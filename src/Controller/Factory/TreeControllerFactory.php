@@ -1,0 +1,24 @@
+<?php
+namespace Admin\Controller\Factory;
+
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Admin\Controller\TreeController;
+
+
+/**
+ */
+class TreeControllerFactory implements FactoryInterface
+{
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+       $connection=$container->get('ADO\Connection');
+	   $cache = $container->get('FilesystemCache');
+	   $config = $container->get('Config');
+	   $SharedEventManager = $container->get('SharedEventManager');
+       
+	  // \Zend\Debug\Debug::dump($MvcEvent->getMvcEvent());
+		return new TreeController($container);
+    }
+}
+

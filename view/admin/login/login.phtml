@@ -1,0 +1,50 @@
+<style>
+TR, TD, BODY,input{color:#000000; font-family: Verdana, sans-serif; font-size: 11px;}
+FORM{margin:0px;}
+table{
+}
+div {
+        position        : absolute;
+        top             : 44%;
+        height          : 110px;
+        margin-top      : -120px;
+        margin: 0 auto;
+        left:42%;
+		        border-width: 6px;
+        border-color: #F3F3F3;
+        border-style:solid;
+		height:96px
+
+}
+</style>
+<div>
+<?php
+$form = $this->form;
+$form->prepare();
+
+echo $this->form()->openTag($form);
+?>
+
+<table  cellspacing="0" cellpadding="5">
+
+<tr>
+<td rowspan="4"><img src="/img/simba.jpg" alt="Simba ZF3"></td>
+<td>Login: </td>
+<td>
+<?= $this->formElement($form->get('login')) ?></td>
+</tr>
+<tr>
+<td>Password: </td>
+<td>
+<?= $this->formElement($form->get('password')) ?>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right">
+<?= $this->formElement($form->get('submit')) ?>
+</td>
+</tr>
+
+</table>
+<?= $this->form()->closeTag() ?>
+</div>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+body, input, textarea, table, td, th {font-family:Verdana,Arial,Helvetica, sans-serif;
+font-size:11px;
+}
+th span{color:#ff0000}
+input[name*=del],button[name*=del] {color:#fff; background-color:#F00}
+input[name*=save],button[name*=save] {color:#000; background-color:#6F0}
+input[name*=create] {color:#000; background-color:#3CF}
+/*#actions_tree_out>img {padding-top:5px; padding-bottom:5px;}*/
+#actions_tree_out{width:1900px;}
+#actions_tree_out table {padding-top:5px; padding-bottom:5px;}
+#actions_tree_out table td{white-space:nowrap}
+table{border-collapse:collapse}
+input[type=text] + button{
+	background-color: #535D94;
+	color: #fff;
+	font-size: 14px;
+	padding-top: 3px;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-bottom: 3px
+}
+.menu {
+	font-family: Verdana;
+	font-size: 11px;
+	line-height: 4px;
+	color: #0000FF;
+
+
+}
+.menu0 {
+	font-weight: bold;
+	color: #FF0000;
+
+}
+.main {
+    border-collapse:collapse;
+	width:100%    
+}
+
+.main td{
+	padding: 4px;
+}
+.main .lmenu{border-right: 1px solid #000000; width:200px; vertical-align:top}
+</style>
+<script language="JavaScript" src="/js/tree.js" type="text/JavaScript"></script>
+</head><body>
+
+<table class="main">
+  <tbody>
+    <tr>
+      <td class="lmenu"><a target="_blank" href="https://masterflash.ru"><img src="/img/simba.jpg" alt="" /></a><br>
+<?=$this->adminMenu()->render();?></td>
+      <td style="vertical-align:top"><?= $this->content ?></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

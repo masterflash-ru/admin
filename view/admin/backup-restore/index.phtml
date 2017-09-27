@@ -1,0 +1,55 @@
+<?php
+use Zend\Form\Element;
+  
+ $base_bak=date('d-m-Y');
+ $base="db_".$base_bak;
+ 
+ if (!is_dir($this->config['backup_folder'])) {mkdir($this->config['backup_folder'],0777);}
+ 
+ $directory=realpath($this->config['backup_folder'])."/";
+//создание дампа
+if (isset($_POST['back']) && $_POST['back_name']) 
+	{
+	passthru("mysqldump --user=".$this->config["db"]["login"]." --host ".$this->config["db"]["host"]." --password=".$this->config["db"]["password"]." -R --add-drop-table ".$this->config["db"]["database"]." > $directory".$_POST['back_name']);
+
+	echo "Выполнено<strong>$directory".$_POST['back_name']."</strong>";
+	}
+//восстановление
+if (isset($_POST['restore']) && $_POST['restore_name']) 
+	{
+	passthru("mysql --user=".$this->config["db"]["login"]." --host ".$this->config["db"]["host"]." --password=".$this->config["db"]["password"]." < $directory".$_POST['restore_name']);
+	
+	echo "Выполнено";
+	}
+
+?>
+<div align="center"><strong>Архивирование/восстановление БД</strong>
+</div>
+<form name="form1" method="post" action="">
+  Сделать дамп базы данных:
+    <input name="back_name" type="text" class="txt" id="back_name" value="<?=$base?>.sql" size="30">    
+  <input name="back" type="submit" id="back" value="Выполнить" class="txt">
+</form>
+
+
+<br /><br /><br />
+  <form name="form2" method="post" action="">
+   Восстановить из доступных дампов:
+   <?php
+   $s=scandir($directory);
+   $rez=[];
+   foreach ($s as $d)
+   	{
+		if ($d==".." || $d==".") {continue;}
+		$rez[$d]=$d;
+	}
+   
+   	$select = new Element\Select("restore_name");
+	$select->setValueOptions($rez);
+
+   echo $this->formSelect($select);
+   ?>
+
+    <input name="restore" type="submit" id="restore" value="Выполнить" class="txt">
+  </form>
+
