@@ -90,7 +90,19 @@ return [
 									],
 								],
 							],
-
+							'getconfig' => [
+								'type' => Segment::class,
+								'options' => [
+									'route'    => '/getconfig/[:name]',
+									'constraints' => [
+                               			 'name' => '[a-zA-Z0-9_-]+',
+                           			 ],
+									'defaults' => [
+										'controller' => Controller\GetConfigController::class,
+										'action'     => 'index',
+									],
+								],
+							],
 
 				],//'child_routes'
 			],
@@ -161,10 +173,10 @@ return [
         ],
     	
 		//если у контроллера нет коннструктора или он не нужен или пустой
-        /*'invokables' => [
-           'Application\Controller\index' => 'Application\Controller\IndexController',
+        'invokables' => [
+           //Controller\GetConfigController::class => Controller\GetConfigController::class,
 			
-        ],*/
+        ],
 	],
 	//плагины контроллеров, грубоговоря это дополнительные перегруженные методы внутри контроллера
     'controller_plugins' => [
@@ -245,6 +257,7 @@ return [
                 //допуски
                 ['actions' => '*', 'allow' => '+admin.login']
             ],
+			
         ]
     ],
 

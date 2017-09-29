@@ -121,7 +121,6 @@ $this->result_sql=[];
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
 	$this->EventManager->addIdentifiers(["simba.admin"]);
-
 	$this->container=$container;
 }//конец конструктора
 
@@ -415,9 +414,6 @@ if ($this->struct0['caption_style'])
 			}
 
 */
-
-
-
 
 
 $this->tab_name=$this->struct0['table_name'];//$tree_name=$this->struct0['tree_name'];
@@ -772,82 +768,86 @@ while (!$clone_rs->EOF)
 		//работаем в определенном уровне и выводим поля которые указаны при конструировании
 		for ($j=0;$j<count($this->struct2['pole_type']);$j++)
 			{//это цикл по полям
-		//инициализируем переменные на всякий случай
-		if (!isset($this->sp['pole_style'][$j]))$this->sp['pole_style'][$j]=NULL;
-		if (!isset($this->sp['pole_prop'][$j]))$this->sp['pole_prop'][$j]=NULL;
-		if (!isset($this->sp['sql'][$j]['name']))$this->sp['sql'][$j]['name']=NULL;
-		if (!isset($this->sp['sql'][$j]['id']))$this->sp['sql'][$j]['id']=NULL;
-		if (!isset($this->sp['sql'][$j]['sp_group_array']))$this->sp['sql'][$j]['sp_group_array']=NULL;
-		if (!isset($this->sp['const'][$j]))$this->sp['const'][$j]=NULL;
-		if (!isset($this->sp['caption_style'][$j]))$this->sp['caption_style'][$j]=NULL;
+				//инициализируем переменные на всякий случай
+				if (!isset($this->sp['pole_style'][$j]))$this->sp['pole_style'][$j]=NULL;
+				if (!isset($this->sp['pole_prop'][$j]))$this->sp['pole_prop'][$j]=NULL;
+				if (!isset($this->sp['sql'][$j]['name']))$this->sp['sql'][$j]['name']=NULL;
+				if (!isset($this->sp['sql'][$j]['id']))$this->sp['sql'][$j]['id']=NULL;
+				if (!isset($this->sp['sql'][$j]['sp_group_array']))$this->sp['sql'][$j]['sp_group_array']=NULL;
+				if (!isset($this->sp['const'][$j]))$this->sp['const'][$j]=NULL;
+				if (!isset($this->sp['caption_style'][$j]))$this->sp['caption_style'][$j]=NULL;
 
-	if (isset($this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]])) $data.="<span".$this->sp['caption_style'][$j].">".$this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]]."</span>";
-			//работаем с функцией до вывода поля на экран
-			if ($this->struct2['functions_befo_out'][$j]>'') 
-					{//получить имя функции из таблицы
-						$fn=$this->struct2['functions_befo_out'][$j];
-						$fn=new $fn;
-
-					$const=explode (',',$this->sp['const'][$j]);//массив констант
-
-				$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]]->Value    =$fn
-																($this,
-																//$this->result_sql[$this->struct2['col_name'][$j]][$i],//сама инфа
-																$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]] ->Value,
-																$this->struct2,
-																$this->struct2['pole_type'][$j],
-																$this->pole_dop,
-																$this->tab_name,
-																$this->spec_poles[0],
-																$const,
-																//$this->result_sql[$this->spec_poles[0]],
-																$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value,
-																0,
-																$i,
-																$j ,  //порядковый номер элемента  в элементе строки (ТОЛЬКО ДЛЯ ДЕРЕВА!)
-																$clone_rs
-																);
-
-					$this->sp['const'][$j]=implode (',',$const);//обратно в список, т.к. наша функция может изменять константы
-
+				if (isset($this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]])) 
+					{
+						$data.=htmlentities ($this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]],ENT_COMPAT,"UTF-8");
 					}
+				//работаем с функцией до вывода поля на экран
+				if ($this->struct2['functions_befo_out'][$j]>'') 
+						{//получить имя функции из таблицы
+							$fn=$this->struct2['functions_befo_out'][$j];
+							$fn=new $fn;
+	
+							$const=explode (',',$this->sp['const'][$j]);//массив констант
+	
+							$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]]->Value    =$fn
+																	($this,
+																	//$this->result_sql[$this->struct2['col_name'][$j]][$i],//сама инфа
+																	$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]] ->Value,
+																	$this->struct2,
+																	$this->struct2['pole_type'][$j],
+																	$this->pole_dop,
+																	$this->tab_name,
+																	$this->spec_poles[0],
+																	$const,
+																	//$this->result_sql[$this->spec_poles[0]],
+																	$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value,
+																	0,
+																	$i,
+																	$j ,  //порядковый номер элемента  в элементе строки (ТОЛЬКО ДЛЯ ДЕРЕВА!)
+																	$clone_rs
+																	);
+	
+							$this->sp['const'][$j]=implode (',',$const);//обратно в список, т.к. наша функция может изменять константы
+						}
 			//само поле поле по его идентификатору
 			$data.=$this->_form_item_->create_form_item
-				($this->struct2['pole_type'][$j],
-				//$this->struct2['pole_name'][$j].'['.$this->result_sql[$this->spec_poles[0]][$i].']',
-				$this->struct2['pole_name'][$j].'['.   $clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value.']',
-				//$this->result_sql[$this->struct2['col_name'][$j]][$i],//значение
-				$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]]->Value,
-				
-				$this->sp['pole_style'][$j].' '.$this->sp['pole_prop'][$j],
-				
-				$this->sp['sql'][$j]['name'],
-				$this->sp['sql'][$j]['id'],
-				$this->sp['sql'][$j]['sp_group_array'],
-
-				$this->sp['const'][$j],
-				$this->struct2['value'][$j],
-				unserialize($this->struct2['properties'][$j])
-				);
+						(
+							$this->struct2['pole_type'][$j],
+							//$this->struct2['pole_name'][$j].'['.$this->result_sql[$this->spec_poles[0]][$i].']',
+							$this->struct2['pole_name'][$j].'['.   $clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value.']',
+							//$this->result_sql[$this->struct2['col_name'][$j]][$i],//значение
+							$clone_rs->	Fields->Item[$this->struct2['col_name'][$j]]->Value,
 								
-								
+							$this->sp['pole_style'][$j].' '.$this->sp['pole_prop'][$j],
+							
+							$this->sp['sql'][$j]['name'],
+							$this->sp['sql'][$j]['id'],
+							$this->sp['sql'][$j]['sp_group_array'],
+			
+							$this->sp['const'][$j],
+							$this->struct2['value'][$j],
+							unserialize($this->struct2['properties'][$j])
+						);
 			}
-		
-		//кнопки в текущей строке, если они выбраны
-		if ($this->but[0]) $b0="<input type='submit' name='save[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value  ."]' value=\"запись\">"; else $b0='';
-		if ($this->but[1]) $b1="<input type='submit' name='create[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]' value=\"нов.подуров.\">"; else $b1='';
-		if ($this->but[2]) $b2="<input type='submit' name='del[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]' value=\"удал\" class='del'>"; else $b2='';
-
-		if ($this->struct0['col_por'] && $this->struct0['col_por']<$lev1) $data.=$b0.$b2;	else 	$data.=$b0.$b1.$b2;
-		$data.="<input name='level[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]' type='hidden' value='".$clone_rs->	Fields->Item[$this->spec_poles[2]] ->Value."'>
-				<input name='subid[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value ."]' type='hidden' value='".$clone_rs->	Fields->Item[$this->spec_poles[1]] ->Value."'>";
-		
-		$data.="<input name='id_[]' type='hidden' value=\"".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."\">";
-		
-		$this->tree_obj->add_item(htmlspecialchars ($data,ENT_COMPAT,"UTF-8"),'',$clone_rs->	Fields->Item[$this->spec_poles[2]] ->Value,'','',$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value);//это только для коргня раздела
-		$this->create_tree ($clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value,$lev1);
-		$i++;
-		$clone_rs->MoveNext();
+			$data2="";
+			//кнопки в текущей строке, если они выбраны
+			if ($this->but[0]) $b0="<input type=\"submit\" name=\"save[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value  ."]\" value=\"запись\">"; else $b0='';
+			if ($this->but[1]) $b1="<input type=\"submit\" name=\"create[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]\" value=\"нов.подуров.\">"; else $b1='';
+			if ($this->but[2]) $b2="<input type=\"submit\" name=\"del[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]\" value=\"удал\" class=\"del\">"; else $b2='';
+	
+			if ($this->struct0['col_por'] && $this->struct0['col_por']<$lev1) $data2.=$b0.$b2;	else 	$data2.=$b0.$b1.$b2;
+			
+			$data2.="<input name=\"level[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."]\" type=\"hidden\" value=\"".$clone_rs->	Fields->Item[$this->spec_poles[2]] ->Value."\">
+					<input name=\"subid[".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value ."]\" type=\"hidden\" value=\"".$clone_rs->	Fields->Item[$this->spec_poles[1]] ->Value."\">
+					<input name=\"id_[]\" type=\"hidden\" value=\"".$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value."\">";
+			
+			$data.=htmlentities ($data2,ENT_NOQUOTES | ENT_XHTML,"UTF-8");
+			
+			//$this->tree_obj->add_item(htmlspecialchars ($data,ENT_COMPAT,"UTF-8"),'',$clone_rs->	Fields->Item[$this->spec_poles[2]] ->Value,'','',$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value);//это только для коргня раздела
+			$this->tree_obj->add_item($data,'',$clone_rs->	Fields->Item[$this->spec_poles[2]] ->Value,'','',$clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value);//это только для коргня раздела
+			$this->create_tree ($clone_rs->	Fields->Item[$this->spec_poles[0]] ->Value,$lev1);
+			$i++; 
+			$clone_rs->MoveNext();
 		}
 	}
 

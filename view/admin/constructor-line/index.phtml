@@ -1,6 +1,7 @@
 <?php
 /*
 перекочевало из старой версии
+заменены конфигурационные файлы на секции общей конфигурации приложения
 
 
 8.5.17 - перенесено в пространство имен old - для временной миграции на ZF3
@@ -13,20 +14,14 @@
 если указан файл настроек, то он инициализируется и его данные становятся константами
 
 
-
-version=
-build=19.01.2010
-Наведен порядок с ошибками типа Notice
-
 */
 use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
+use Zend\Form\Element;
 
-//\Zend\Debug\Debug::dump($this);exit;
+//\Zend\Debug\Debug::dump($this->config["statpage"]);
 
 $GLOBALS["form_item"]=new form_item($this);
-
-
 
 
 
@@ -81,7 +76,7 @@ if (isset($_POST['save_all']))
 					'row_type'=>0,
 					'table_name'=>$_POST['interface_tabl_tek'],
 					'pole_global_const'=>$_POST['pole_global_const0'],
-					'caption_style'=>$_POST['file_setting'],
+					'caption_style'=>$_POST['config_section'],
 					'pole_style'=>$_POST['imp_exp'],
 					'col_name'=>$_POST['col_name0'],
 					'pole_name'=>$_POST['col___id'],
@@ -453,8 +448,19 @@ if (value==2)
     <table width="100%" border="0" cellspacing="0" cellpadding="0" >
 
       <tr>
-        <td>Использовать файл настроек:</td>
-        <td colspan="2"><input type="text" name="file_setting"  value="<?php echo $struct0['caption_style']; ?>"></td>
+        <td>Использовать секцию настроек:</td>
+        <td colspan="2">
+        	<?php
+				$c=[[]];
+				foreach (array_keys($this->config) as $_c)
+					{
+						$c[$_c]=$_c;
+					}
+            	$select = new Element\Select("config_section");
+				$select->setValueOptions($c);
+				$select->setValue($struct0['caption_style']);
+				echo $this->FormElement($select);
+			?></td>
       </tr>
 
 
@@ -837,55 +843,19 @@ echo "pole_consts_styles=unserialize('".str_replace("'","\'",serialize($pole_con
 echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'validator_parametrs'=>[]]  ))."');";//получить все что есть валидатору
 
 
-//print_r($pole_consts_styles);
-/*
-array(itemcount=>$this->_get_item_atr($this->items,'itemCount'),
-			listflag=>$this->_get_item_atr($this->items,'listFlag',true),
-			constcount=>$a,
-			const_count_msg=>$const_count_msg,
-			properties_listid=>$properties_listid,
-			properties_listtext=>$properties_listtext,
-			properties_text=>$properties_text
-			);
-			*/
-//все по структуре поля (того, что выбранор в данный момент)
-
 if (isset($struct2)) echo "\n struct2=unserialize('".addslashes(serialize($struct2))."');\n";
  else echo "\n struct2=Array();\n";
-//print_r(unserialize($struct2['properties']));
- //получить список глобальных констатн
-//$conf=array();$j=0;
-//foreach ($interface['constype'] as $i=>$v)
-	
-		//$c=simba::queryAllRecords('select sysname,name from config ');
-		$c=get_defined_constants(true);
-		$c=array_keys($c['user']);
-		$c1=$c;
-		//если аказан файл с настройками, читаем его и делаем из него константы
-		if ($struct0['caption_style'])
-			{
-				if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']))
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']);
-					}
-					else 
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER.$struct0['caption_style']);
-						}
-				
-				foreach ($config->toArray() as $items) 
-					foreach ($items as $sysname=>$v)
-						{
-								$c[]=$sysname;
-						}
-				$c1=$c;
 
-			}
-		
-		
-			
+//получить список глобальных настроек
 
-echo "var const_sp=\"".simba::getSpValue ($c1,$c,'')."\";\n";
+$c=$ckey=[];
+if ($struct0['caption_style'])
+	{
+		$c=$this->config[$struct0['caption_style']];
+		$ckey=array_values($c);$c=array_keys($c);
+	}
+		
+echo "var const_sp=\"".simba::getSpValue ($c,$ckey,'')."\";\n";
 if (!empty($_POST['interface_razdel']))   echo 'ch_item('.$struct2['pole_type'].')';
  ?>
 

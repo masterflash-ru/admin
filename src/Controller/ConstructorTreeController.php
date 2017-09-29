@@ -21,11 +21,13 @@ class ConstructorTreeController extends AbstractActionController
 {
 	protected $connection;
 	protected $sessionManager;
+	protected $config;
 
-public function __construct ($connection,$sessionManager)
+public function __construct ($connection,$sessionManager,$config)
 	{
 		$this->connection=$connection;
 		$this->sessionManager=$sessionManager;
+		$this->config=$config;
 	}
 
 
@@ -34,7 +36,7 @@ public function __construct ($connection,$sessionManager)
 public function indexAction()
 {
 	Simba::$connection=$this->connection;
-  return new ViewModel();
+  return new ViewModel(["config"=>$this->config]);
 	
 }
 

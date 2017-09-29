@@ -16,24 +16,24 @@ class Simba
 	public static $flag=true;			//true -  разрешены мультизапросы
 	public static $connection;
 
-
 //=получимть константу по ее идентификатору таблицы
 public static function get_const($sysname,$return_array_flag=false)
 {//получение глобальной константы по ее имени в таболице
 //$return_array_flag - если false тогда возвращает список через запятую, иначе возвращает в виде массива
+//\Zend\Debug\Debug::dump($sysname);
 
 if (is_array($sysname))
 	{
-		$arr=array();
+		$arr=[];
 		foreach ($sysname as $v) 
 			{
-				if ($v) $arr[]=constant($v).DIRECTORY_SEPARATOR;
+				if ($v) $arr[]=$v.DIRECTORY_SEPARATOR;
 					else $arr[]="";
 			}
 	}
 	else 
 		{
-			if ($sysname) return constant($sysname).DIRECTORY_SEPARATOR;
+			if ($sysname) return $sysname.DIRECTORY_SEPARATOR;
 				else return "";
 		}
 

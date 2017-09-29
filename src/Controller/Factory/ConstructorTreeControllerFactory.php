@@ -18,7 +18,7 @@ class ConstructorTreeControllerFactory implements FactoryInterface
 		//имя базы данных из конфига
 		$config = $container->get('Config');
 		define ("DBNAME",$config["db"]["database"]);
-		return new ConstructorTreeController($connection,$sessionManager);
+		return new ConstructorTreeController($connection,$sessionManager,$config);
     }
 }
 

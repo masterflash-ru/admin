@@ -38,7 +38,8 @@ function add_item($text,$url='',$level=0,$link_prop='',$title='',$id=0)
 {
 	$url=htmlspecialchars($url,ENT_NOQUOTES);
 	$url=preg_replace ("/\040/",'%20',$url);
-	$this->mnu['text'][$this->ss]=preg_replace("/\n|\r/",'',stripslashes($text));
+	$text=preg_replace("/\n|\r/",'',$text);	//в одну строку
+	$this->mnu['text'][$this->ss]=$text;
 	$this->mnu['url'][$this->ss]=$url;
 	$this->mnu['level'][$this->ss]=$level;
 	$this->mnu['link_prop'][$this->ss]=$link_prop;
@@ -105,7 +106,8 @@ for ($i=0;$i<count ($this->mnu['text']);$i++)
 	{
 //есть след подуровень?
 	if (isset($this->mnu['level'][$i+1]) && $this->mnu['level'][$i+1]>$this->mnu['level'][$i]) $fl='true'; else $fl='false';
-			$out.='db["'.$this->menu_name.'"][db["'.$this->menu_name.'"].length] = new dbRecord('.$fl.',"'.$this->mnu['text'][$i].'","'.$this->mnu['url'][$i].'",'.$this->mnu['level'][$i].' ,"" ,"");'."\n";
+	
+	$out.='db["'.$this->menu_name.'"][db["'.$this->menu_name.'"].length] = new dbRecord('.$fl.",'".$this->mnu['text'][$i]."','".$this->mnu['url'][$i]."','".$this->mnu['level'][$i]."','' ,'');\n";
 	}	
 $out.='mycookie["'.$this->menu_name.'"] = document.cookie
 //обнуление

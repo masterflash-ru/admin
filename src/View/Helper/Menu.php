@@ -21,6 +21,7 @@ public function __construct ($connection,$rbacManager,$sessionManager)
 		$this->connection=$connection;
 		$this->sessionManager=$sessionManager;
 		$this->rbacManager=$rbacManager;
+		
 	}
     
     /**
@@ -62,11 +63,11 @@ protected function tovtree($subid,$lev)
 				if ($rs1->Fields->Item['url']->Value) $url=$rs1->Fields->Item['url']->Value; else $url='';
 				if ($rs1->Fields->Item['level']->Value) 
 					{
-						$this->tree->add_item(htmlspecialchars("<span class='menu'>".$rs1->Fields->Item['name']->Value."</span>"),$url,$rs1->Fields->Item['level']->Value,'','',$rs1->Fields->Item['id']->Value);//это только для коргня раздела
+						$this->tree->add_item(htmlentities('<span class="menu">'.$rs1->Fields->Item["name"]->Value."</span>",ENT_NOQUOTES | ENT_XHTML),$url,$rs1->Fields->Item["level"]->Value,"","",$rs1->Fields->Item["id"]->Value);//это только для коргня раздела
 					}
 				else  
 					{
-						$this->tree->add_item(htmlspecialchars('<span class="menu0">'.$rs1->Fields->Item['name']->Value."</span>"),$url,$rs1->Fields->Item['level']->Value,'','',$rs1->Fields->Item['id']->Value);
+						$this->tree->add_item(htmlentities('<span class="menu0">'.$rs1->Fields->Item['name']->Value."</span>",ENT_NOQUOTES | ENT_XHTML),$url,$rs1->Fields->Item['level']->Value,'','',$rs1->Fields->Item['id']->Value);
 					}
 			$this->tovtree ((int)$rs1->Fields->Item['id']->Value,(int)$lev1);
 			$rs1->MoveNext();

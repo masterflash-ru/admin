@@ -13,7 +13,7 @@ public function __invoke($obj,$infa,$struct_arr,$pole_type,$pole_dop,$tab_name,$
 	//print_r($obj);
 	
 	
-	$l=explode(",","ru_RU,en_US");//                  
+	$l=$obj->config["locale_enable_list"];// массив допустимых локалей                  
 		//подменить список
 		$obj->dop_sql['name']=$l;
 		$obj->dop_sql['id']=$l;

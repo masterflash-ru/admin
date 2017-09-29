@@ -555,6 +555,7 @@ if ($this->struct0['caption_style'])
 			}
 */
 
+
 //если у нас вывод в виде формы, тогда смотрим нужно ли выводить кнопки создать запись и переходы по записям (это хранится в колонке value)
 $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];

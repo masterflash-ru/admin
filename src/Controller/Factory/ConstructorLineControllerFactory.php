@@ -18,7 +18,7 @@ class ConstructorLineControllerFactory implements FactoryInterface
 		//имя базы данных из конфига
 		$config = $container->get('Config');
 		define ("DBNAME",$config["db"]["database"]);
-		return new ConstructorLineController($connection,$sessionManager);
+		return new ConstructorLineController($connection,$sessionManager,$config);
     }
 }
 
