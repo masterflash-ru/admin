@@ -49,31 +49,31 @@ class Ioline
 
 */
 
-public $error_row=array();//список бракованых идентификаторов таблицы, поля не прошли проверку! (целые строки)
-public $error_item=array();//индивидуальные бракованные элементы
+public $error_row=[];//список бракованых идентификаторов таблицы, поля не прошли проверку! (целые строки)
+public $error_item=[];//индивидуальные бракованные элементы
 public $interface_name;//имя интерфейса для работы
-public $design_tables_text_interfase=array();//хранит текстовые надписи для данного языка
+public $design_tables_text_interfase=[];//хранит текстовые надписи для данного языка
 public $line_table_obj;//хранит эземпляр объекта который генерирует структуру на низком уровне
 public $struct0;//струтура интерфейса из таблицы
 public $struct1;
 public $struct2;
-public $pole_dop=array();//данные из подолнительных полей
+public $pole_dop=[];//данные из подолнительных полей
 public $pole__id;//уникальный ключ выводимой таблицы
 public $del_record;//строка SQL для удаления записи (защищено, т.к. SQL правится)
 public $tab_name;//имя таблицы, в данном интерфейсе
-public $dop_sql=array();//массив для генерации выпадающих списков
+public $dop_sql=[];//массив для генерации выпадающих списков
 
 public $result_sql;//хранит результат выборки SQL (после всех преобразований в интерфейсе), возможно это потребуется в обработ.функциях
-public $col_function_array_rez=array();//результат работы внутренних функций, все в виде ассоциативного массива
+public $col_function_array_rez=[];//результат работы внутренних функций, все в виде ассоциативного массива
 
-public $error_code=array();//код ошибки входных данных, ключи массива - имена полей (POST)
-public $error_message=array();//текстовые сообщения об ошибках
-public $error_form_item=array();//данные об ошибках из объекта form_item
-private $value_for_error=array();//сложный массив для выдачи статуса объекта, какие колоки и какие строки были обработаны
-private $global_error_code=array();//коды ошибок вообще данного интерфейса, не связано со строками
-private $global_error_message=array();//тексты ошибок вообще данного интерфейса, не связано со строками
+public $error_code=[];//код ошибки входных данных, ключи массива - имена полей (POST)
+public $error_message=[];//текстовые сообщения об ошибках
+public $error_form_item=[];//данные об ошибках из объекта form_item
+private $value_for_error=[];//сложный массив для выдачи статуса объекта, какие колоки и какие строки были обработаны
+private $global_error_code=[];//коды ошибок вообще данного интерфейса, не связано со строками
+private $global_error_message=[];//тексты ошибок вообще данного интерфейса, не связано со строками
 public $get_interface_input;//параметры которые передаются в интерфейс GET запросом (для поля 49)
-public $cap=array();//заголовки в колонках
+public $cap=[];//заголовки в колонках
 
 //имена кнопок на форме по которым совершаются остандартные операции
 public $button_save_name='save';//имя кнопки в форме по которой записывается запись
@@ -100,8 +100,8 @@ function __construct($container,$view)
 	$this->line_table_obj=new tab_admin($view);
 	$this->form_item=new form_item($view);
 	//глобальные параметры
-	$this->value_for_error['column_name']=array(); //имена колонок которые были обработаны
-	$this->value_for_error['row_item']=array(); // ID строк которые были обработаны
+	$this->value_for_error['column_name']=[]; //имена колонок которые были обработаны
+	$this->value_for_error['row_item']=[]; // ID строк которые были обработаны
 	$this->get_interface_input='';
 	$this->cap=[];
 	Simba::$connection=$container->get('ADO\Connection');
@@ -181,7 +181,7 @@ $i=0;
 while ($i<$count) //for ($i=0;;$i++)
 	{$c_=explode (",",$this->struct2['pole_global_const'][$i]);
 		$validator=unserialize ($this->struct2['validator'][$i]);// print_r($validator);
-		for ($p=0;$p<count($c_);$p++) $const[$p]=simba::get_const($c_[$p]);
+		for ($p=0;$p<count($c_);$p++) {$const[$p]=simba::get_const($c_[$p]);}
 		if (isset($_POST[$this->struct2['pole_name'][$i]][$id])) $infa=$_POST[$this->struct2['pole_name'][$i]][$id];
 			else $infa=NULL;
 		//проверим, еуказана ли функциЯ которая вызовется до записи поля
@@ -258,7 +258,7 @@ $infa=$this->form_item->save_form_item($row_item,
 					{//получить имя функции из таблицы
 						$fn=$this->struct2['functions_after'][$i];
 						$fn=new $fn;
-						$fn(
+						$infa=$fn(
 								$this,
 								$infa,
 								$this->struct2,
@@ -287,20 +287,18 @@ if (!$flag_error)
 		{
 			$fn=$this->struct0['properties'];
 						$fn=new $fn;
-
-		$fn(
-														$this, //данный объект со всеми его устновками
-														$tab_rec, // массив структура пригодная для записи в базу данных
-												NULL,
-												NULL,
-												NULL,
-												NULL,
-												NULL,
-												NULL,
-												NULL,
-											
-												-2
-													);
+						$fn(
+							$this, //данный объект со всеми его устновками
+							$tab_rec, // массив структура пригодная для записи в базу данных
+							NULL,
+							NULL,
+							NULL,
+							NULL,
+							NULL,
+							NULL,
+							NULL,
+							-2
+							);
 		}
 		else //нет обработчика, записываем по умолчанию 
 			{//если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
@@ -338,7 +336,7 @@ function save_all()
 	//вгачале проверим подпись формы
 if(isset($_POST['cod_form']) && isset($_SESSION['io_line_interface'][$this->interface_name]) && $_SESSION['io_line_interface'][$this->interface_name]==$_POST['cod_form'] ) 
 		{
-		$id=array();
+		$id=[];
 		if ($_POST['global_action_id_array']>'') $id=explode(',',$_POST['global_action_id_array']); 
 		for ($i=0;$i<count($id);$i++) $this->save_field($id[$i]);
 		}
@@ -462,7 +460,7 @@ $this->struct2=simba::queryOneRecord ('select table_name,functions_befo_out from
 
 
 $this->tab_name=$this->struct2['table_name'];
-if (!$this->tab_name && !$this->struct2['functions_befo_out']) {throw new Exception(__CLASS__,3,array());}
+if (!$this->tab_name && !$this->struct2['functions_befo_out']) {throw new Exception(__CLASS__,3,[]);}
 //загрузим текстовый интерфейс для выбранной таблицы из ьаблицы с текстами
 $c=simba::queryAllRecords("select item_name,text from design_tables_text_interfase where 
 							table_type=0 and interface_name='".$this->interface_name."'");
@@ -476,7 +474,7 @@ if (!$this->struct2['pole_name']) {throw new Exception(__CLASS__,4,array($this->
 $this->pole__id=$this->struct2['pole_name'];//это уникальный идентификатор таблицы
 $this->del_record=str_replace('$pole_dop','$this->pole_dop',$this->struct2['default_sql']);//т.к. работаем в объекте, поправим $pole_dopN на $this->pole_dopN
 
-$const=array();
+$const=[];
 //проверим количество дополнительных полей и преобразуем их в массив
 $this->struct2=simba::queryAllRecords ('select properties,pole_name,col_name,pole_type,pole_global_const from design_tables 
 			where table_type=0 and row_type=1 and interface_name="'.$this->interface_name.'" order by col_por,id');
@@ -621,7 +619,7 @@ if (is_array($s))
 //массив 0/1 для каждой из кнопок 0-нет.1-да
 if (preg_match("/1/",$this->struct0['pole_prop'])) 
 	$this->line_table_obj->global_action=explode(',',$this->struct0['pole_prop']); 
-		else $this->line_table_obj->global_action=array();
+		else $this->line_table_obj->global_action=[];
 
 //общий заголовок таблицы
 @$this->line_table_obj->caption=$this->design_tables_text_interfase['caption0'];
@@ -661,7 +659,7 @@ $sql.=$_sort;//приклеить к запросу для сортировки
 
 
 //==================================помечаем ошибочнуый элемент
-$this->error_item1=array();
+$this->error_item1=[];
 //проверим что является источником данных, если функция, тогда SQL не делаем
 if ($this->struct0['functions_befo_out']) 
 		{
@@ -756,7 +754,7 @@ if (isset($this->struct2['pole_name']) && $this->struct2['pole_name'])
 		if ($nnn>'' && $nnn!='get_interface_input') 
 			{
 				preg_match ('/pole_dop([0-9]?)/i',$nnn,$c) ;
-			if (!isset($c[1]) || $c[1]=='')  throw new Exception(__CLASS__,5,array());
+			if (!isset($c[1]) || $c[1]=='')  throw new Exception(__CLASS__,5,[]);
 			}
 
 $count=$this->create_start_end_items(2);//генерировать первую строку, заодно получить кол-во колонок
@@ -771,7 +769,7 @@ if (isset($arr[$this->pole__id]) )
 		foreach ($struct3['pole_name'] as $nnn) 
 			if ($nnn>'' && $nnn!='get_interface_input') 
 				{preg_match('/pole_dop([0-9]?)/',$nnn,$c) ;
-				if ($c[1]=='') throw new Exception(__CLASS__,8,array());
+				if ($c[1]=='') throw new Exception(__CLASS__,8,[]);
 				}
 	for ($i=0;$i<$count;$i++)
 		{//все оставшиеся строки таблицы порядок такойже как и для первой строки!!!!!!!!!!
@@ -794,7 +792,7 @@ if (isset($arr[$this->pole__id]) )
 					}
 				}
 		
-		$this->dop_sql=array();
+		$this->dop_sql=[];
 			if ($struct3['pole_spisok_sql']) 
 				{$sql__=$struct3['pole_spisok_sql'];
 				$sql__= preg_replace ("/\"/",'\\\"',$sql__);
@@ -853,7 +851,7 @@ if (isset($arr[$this->pole__id]) )
 												);//print_r(unserialize($struct3['properties']));
 												
 			//проверить, если это кнопки, тогда внести фиктивный массив идентификаторов, что бы было не пусто!
-			if (preg_match ("/^[1-9]/",$struct3['col_name'])) $this->line_table_obj->row_all_value($i,$arr[$this->pole__id],array());//$arr['__error_flag__']); 
+			if (preg_match ("/^[1-9]/",$struct3['col_name'])) $this->line_table_obj->row_all_value($i,$arr[$this->pole__id],[]);//$arr['__error_flag__']); 
 					else  {
 								@$this->line_table_obj->row_all_value($i,$arr[$struct3['col_name']],$this->error_item1[$struct3['col_name']]);//это знаяение по имени колонки
 							
@@ -898,7 +896,7 @@ $count=simba::numRows();
 for ($i=0;$i<$count;$i++)
 {
 	@$this->cap[$i]=$this->design_tables_text_interfase['caption_col_'.$this->struct2['col_name'][$i]];
-	$this->dop_sql=array();
+	$this->dop_sql=[];
 	if ($this->struct2['pole_spisok_sql'][$i]) 
 		{$sql_=$this->struct2['pole_spisok_sql'][$i];
 		$sql_= preg_replace ("/\"/",'\\\"',$sql_);
@@ -984,7 +982,7 @@ $const_dop_pole=simba::get_const($this->struct1['pole_global_const'][$jjj]);//к
 //дополнительное поле до вывода всей таблицы
 if ($this->struct1['pole_type'][$jjj]>0) 
 	{//если указан тип поля тогда работаем с ним
-	$this->dop_sql=array();
+	$this->dop_sql=[];
 	if ($this->struct1['pole_spisok_sql'][$jjj]) 
 		{
 			$sql__=stripslashes($this->struct1['pole_spisok_sql'][$jjj]);//echo $sql__;
