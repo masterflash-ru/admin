@@ -59,6 +59,16 @@ public function render()
 {
 	//на входе код символа соответсв. списку ниже и  выделяет соответсвующую ссылку жирным и увеличенным шрифтом
 	//генерируем цифры
+		preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
+	if (count($ar_name))
+		{
+			$name=$ar_name[1].'-'.$ar_name[2];
+		}
+		else
+			{
+				$name=$this->name[0];
+			}
+
 	$str_='';
 	$atr_='style="font-weight:bold; font-size:130%"';//стиль выделения символа
 	$national_str_code_start=192;
@@ -67,30 +77,37 @@ public function render()
 		{//установим диапозон кодов символов национального
 		if (isset($this->properties['national_str_code_start']) && $this->properties['national_str_code_start']>0) $national_str_code_start=$this->properties['national_str_code_start'];
 		if (isset($this->properties['national_str_code_end']) && $this->properties['national_str_code_end']>0) $national_str_code_end=$this->properties['national_str_code_end'];
-	if (!$this->properties['number_str'])
-		for ($i=48;$i<58;$i++) 
-			{if (stristr($this->properties['array_links'],chr($i))>'' || $this->properties['array_links']=='') 
-					{if ($this->value==$i) $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')" '.$atr_.'>'.chr($i).'</a> '; 
-						else $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')">'.chr($i).'</a> ';
+			if (!$this->properties['number_str'])
+			{
+				for ($i=48;$i<58;$i++) 
+					{
+						if (stristr($this->properties['array_links'],chr($i))>'' || $this->properties['array_links']=='') 
+							{
+								if ($this->value==$i) $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')" '.$atr_.'>'.chr($i).'</a> '; 
+								else $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')">'.chr($i).'</a> ';
+							}
+						else {
+							if ($this->value==$i)
+								$str_.='<span '.$atr_.'>'.chr($i).' </span> '; 
+									else $str_.=chr($i).' ';
+						}
 					}
-				else {
-				if ($this->value==$i)
-					$str_.='<span '.$atr_.'>'.chr($i).' </span> '; 
-						else $str_.=chr($i).' ';
-				}
 			}
-		//латинские буквы
-		if (!$this->properties['latin_str'])
-		 for ($i=65;$i<91;$i++) 
-			{if (stristr($this->properties['array_links'],chr($i))>'' || $this->properties['array_links']=='')  
-				{if ($this->value==$i) $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')" '.$atr_.'>'.chr($i).'</a> '; 
-					else $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')">'.chr($i).'</a> ';
-				}
-				else
+			//латинские буквы
+			if (!$this->properties['latin_str'])
+			{
+			 for ($i=65;$i<91;$i++) 
 				{
-				if ($this->value==$i)
-					$str_.='<span '.$atr_.'>'.chr($i).'</span> '; 
-						else $str_.=chr($i).' ';
+					if (stristr($this->properties['array_links'],chr($i))>'' || $this->properties['array_links']=='')  
+						{if ($this->value==$i) $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')" '.$atr_.'>'.chr($i).'</a> '; 
+							else $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')">'.chr($i).'</a> ';
+						}
+					else
+						{
+						if ($this->value==$i)
+							$str_.='<span '.$atr_.'>'.chr($i).'</span> '; 
+								else $str_.=chr($i).' ';
+						}
 				}
 			}
 		}
@@ -99,23 +116,32 @@ public function render()
 	if (!$this->properties['national_str'])
 		{if (!isset($this->properties['national_encode']) || $this->properties['national_encode']=='') $this->properties['national_encode']='Windows-1251';
 		for ($i=$national_str_code_start;$i<=$national_str_code_end;$i++)  
-			{$chr=iconv($this->properties['national_encode'],$this->xmsg__->xmlEncoding, chr($i));
-			if (stristr($this->properties['array_links'],$chr)>'' || $this->properties['array_links']=='')  
-				{if ($this->value==$i) $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')" '.$atr_.'>'.$this->_encoding ($chr,$this->xml_parser_encoding,$this->xmsg__->xmlEncoding).'</a> '; 
-					else $str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$this->name[0].'\')" >'.$this->_encoding ($chr,$this->xml_parser_encoding,$this->xmsg__->xmlEncoding).'</a> ';
-				}
+			{
+				$chr=iconv($this->properties['national_encode'],"utf-8", chr($i));
+				if (stristr($this->properties['array_links'],$chr)>'' || $this->properties['array_links']=='')  
+					{
+						if ($this->value==$i) 
+							{
+								$str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')" '.$atr_.'>'.$chr.'</a> '; 
+							}
+							else 
+							{
+								$str_.='<a href=# onclick="pole_id47(\''.$i.'\',\''.$name.'\')" >'.$chr.'</a> ';
+							}
+					}
 				else
 					{
-					if ($this->value==$i) $str_.='<span '.$atr_.'>'.$this->_encoding ($chr,$this->xml_parser_encoding,$this->xmsg__->xmlEncoding).'</span>  '; 
-						else $str_.=$this->_encoding ($chr,$this->xml_parser_encoding,$this->xmsg__->xmlEncoding).' ';
+					if ($this->value==$i) $str_.='<span '.$atr_.'>'.$chr.'</span>  '; 
+						else $str_.=$chr.' ';
 					}
 			}
 		
 		}
 
-
-
-	return $this->view->formHidden($this->name[0],$this->value)."<a href=# onclick=\"pole_id47(0,'{$this->name[0]}')\"  title=\"отменить фильтр\">_</a>".$str_;
+	$input = new Element\Hidden($this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttribute("id",$name);
+	return $this->view->FormElement($input)."<a href=# onclick=\"pole_id47(0,'{$name}')\"  title=\"отменить фильтр\">_</a>".$str_;
 }
 
 

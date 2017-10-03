@@ -4,10 +4,11 @@
 */
 
 namespace Admin\Lib\Fhelper;
-//use Filter_Imgresize;
+
 use Admin\Lib\Simba;
 use Zend\Form\Element;
-
+use Images\Filter\ImgResize;
+use Images\Filter\Watermark;
 
 class F30 extends Fupload 
 {
@@ -34,7 +35,7 @@ class F30 extends Fupload
 								"img_resize_type"=>"Изменение размеров изображений:",
 								"img_new_size"=>"Новый размер (см. параметр выше!):",
 								"file_max_size"=>"Максимальный размер файла в байтах, если 0 или пусто, только ограничения PHP:",
-								"watermark"=>"Имя файла (с путем) для наложения в виде водяного знака",
+								"watermark"=>"Имя файла (с путем Относительно папки указаной в первой константе!) для наложения в виде водяного знака ",
 								"sql_for_delete_foto"=>"Выбирать SQL имя удаляемого файла:",
 								'wh_kostil'=>"Костыльная опция для варианта /Преобразовать точно к размерам (пример, 200x300), вырезается!/"
 								];
@@ -53,8 +54,8 @@ class F30 extends Fupload
 								];
 
 	protected $itemcount=2;
-	protected $constcount=1;
-	protected $const_count_msg=["Относительный путь к библиотеке изображений:"];
+	protected $constcount=2;
+	protected $const_count_msg=["Внутренняя папка обработки:","PUBLIC Папка вебсервера"];
 	protected $properties_listid=[
 					            'names' => [0,1,2,3],
 								'help' => [0,1,2],
@@ -90,89 +91,82 @@ protected $properties_listtext=['names'=>
                    // Filter_ImgResize::METHOD_SCALE_FIT_H
 				   ]
 			];
-							
+
+	protected $root_file_system;		//абсолютный путь к корню приложения
+	protected $data_folder;				//абсолютный путь к временной папке
+	protected $public_folder;			//абсолютный путь к папке публикации веб
+						
 public function __construct($item_id)
 {
 		parent::__construct($item_id);
+		
 }
 	
 	
 	
 public function render()
 {
+	$this->init();
+
 	$img_array=($this->properties['img_array']) ? $this->properties['img_array']:1;
 	$out='<table border="1" cellspacing="0" cellpadding="0">';
 	$vv=explode(',',$this->value);
 	for ($i=0;$i<$img_array;$i++)
 		{
 			if (empty($vv[$i]) && $this->default_value>'') {$vv[$i]=$this->default_value;}//если пусто, установить значение по умолчанию
-			$ss=@getimagesize(ROOT_FILE_SYSTEM.$this->const[0].$vv[$i]);
+			$ss=@getimagesize($this->root_file_system.$this->const[1].$vv[$i]);
 			$sss=150;
 			if (isset($this->properties['img_size']) && !$this->properties['img_size']=='')  {$sss=(int)$this->properties['img_size'];}
 			if (isset($this->properties['img_size']) && $this->properties['img_size']==-1)
-				{//вывод без масштабирования			
-					if (preg_match("/\.swf$/i",$vv[$i])) 
+				{
+					//вывод без масштабирования			
+					if ($vv[$i]) 
 						{
-							$out1='<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="'.$ss[0].'" height="'.$ss[1].'"><param name="allowScriptAccess" value="sameDomain"><param name="PLAY" value="false" /><param name="movie" value="'.ROOT_URL.$this->const[0].$vv[$i].'"><param name="quality" value="high"><embed src="'.ROOT_URL.$this->const[0].$vv[$i].'" quality="high" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" width="'.$ss[0].'" height="'.$ss[1].'" play="false"></embed></object>';
+							$out1="<img src=\"/".$this->const[1].$vv[$i]."\">";
 						}
-						else 
-							{
-								if ($vv[$i]) 
-									{
-										$out1="<img src=\"".ROOT_URL.$this->const[0].$vv[$i]."\">";
-									}
-								else {$out="";}
+					else {$out="";}
 								
-							}
 				}
 				else 
 					{//масштабируем
-						if (preg_match("/\.swf$/i",$vv[$i])) 
-							{
-								if (empty($ss))
-									{
-										$ss[0]=300;
-										$ss[1]=150;
-									}
-									else
-										{
-											if ($ss[0]>0) $ss[1]=ceil($ss[1]*$sss/$ss[0]); else $ss[1]=0;
-										}
-			
-								$out1='<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="'.$ss[0].'" height="'.$ss[1].'"><param name="allowScriptAccess" value="sameDomain"><param name="PLAY" value="false" /><param name="movie" value="'.ROOT_URL.$this->const[0].$vv[$i].'"><param name="quality" value="high"><embed src="'.ROOT_URL.$this->const[0].$vv[$i].'" quality="high" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" width="'.$ss[0].'" height="'.$ss[1].'" play="false"></embed></object>';
-							}
-							else 
-								{
-									if (!empty($vv[$i])) {$out1="<img alt=\"\" src=\"".ROOT_URL.$this->const[0].$vv[$i]."\" style='max-width:".$sss."px'>";}
+						if (!empty($vv[$i])) {$out1="<img alt=\"\" src=\"/".$this->const[1].$vv[$i]."\" style='max-width:".$sss."px'>";}
 										else $out1="";
-								}
 					}
 		$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
 		//добавить крыжики удаления
 		if (!empty($vv[$i]))
 			{
-				$out1.='<br><label>'.$this->view->formCheckbox("delete_".$nnn,1,NULL,['uncheckedValue'=>0]).'Удалить</label>';}
-		//добавить крыжик отмены авто ресайза фото, если конечно авторесайз включен
-		//if ($this->properties['img_resize_type']>'') $out1.='<br><span '.$this->atr[1].'>Не менять размер</span><input name="non_resize_'.$nnn.'" type="checkbox" value="1">';
-	
+				$checkbox = new Element\Checkbox("delete_".$nnn);
+				$checkbox->setUseHiddenElement(true);
+				$checkbox->setCheckedValue(1);
+				$checkbox->setUncheckedValue(0);
+				$out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
+				}
 	
 		//справочно
 		$out2='';
-		if ($this->properties['help']==0) $out2='<br><span '.$this->atr[1].'>Запись в:'.ROOT_FILE_SYSTEM.$this->const[0].'<br></span><span '.$this->atr[1].'>Файл: '.$vv[$i].', <b>'.$ss[0].'x'.$ss[1].' px</b></span>';
-		if ($this->properties['help']==2) $out2='<span '.$this->atr[1].'>Файл: '.$vv[$i].', <b>'.$ss[0].'x'.$ss[1].' px</b></span>';
+		if ($this->properties['help']==0) $out2='<br><b>Папка:'.$this->data_folder.'<br>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
+		if ($this->properties['help']==2) $out2='<b>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
 	
 	$out.="<tr>";
 	if ($img_array>1)  {$out.=" <th width=1>$i:</th>";}
 	
-	$out.="	<td>".$this->view->formFile($nnn)."<br>$out2</td>
+	
+	//создаем элемент ФАЙЛ
+	$out.="	<td>".$this->view->FormElement(new Element\File($nnn))."<br>$out2</td>
 		<td>$out1</td>
 		  </tr>";
 		}
-	$out.=$this->view->formHidden("img_array_".$this->name[0],$img_array);
-	$out.=$this->view->formHidden("value_array_".$this->name[0],$this->value);
-	
-	//$out.='<input name="-img_array_'.$this->name[0].'" type="hidden" value="'.$img_array.'"><input name="-value_array_'.$this->name[0].'" type="hidden" value="'.$this->value.'">';
-	
+
+	$h1 = new Element\Hidden("img_array_".$this->name[0]);
+	$h1->setValue($img_array);
+	$out.= $this->view->FormElement($h1);
+
+	$h2 = new Element\Hidden("value_array_".$this->name[0]);
+	$h2->setValue($this->value);
+	$out.= $this->view->FormElement($h2);
+
+
 	return $out.'</table>';
 
 
@@ -181,12 +175,12 @@ public function render()
 
 public function save()
 {
+	$this->init();
 	if ($this->properties['names']>0) $prefix=rand(); else $prefix='';
 	$img_array=$_POST["img_array_".$this->col_name][$this->id];// кол-во подэлементов внутри элемента
 	$infa_old=explode (',',$_POST["value_array_".$this->col_name][$this->id]);
 	$infa_=array();
-	//$img_resize=explode('|',$this->properties['img_resize']);//получить размеры для каждой картинки
-	//$this->set_error($row_item,0);
+
 	if ($this->properties['file_enable_extension']>'') {$file_enable_extension=explode('|',$this->properties['file_enable_extension']);}
 		else {$file_enable_extension=[];}
 	
@@ -196,14 +190,14 @@ public function save()
 	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]))	
 		{
 			$infa_[$iq]='';
-			@unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa_old[$iq]);
+			@unlink ($this->public_folder.$infa_old[$iq]);
 			$infa_old[$iq]='';
 		}
 	
 	
 	$rez=$this->file_upload(
 						array($this->id=>$this->col_name.$iq),
-						ROOT_FILE_SYSTEM.$this->const[0],
+						$this->data_folder,
 						$file_enable_extension,
 						(int) $this->properties['file_max_size'],//максимальный размер файла
 						0666,
@@ -214,43 +208,44 @@ public function save()
 	if ($rez['error']==0 && $rez['name']>'')
 		{
 		//проверим, изменилось ли имя файла, если да, тогда старый стереть!
-		 @unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa_old[$iq]);
+		 @unlink ($this->public_folder.$infa_old[$iq]);
 		//ошибки нет, записываем
 		$infa_[$iq]=$rez['name'];
 		
+		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['Resize_Service'];
 		
 			switch ((string)$this->properties['img_resize_type'])
 				{
 				case 'w':
 						{//масштабно по ширине
 						$new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
-						$f=new \Filter_ImgResize(
+						$f=new ImgResize(
 													array
 														(
-															'adapter'=>FILTER_IMG_RESIZE_ADAPTER,
+															'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 															'width' => $new_wh[0],	
 															'height' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-															'method' => \Filter_ImgResize::METHOD_SCALE_FIT_W
+															'method' => ImgResize::METHOD_SCALE_FIT_W
 														)
 												);
 
-						$f->filter(ROOT_FILE_SYSTEM.$this->const[0].$infa_[$iq]); //применить фильтр
+						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
 						break;
 						}
 				case 'h':
 						{//масштабно по высоте
 						$new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
-						$f=new \Filter_ImgResize(
+						$f=new ImgResize(
 												array
 													(
-														'adapter'=>FILTER_IMG_RESIZE_ADAPTER,
+														'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 														'height' => $new_wh[0],	
 														'width' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-														'method' => \Filter_ImgResize::METHOD_SCALE_FIT_H
+														'method' => ImgResize::METHOD_SCALE_FIT_H
 													)
 												);
 
-						$f->filter(ROOT_FILE_SYSTEM.$this->const[0].$infa_[$iq]); //применить фильтр
+						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
 						break;
 						}
 				case 'wh':
@@ -259,17 +254,17 @@ public function save()
 						  
 						 // $wh_method=Filter_ImgResize::METHOD_SCALE_FIT_W;
 						 // if (!empty($this->properties['wh_kostil']) )$wh_method=Filter_ImgResize::METHOD_SCALE_FIT_H;
-						$f=new \Filter_ImgResize(
+						$f=new ImgResize(
 													array
 															(
-																'adapter'=>FILTER_IMG_RESIZE_ADAPTER,
+																'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 																'height' => $new_wh[1],	
 																'width' => $new_wh[0] ,
-																'method' =>Filter_ImgResize:: METHOD_SCALE_WH_CROP
+																'method' =>ImgResize:: METHOD_SCALE_WH_CROP
 															)
 												);
 
-						$f->filter(ROOT_FILE_SYSTEM.$this->const[0].$infa_[$iq]); //применить фильтр
+						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
 
 						
 						break;
@@ -280,18 +275,21 @@ public function save()
 		//проверим надо ли накладывать водяной знак
 		if (!empty($this->properties['watermark'])) 
 			{
-					$f=new \Filter_Watermark(['waterimage'=>ROOT_FILE_SYSTEM.$this->properties['watermark']]);
-					$f->filter(ROOT_FILE_SYSTEM.$this->const[0].$infa_[$iq]);
+					$f=new Watermark(['waterimage'=>$this->data_folder.$this->properties['watermark']]);
+					$f->filter($this->data_folder.$infa_[$iq]);
 
 			}
 		
+	//переносим в PUBLIC папку
+		foreach ($infa_ as $img_item)
+			{
+				if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";}
+			}
 		}
 	
 		else  $infa_[$iq]=$infa_old[$iq];
-		
-		//if ($rez['error']>0) $this->set_error($row_item,$rez['error']);
-	
 	}
+	
 	$infa=implode(',',$infa_);//упаковать
 	$this->infa=$infa;
 	return $this->infa;
@@ -300,17 +298,31 @@ public function save()
 
 public function del()
 {
+	$this->init();
+
 	if ($this->col_name  && empty($this->properties['sql_for_delete_foto']) ) 
 		{
 			$n=simba::queryOneRecord('select '.$this->col_name.' from '.$this->tab_name.' where id='.$this->id);//получить имя файла (может быть список)
 			$infa=explode(',',$n[$this->col_name]);
 			for ($qi=0;$qi<count($infa);$qi++)		
 				{
-					@unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa[$qi]);
+					@unlink ($this->public_folder.$infa[$qi]);
 				}
 		}
 
 }
 
+/*
+инициализирует пути данного помощника
+*/
+public function init()
+{
+	$this->root_file_system=getcwd().DIRECTORY_SEPARATOR;
+	$this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
+	$this->data_folder=getcwd().DIRECTORY_SEPARATOR.$this->const[0];
+	
+	if (!is_readable($this->public_folder)) {echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);}
+	if (!is_readable($this->data_folder)) {echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);}
 
+}
 }

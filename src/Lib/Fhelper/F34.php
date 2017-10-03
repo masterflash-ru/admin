@@ -92,7 +92,10 @@ public function render()
 				$name=$this->name[0];
 			}
 	$this->zatr["class"]="dtpicker";
-	return $this->view->formText($this->name[0],$this->value,$this->zatr);
+	$input = new Element\Text($this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttributes($this->zatr);
+	return $this->view->FormElement($input);
 }
 
 

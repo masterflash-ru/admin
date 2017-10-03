@@ -38,10 +38,11 @@ public $error_message=[];//текстовые сообщения об ошибк
 public $errors=[];//хранит тексты ошибок обычно загружаемых данных, ключи массива - номера ошибок
 public $date_time_locale_format=[];//массив с форматом даты-времени данной локали
 public $view;
+public $config;		//конфиг приложения
 
-public function __construct ($view)
+public function __construct ($view,$config)
 {//конструктор
-	
+	$this->config=$config;
 	$this->date_time_locale_format=[
 									"date_time_format"=>"%d.%m.%Y %H:%M:%S",
 									"date_format"=>"%d.%m.%Y",
@@ -129,6 +130,7 @@ public function get_pole_consts_styles()
 			$f_id=(int)str_replace("F","",$item[0]);
 			$f=new $fn($f_id);
 			$f->SetView($this->view);
+			$f->setConfig($this->config);
 			$itemcount[$f_id]=$f->Getitemcount();
 			$constcount[$f_id]=$f->Getconstcount();
 			$const_count_msg[$f_id]=$f->Getconst_count_msg();
@@ -174,6 +176,7 @@ $row_item=$id;
 	$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 	$f=new $f($item_id);
 	$f->SetView($this->view);
+	$f->setConfig($this->config);
 $item_count=$f->Getitemcount();
 
 //применим атрибуты имя
@@ -256,6 +259,7 @@ $id=$del_record;
 		$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 		$f=new $f($item_id);
 		$f->SetView($this->view);
+		$f->setConfig($this->config);
 		$f->col_name=$col_name;
 		$f->tab_name=$tab_name;
 		$f->const=$const;
@@ -292,6 +296,7 @@ $row_item=$id;
 		$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 		$f=new $f($item_id);
 		$f->SetView($this->view);
+		$f->setConfig($this->config);
 		$f->col_name=$col_name;
 		$f->tab_name=$tab_name;
 		$f->const=$const;
@@ -505,9 +510,6 @@ var time_now=nl_create_now_date('".$this->date_time_locale_format['time_format']
 setTimeout('data___clock()',3000)
 }
 data___clock();
-
-function ch_l(form) 
-{document.getElementById('ch_language').value=document.getElementById('{NAME0}').value;form.submit();}
 
 \$( function() {\$('.dtpicker' ).datetimepicker();});
 ";

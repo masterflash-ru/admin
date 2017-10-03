@@ -97,7 +97,6 @@ function __construct($container,$view)
 //интерфейс
 
 //глобальные параметры
-$this->line_table_obj=new tab_admin($view);//экземпляр линейного интерфейса
 $this->tree_obj=new tree();//объект дерева
 $this->tree_obj->menu_type=1;
 
@@ -106,7 +105,6 @@ $this->tree_obj->menu_type=1;
 		if(isset($_COOKIE['menu_e']))$this->tree_obj->status_old_id=$_COOKIE['menu_e']; else $this->tree_obj->status_old_id='';
 
 
-$this->_form_item_=new form_item($view);
 $this->print_html='';
 $this->value_for_error['column_name']=[]; //имена колонок которые были обработаны
 $this->value_for_error['row_item']=[]; // ID строк которые были обработаны
@@ -122,6 +120,10 @@ $this->result_sql=[];
 	$this->EventManager=new EventManager($SharedEventManager);
 	$this->EventManager->addIdentifiers(["simba.admin"]);
 	$this->container=$container;
+	$this->_form_item_=new form_item($view,$this->config);
+$this->line_table_obj=new  tab_admin($view,$this->config);//экземпляр линейного интерфейса
+
+
 }//конец конструктора
 
 

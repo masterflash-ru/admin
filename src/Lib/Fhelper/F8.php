@@ -20,7 +20,9 @@ public function __construct($item_id)
 	
 public function render()
 {
-	return $this->view->formHidden($this->name[0],$this->value,$this->zatr);
+	$input = new Element\Hidden($this->name[0]);
+	$input->setValue($this->value);
+	return $this->view->FormElement($input);
 }
 
 

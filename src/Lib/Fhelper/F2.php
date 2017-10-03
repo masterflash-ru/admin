@@ -22,10 +22,8 @@ public function render()
 {
 	$input = new Element\Text($this->name[0]);
 	$input->setValue($this->value);
-	$input->setAttributes($this->zatr);//\Zend\Debug\Debug::dump($input);exit;
+	$input->setAttributes($this->zatr);
 	return $this->view->FormElement($input);
-
-	//return $this->view->formText($this->name[0],$this->value,$this->zatr);
 }
 
 

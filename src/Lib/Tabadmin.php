@@ -22,14 +22,8 @@ class tabadmin
 
 */
 
-const version=4.0;
-const build='08.01.2010';
 //генерация таблиц ввода информации в базу данных
-//public $root=ROOT_FILE_SYSTEM; //локальный путь, может потребоваться для вывода картинок
-//public $url=ROOT_URL;//тоже в терминах вэб сервера
-//public $pic='pic/';//путь к графическим элментам
 public $sort_cols_flag=[];//массив номера слева направо по колонкам, если содержимое true, тогда сортировка колонки разрешена иначе нет
-//public $admin_folder=ADMIN_FOLDER;
 public $form_name="form_1";//имя формы
 public $form_action;//поле action формы
 public $tab_atribute='border="1" cellpadding="5" cellspacing="0"';//атрибуты таблицы по умолчанию
@@ -104,6 +98,7 @@ public $button_all_operation_names=[];//имена кнопок "Сохрани�
 
 public  $view;
 public $form_item;
+public $config;
 
 public function __toString()
 {return array('version'=>$this->version,'build'=>build);
@@ -113,7 +108,7 @@ public function version()
 {return $this->version;
 }
 
-public function __construct ($view)
+public function __construct ($view,$config)
 {//конструктор
 //
 $this->view=$view;
@@ -122,7 +117,8 @@ $this->button_all_operation_names[0]='delete_selected_';
 $this->button_all_operation_names[1]='_save_all_';
 $this->button_all_operation_names[2]='_optimize_table_';
 $this->button_all_operation_names[3]='_clear_cache_';
-$this->form_item=new form_item($view);
+$this->form_item=new form_item($view,$config);
+$this->config=$config;
 }
 
 

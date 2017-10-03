@@ -97,8 +97,8 @@ public $EventManager;
 
 function __construct($container,$view)
 {
-	$this->line_table_obj=new tab_admin($view);
-	$this->form_item=new form_item($view);
+	
+	
 	//глобальные параметры
 	$this->value_for_error['column_name']=[]; //имена колонок которые были обработаны
 	$this->value_for_error['row_item']=[]; // ID строк которые были обработаны
@@ -113,7 +113,8 @@ function __construct($container,$view)
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
 	$this->EventManager->addIdentifiers(["simba.admin"]);
-
+	$this->form_item=new form_item($view,$this->config);
+	$this->line_table_obj=new tab_admin($view,$this->config);
 }//конец конструктора
 
 
@@ -688,7 +689,7 @@ if ($this->struct0['functions_befo_out'])
 				
 				$arr=simba::queryAllRecords($sql);
 			}
-			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";\debug::dump($sql);}
+			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";\Zend\Debug\Debug::dump($sql);}
 			$count=simba::numRows();
 		}
 

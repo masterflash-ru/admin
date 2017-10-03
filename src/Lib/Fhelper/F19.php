@@ -8,7 +8,7 @@ use Zend\Form\Element;
 
 class F19 extends Fhelperabstract 
 {
-	protected $hname="!Кнопка подписывает форму";
+	protected $hname="Кнопка подписывает форму";
 	protected $category=6;
 	protected $properties_keys=["button_delete_flag","button_caption"];
 	protected $properties_text=["button_delete_flag"=>"Для кнопки удаления требовать подтверждение операции",

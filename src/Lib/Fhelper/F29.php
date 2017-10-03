@@ -87,8 +87,19 @@ public function render()
 				$name=$this->name[0];
 			}
 
-	return $this->view->formText($this->name[0],$this->value,$this->zatr).
-		$this->view->formButton($this->name[0]."_","-",["onClick"=>'document.getElementById("'.$name.'").value=this.value']).
+	$input = new Element\Text($this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttributes($this->zatr);
+	$input->setAttribute("id", $name);
+	
+	$button = new Element\Button($this->name[0]."_");
+	$button->setValue($this->value);
+	$button->setLabel("_");
+	$button->setAttributes(["onClick"=>'document.getElementById("'.$name.'").value=this.value',"id"=>$name."_"]);
+
+
+	return $this->view->FormElement($input).
+		$this->view->FormElement($button).
 		'<script>
 			if (typeof(timeitem)!="object") {var timeitem=[];}
 			timeitem[timeitem.length]="'.$name.'_";

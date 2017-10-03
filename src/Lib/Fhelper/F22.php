@@ -24,8 +24,29 @@ public function render()
 {
 	$zs=$this->zselect;
 	$this->zselect=[""=>""];
-	foreach ($zs as $k=>$v) {$this->zselect[$k]=$v;}
-	return $this->view->formSelect($this->name[0].'[]',$this->value,$this->zatr,$this->zselect);
+	foreach ($zs as $k=>$v) 
+		{
+			$this->zselect[$k]=$v;
+		}
+	//костыли для списка с опциями
+	foreach ($zs as $k=>$v) 
+		{
+			if (is_array($v))
+				{
+					$this->zselect[$k]=["options"=>$v,"label"=>$k];
+				}
+			else
+				{
+					$this->zselect[$k]=$v;
+				}
+		}
+
+	$select = new Element\Select($this->name[0]);
+	$select->setValueOptions($this->zselect);
+	$select->setValue(explode(",",$this->value));
+	$select->setAttributes($this->zatr);
+	$select->setAttribute('multiple','multiple');
+	return  $this->view->FormSelect($select);
 	
 }
 

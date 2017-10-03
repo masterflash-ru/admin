@@ -47,12 +47,22 @@ public function render()
 			if (in_array($this->sp_id[$j],$value)) {$selected_flag=1;} else {$selected_flag=0;}
 			$out.='db_item48["'.$names_.'"][db_item48["'.$names_.'"].length] = new db_record_item48("'.  htmlspecialchars($this->sp_id[$j],ENT_NOQUOTES).'","'.$_text.'","'.$selected_flag.'");';
 	  }
-$out.='\');';
-$out.='</script>';
+	$out.='\');';
+	$out.='</script>';
 	
 	$barr["onClick"]="create_window(\"{$names_}\")";
-	return $out."<span id=\"{$name_id}_text\"></span>".$this->view->formHidden($this->name[0],$this->value).
-		$this->view->formButton($this->name[0]."_","Выбрать",$barr);
+	
+	$button = new Element\Button($this->name[0]."_");
+	$button->setValue($this->value);
+	$button->setLabel("Выбрать");
+	$button->setAttributes($barr);
+
+	$input = new Element\Hidden($this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttribute("id",$name_id);
+
+	return $out."<span id=\"{$name_id}_text\"></span>".$this->view->FormElement($input).
+		$this->view->FormElement($button);
 }
 
 

@@ -27,13 +27,13 @@ if (is_array($sysname))
 		$arr=[];
 		foreach ($sysname as $v) 
 			{
-				if ($v) $arr[]=$v.DIRECTORY_SEPARATOR;
+				if ($v) $arr[]=rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 					else $arr[]="";
 			}
 	}
 	else 
 		{
-			if ($sysname) return $sysname.DIRECTORY_SEPARATOR;
+			if ($sysname) return rtrim($sysname,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 				else return "";
 		}
 

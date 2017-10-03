@@ -57,7 +57,7 @@ public function render()
 		if ($interface_type[$i]==0) $_url="line/";
 		if ($interface_type[$i]==1) $_url="tree/";
 		if ($interface_type[$i]==3) $_url="";
-		$jmp[$i]='onclick=\'window.open("/admin/'. $_url. $interface_name[$i].
+		$jmp[$i]='onclick=\'window.open("/adm/'. $_url. $interface_name[$i].
 		
 		'?get_interface_input='.base64_encode(serialize($this->value)).
 		'&window_close_type='.$this->properties['window_close_type'].
@@ -73,9 +73,10 @@ public function render()
 			}
 		}
 	
-	
+	$input = new Element\Hidden($this->name[0]);
+	$input->setValue($this->value);
 
-	return implode("",$jmp_html).$this->view->formHidden($this->name[0],$this->value);
+	return implode("",$jmp_html).$this->view->FormElement($input);
 }
 
 

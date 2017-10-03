@@ -26,11 +26,19 @@ public function render()
 	$_v=unserialize($this->value);
 	if (!isset($_v["hops"])) {$_v["hops"]="";}
 	if (!isset($_v["out"])) {$_v["out"]="";}
-	
+
+	$input = new Element\Text("hops_".$this->name[0]);
+	$input->setValue($_v["hops"]);
+	$input->setAttributes(["size"=>5]);
+
+	$select = new Element\Select("out_".$this->name[0]);
+	$select->setValueOptions(["rnd"=>"Случано","ord"=>"Чередование"]);
+	$select->setValue($_v["out"]);
+
 	return "<label>Вариант вывода: ".
-		$this->view->formSelect("out_".$this->name[0],$_v["out"],[],["rnd"=>"Случано","ord"=>"Чередование"])."</label><br/>\n".
+		$this->view->FormSelect($select)."</label><br/>\n".
 	"<label>Количество показов(страниц) одного банера, страниц:".
-		$this->view->formText("hops_".$this->name[0],$_v["hops"],["size"=>5])."</label>";
+		$this->view->FormElement($input)."</label>";
 }
 
 public function save()

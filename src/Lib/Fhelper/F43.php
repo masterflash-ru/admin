@@ -12,7 +12,7 @@ use Zend\Form\Element;
 
 class F43 extends Fupload 
 {
-	protected $hname="Закачка баннеров HTML5 и просмотр существующих";
+	protected $hname="НЕ РАБОТАЕТ! Закачка баннеров HTML5 и просмотр существующих";
 	protected $category=100;
 
 	protected $itemcount=2;

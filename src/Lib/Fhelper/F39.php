@@ -5,6 +5,7 @@
 
 namespace Admin\Lib\Fhelper;
 use Zend\Form\Element;
+use Zend\Session\Container;
 
 class F39 extends Fhelperabstract 
 {
@@ -45,22 +46,23 @@ public function __construct($item_id)
 	
 public function render()
 {
-		$_SESSION['fck_connector_config']['Enabled']=true;//разрешить загрузку файлов
-		$_SESSION['fck_connector_config']['UserFilesPath']=ROOT_URL;//корневой путь к папкам
-		$_SESSION['fck_connector_config']['UserFilesAbsolutePath']=ROOT_FILE_SYSTEM;//абсолютный корневой путь
-		$_SESSION['fck_connector_config']['FileTypesPath_File']=$this->const[0];//путь к файлам и др. 
-		$_SESSION['fck_connector_config']['FileTypesPath_Image']=$this->const[0];//путь к файлам с картинками и др. 
-		$_SESSION['fck_connector_config']['FileTypesPath_Flash']=$this->const[0];//путь к файлам с флешем
-		$_SESSION['fck_connector_config']['FileTypesPath_Media']=$this->const[0];//путь к файлам с флешем
+	//запишем в сессию конфиг для передачи в ckeditor
+		$fck_connector_config = new Container('fck_connector_config');
+		$fck_connector_config->Enabled=true;//разрешить загрузку файлов
+		$fck_connector_config->FileTypesPath_File=$this->const[0];//путь к файлам и др. 
+		$fck_connector_config->FileTypesPath_Image=$this->const[0];//путь к файлам с картинками и др. 
 		
 		$js="";
 		if (!defined("_F36_")) 
 			{
 				define ("_F36_",1);
-				$js='<script src="'.ROOT_URL.ADMIN_FOLDER.'App/View/htmledit/ckeditor.js"></script>';
+				$js='<script src="/htmledit/ckeditor.js"></script>';
 			}
+		$input1 = new Element\Textarea($this->name[0]);
+		$input1->setValue($this->value);
+		$input1->setAttribute("class","ckeditor");
 
-	return $this->view->formTextArea($this->name[0],$this->value,["class"=>"ckeditor"]).$js;
+	return $this->view->FormElement($input1).$js;
 }
 
 

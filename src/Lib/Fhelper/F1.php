@@ -37,7 +37,10 @@ public function render()
 	$valuep=$this->value;
 	if ($this->properties['value_type']>0) {$value=$this->default_value;}
 	if ($this->properties['text_type']>0) {$valuep=$this->default_text;}
-	return $this->view->formHidden($this->name[0],$value)."<span {ATR0}>{$valuep}</span>";
+	$input = new Element\Hidden($this->name[0]);
+	$input->setValue($this->value);
+	return $this->view->FormElement($input)."<span {ATR0}>{$valuep}</span>";
+
 }
 
 

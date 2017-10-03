@@ -62,10 +62,6 @@ public function render()
 		$select->setAttributes($this->zatr);
 
 		return $this->view->FormElement($input).$this->view->FormElement($select);
-	/*return 
-			$this->view->formText($this->name[0],$this->value).
-			$this->view->formSelect("_".$this->name[0],$this->value,$this->zatr,$this->zselect);
-	*/
 }
 
 

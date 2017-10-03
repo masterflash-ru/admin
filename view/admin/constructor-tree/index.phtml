@@ -13,7 +13,7 @@ use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
 use Zend\Form\Element;
 
-$GLOBALS["form_item"]=new form_item($this);
+$GLOBALS["form_item"]=new form_item($this,$this->config);
 
 
 if (isset($_POST['tab_constr']))

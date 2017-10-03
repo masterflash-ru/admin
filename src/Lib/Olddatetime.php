@@ -36,7 +36,7 @@ build=09.12.2009
 
 public function  __construct ()
 	{//параметры формата даты и времени во всех вариантах
-	
+	setlocale(LC_ALL,array('ru_RU.utf8','ru_RU.UTF-8'));
 	//формат даты и врменеи в базе данных, трансформировать дату и время в формат PHP
 	list ($date_time_locale_format['date_db_format'],$date_time_locale_format['time_db_format'],$date_time_locale_format['date_time_db_format'])=array('%Y-%m-%d','%H:%i:%s','%Y-%m-%d %H:%i:%s');
 	

@@ -24,6 +24,7 @@ abstract class Fhelperabstract
 	public $line_row_type;
 	public $any_values;
 	public $zselect;
+	public $config;	//конфиг приложения
 	
 	//для записи
 	public $tab_name;
@@ -32,7 +33,7 @@ abstract class Fhelperabstract
 	public $id;
 	
 	protected $properties_keys=[];
-	public  $pic_size=100;		//масштаб изображения
+	public  $pic_size=180;		//масштаб изображения
 	
 	
 	protected $itemcount=0;
@@ -77,7 +78,10 @@ public function SetView($view)
 	$this->view=$view;
 }
 
-
+public function setConfig($config)
+{
+	$this->config=$config;
+}
 /*преобразует массив с числовыми индексами в ассоциативный, имена ключей=именам св-в поля из описателя*/
 public function get_properties_array_item($properties)
 {
