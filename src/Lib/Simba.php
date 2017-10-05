@@ -15,6 +15,19 @@ class Simba
 	
 	public static $flag=true;			//true -  разрешены мультизапросы
 	public static $connection;
+	public static $config;
+
+
+public static function setConfig($config)
+{
+	self::$config=$config;
+	
+	$k='return \Admin\Lib\Simba::$config'.'["images"]["images_data_folder"];';
+	//\Zend\Debug\Debug::dump( eval($k));
+	//\Zend\Debug\Debug::dump($config);
+}
+
+
 
 //=получимть константу по ее идентификатору таблицы
 public static function get_const($sysname,$return_array_flag=false)
@@ -27,14 +40,28 @@ if (is_array($sysname))
 		$arr=[];
 		foreach ($sysname as $v) 
 			{
-				if ($v) $arr[]=rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+				$v=str_replace("'",'"',trim($v));
+				if ($v) 
+					{
+						$k='return \Admin\Lib\Simba::$config'.$v.';';
+						$v=eval($k);
+						if (empty($v)) {echo "<h2>Константа {$v} не определена!</h2>";exit;}
+						$arr[]= rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+					}
 					else $arr[]="";
 			}
 	}
 	else 
 		{
-			if ($sysname) return rtrim($sysname,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-				else return "";
+			$sysname=str_replace("'",'"',trim($sysname));
+			if ($sysname) 
+				{
+					$k='return \Admin\Lib\Simba::$config'.$sysname.';';
+					$v=eval($k);
+					if (empty($v)) {echo "<h2>Константа {$sysname} не определена!</h2>";exit;}
+					return rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+				}
+				else {return "";}
 		}
 
 return $arr;

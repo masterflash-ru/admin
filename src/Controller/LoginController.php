@@ -36,7 +36,6 @@ public function __construct ($authManager, $authService,$sessionManager)
 		$this->authManager=$authManager;
 		$this->authService=$authService;
 		$this->sessionManager=$sessionManager;
-		//\Zend\Debug\Debug::dump($_SESSION);
 	}
 
 

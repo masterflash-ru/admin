@@ -5,6 +5,7 @@
 
 namespace Admin\Lib\Fhelper;
 use Zend\Form\Element;
+use Zend\Crypt\Password\Bcrypt;
 
 class F13 extends Fhelperabstract 
 {
@@ -21,10 +22,20 @@ public function __construct($item_id)
 	
 public function render()
 {
-	$atr=$this->zatr;
-	return "Новый пароль<br/>".$this->view->formPassword("n_".$this->name[0],$this->value,$atr)."<br/>Повторите пароль<br/>".
-			$this->view->formPassword("r_".$this->name[0],$this->value,$atr).
-			$this->view->formHidden($this->name[0],$this->value);
+	$input = new Element\Password("n_".$this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttributes($this->zatr);
+
+	$input1 = new Element\Password("r_".$this->name[0]);
+	$input1->setValue($this->value);
+	$input1->setAttributes($this->zatr);
+
+	$input2 = new Element\Hidden($this->name[0]);
+	$input2->setValue($this->value);
+
+	return "Новый пароль<br/>".$this->view->FormElement($input)."<br/>Повторите пароль<br/>".
+			$this->view->FormElement($input1).
+			$this->view->FormElement($input2);
 }
 
 
@@ -37,10 +48,8 @@ public function save()
 				{
 					if($_POST['n_'.$this->col_name][$this->id]==$_POST['r_'.$this->col_name][$this->id])
 						{
-							$this->infa=$_POST['n_'.$this->col_name][$this->id];
-							$s=substr(uniqid (),7,6);	//соль
-							$this->infa=hash(HASH_PASSWORD_ALGO,$s.$this->infa.$s);//генерируем хеш
-							$this->infa=HASH_PASSWORD_ALGO.'$'.$s.'$'.$this->infa;
+							$bcrypt = new Bcrypt();
+							$this->infa = $bcrypt->create($_POST['n_'.$this->col_name][$this->id]);        
 						}
 						else {echo "<h2>Пароли не совпадают</h2>";}
 				}

@@ -9,6 +9,7 @@ use Admin\Lib\Simba;
 use Zend\Form\Element;
 use Images\Filter\ImgResize;
 use Images\Filter\Watermark;
+use Images\Filter\ImgOptimize;
 
 class F30 extends Fupload 
 {
@@ -24,7 +25,7 @@ class F30 extends Fupload
 								"file_max_size",
 								"watermark",
 								"sql_for_delete_foto",
-								'wh_kostil'
+								'images_optimize'
 								];
 	
 	protected $properties_text=["names"=>"Изменение имени загруженного файла:",
@@ -37,7 +38,7 @@ class F30 extends Fupload
 								"file_max_size"=>"Максимальный размер файла в байтах, если 0 или пусто, только ограничения PHP:",
 								"watermark"=>"Имя файла (с путем Относительно папки указаной в первой константе!) для наложения в виде водяного знака ",
 								"sql_for_delete_foto"=>"Выбирать SQL имя удаляемого файла:",
-								'wh_kostil'=>"Костыльная опция для варианта /Преобразовать точно к размерам (пример, 200x300), вырезается!/"
+								'images_optimize'=>"Оптимизация изображения:"
 								];
 	
 	protected $properties_item_type=["names"=>1,
@@ -50,18 +51,19 @@ class F30 extends Fupload
 								"file_max_size"=>0,
 								"watermark"=>0,
 								"sql_for_delete_foto"=>1,
-								'wh_kostil'=>1
+								'images_optimize'=>1
 								];
 
 	protected $itemcount=2;
 	protected $constcount=2;
-	protected $const_count_msg=["Внутренняя папка обработки:","PUBLIC Папка вебсервера"];
+	protected $const_count_msg=["Внутренняя папка обработки, ключи из конфига в виде массива от корня, например, [\"images\"][\"images_data_folder\"]:",
+								"PUBLIC Папка вебсервера, ключи из конфига в виде массива от корня, например, [\"images\"][\"public_folder_url\"]:"];
 	protected $properties_listid=[
 					            'names' => [0,1,2,3],
 								'help' => [0,1,2],
 								'img_resize_type' => ["n","w","h","wh"],
 								'sql_for_delete_foto' => [0,1],
-								'wh_kostil' => [0,1],
+								'images_optimize' => [0,1],
 								];
 
 protected $properties_listtext=['names'=>
@@ -86,9 +88,9 @@ protected $properties_listtext=['names'=>
                     "ДА",
                     "НЕТ"],
 
-            'wh_kostil'=>[
-                    //Filter_ImgResize::METHOD_SCALE_FIT_W,
-                   // Filter_ImgResize::METHOD_SCALE_FIT_H
+            'images_optimize'=>[
+                    "Нет",
+                   "Да"
 				   ]
 			];
 
@@ -279,7 +281,14 @@ public function save()
 					$f->filter($this->data_folder.$infa_[$iq]);
 
 			}
-		
+
+		//проверим надо ли оптимизировать изображение
+		if (!empty($this->properties['images_optimize'])) 
+			{
+				$f=new ImgOptimize($this->config["images"]["images_optimize"]);
+				$f->filter($this->data_folder.$infa_[$iq]);
+			}
+
 	//переносим в PUBLIC папку
 		foreach ($infa_ as $img_item)
 			{

@@ -109,6 +109,7 @@ function __construct($container,$view)
 	$this->view=$view;
 	$this->cache=$container->get('FilesystemCache');
 	$this->config=$container->get('Config');
+	simba::setConfig($this->config);
 	$this->container=$container;
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);

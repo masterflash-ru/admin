@@ -121,8 +121,8 @@ $this->result_sql=[];
 	$this->EventManager->addIdentifiers(["simba.admin"]);
 	$this->container=$container;
 	$this->_form_item_=new form_item($view,$this->config);
-$this->line_table_obj=new  tab_admin($view,$this->config);//экземпляр линейного интерфейса
-
+	$this->line_table_obj=new  tab_admin($view,$this->config);//экземпляр линейного интерфейса
+	simba::setConfig($this->config);
 
 }//конец конструктора
 

@@ -5,6 +5,7 @@
 
 namespace Admin\Lib\Fhelper;
 use Zend\Form\Element;
+use Zend\Crypt\Password\Bcrypt;
 
 class F21 extends Fhelperabstract 
 {
@@ -21,8 +22,14 @@ public function __construct($item_id)
 	
 public function render()
 {
-	$atr=$this->zatr;
-	return $this->view->formPassword("n_".$this->name[0],$this->value,$atr).$this->view->formHidden($this->name[0],$this->value);
+	$input = new Element\Password("n_".$this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttributes($this->zatr);
+	$input2 = new Element\Hidden($this->name[0]);
+	$input2->setValue($this->value);
+
+	return $this->view->FormElement($input).
+			$this->view->FormElement($input2);
 }
 
 
@@ -31,10 +38,8 @@ public function save()
 {
 	if (!empty($_POST['n_'.$this->col_name][$this->id]))
 		{
-			$this->infa=$_POST['n_'.$this->col_name][$this->id];
-			$s=substr(uniqid (),7,6);	//соль
-			$this->infa=hash(HASH_PASSWORD_ALGO,$s.$this->infa.$s);//генерируем хеш
-			$this->infa=HASH_PASSWORD_ALGO.'$'.$s.'$'.$this->infa;
+		    $bcrypt = new Bcrypt();
+            $this->infa = $bcrypt->create($_POST['n_'.$this->col_name][$this->id]);        
 		}
 	return $this->infa;
 }

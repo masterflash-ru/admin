@@ -1,18 +1,14 @@
 <?php
 /**
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+админка из старой версии системы
+для работоспособности имеет кучу костылей!
  */
 
 namespace Admin;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-//use Zend\ServiceManager\Factory\InvokableFactory; //вcтроеная фабрика вызова
 use Zend\Authentication\AuthenticationService;
-
-
 
 
 return [
@@ -155,6 +151,21 @@ return [
                 ],
 			],			
 
+			//специально для F41 поля
+            'ckeditorf41' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/ckeditorf41/:field',
+					'constraints' => [
+                             'field' => '[a-zA-Z0-9_\-]+',
+                    ],
+
+                    'defaults' => [
+                        'controller' => Controller\CkeditorController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+			],			
        
 	    ],
     ],
@@ -174,7 +185,7 @@ return [
     	
 		//если у контроллера нет коннструктора или он не нужен или пустой
         'invokables' => [
-           //Controller\GetConfigController::class => Controller\GetConfigController::class,
+           Controller\CkeditorController::class => Controller\CkeditorController::class,
 			
         ],
 	],
@@ -182,8 +193,8 @@ return [
     'controller_plugins' => [
 		//фабрики плагинов
         'factories' => [
-            Controller\Plugin\AccessPlugin::class => Controller\Plugin\Factory\AccessPluginFactory::class,
-           // Controller\Plugin\CurrentUserPlugin::class => Controller\Plugin\Factory\CurrentUserPluginFactory::class,
+           Controller\Plugin\AccessPlugin::class => Controller\Plugin\Factory\AccessPluginFactory::class,
+           //Controller\Plugin\CkeditorPlugin::class => Controller\Plugin\Factory\CkeditorFactory::class,
         ],
 		//краткое обращение внутри конроллера, например $this->access
         'aliases' => [
@@ -254,6 +265,10 @@ return [
                 ['actions' => '*', 'allow' => '+admin.login']
             ],
             Controller\LineController::class => [
+                //допуски
+                ['actions' => '*', 'allow' => '+admin.login']
+            ],
+            Controller\CkeditorController::class => [
                 //допуски
                 ['actions' => '*', 'allow' => '+admin.login']
             ],

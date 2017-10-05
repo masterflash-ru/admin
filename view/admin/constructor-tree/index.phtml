@@ -106,7 +106,7 @@ if (isset($_POST['save_all']))
 				'row_type'=>0,
 				'table_name'=>$_POST['interface_tabl_tek'],
 				'table_type'=>1,
-				'caption_style'=>$_POST['config_section'],
+				'caption_style'=>"",//$_POST['config_section'],
 				'pole_prop'=>$pole_spisok_sql,
 				'col_por'=>$_POST['col_por2'],
 				'pole_spisok_sql'=>$_POST['pole_spisok_sql0'],
@@ -363,7 +363,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 
 <style type="text/css">
 <!--
-.zagolov {	color: #FF0000;
+.zagolov {	color: red;
 }
 -->
 </style>
@@ -374,10 +374,10 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
         
         <input name="id0" type="hidden" value="<?=$struct0['id']?>">
 
-  <div align="center" style="color:#FF0000; font-size:18px; font-weight:bold">Конструктор интерфейса древовидных таблиц</font> </div>
+  <div align="center" style="color:red; font-size:18px; font-weight:bold">Конструктор интерфейса древовидных таблиц</font> </div>
 
         <!--касаемо интерфеса -->
-            <fieldset ><legend style="color:#FF0000; font-weight:bold">Интерфейс:</legend>
+            <fieldset ><legend style="color:red; font-weight:bold">Интерфейс:</legend>
         Текущий интерфейс
           <select name="interface_name"  id="interface_name"  onchange="this.form.submit()">
             <?=$interface_sp;?>
@@ -424,7 +424,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 
          <!--Начало дополнительного поля -->
       <input name="id1" type="hidden" id="id1" value="<?=$struct2['id'];?>">
-      <fieldset ><legend><strong style="color:#FF0000;">Дополнительные поля перед деревом:</strong></legend>
+      <fieldset ><legend><strong style="color:red;">Дополнительные поля перед деревом:</strong></legend>
           Конструируем поле номер:
             <select  id="pole_dop_numb" name="pole_dop_numb"  <?=$dis;?> onChange=this.form.submit()>
               <?=simba::getSpValue1 ($a,$a,$pole_dop_numb);?>
@@ -433,10 +433,10 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input name="pole_dop_numb_del_b" type="submit" class="del" id="pole_dop_numb_del_b" value="Уничтожить это поле" <?=$dis;?>><br>
 
-          (Дополнительный вывод до дерева: Поле получает имя<font color="#FF0000"><strong>$pole_dop<?=$pole_dop_numb ?></strong></font>и будет доступно из PHP (можно вставить в SQL инструкцию))
+          (Дополнительный вывод до дерева: Поле получает имя<font color="red"><strong>$pole_dop<?=$pole_dop_numb ?></strong></font>и будет доступно из PHP (можно вставить в SQL инструкцию))
          <fieldset >
                     
-                    <legend  style="color:#FF0000; font-weight:bold"><strong>---</strong></legend>
+                    <legend  style="color:red; font-weight:bold"><strong>---</strong></legend>
                     Текст:
                     <textarea id="caption1" name="caption1" cols="128" rows="1" wrap="VIRTUAL"   <?=$dis;?>><? 
 				echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb];?></textarea>
@@ -452,7 +452,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
            </select>
 </fieldset>
 				  <fieldset >
-				  <legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+				  <legend style="color:red; font-weight:bold">Поле ввода</legend>
 				  Тип:
 				  <select id="pole_type1" name="pole_type1"  <?=$dis; ?>  onChange="ch_item(this.value,1);">
                     <? 	echo create_pole_item_list($struct2['pole_type']);?>
@@ -460,18 +460,14 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 				  Значение
 				  <textarea name="value1" cols="115" rows="1"  id="value1" <?=$dis1;?>="<?=$dis1;?>"><?=$struct2['value']; ?></textarea>
 	    </fieldset> 
-         <fieldset>
-                          <legend style="color:#FF0000; font-weight:bold"><strong>стиль</strong></legend>
-                          <span id='st_out'></span>
-        </fieldset>
 		<fieldset>
-                          <legend style="color:#FF0000; font-weight:bold"><strong>Атрибуты поля</strong></legend>
+                          <legend style="color:red; font-weight:bold"><strong>Атрибуты поля</strong></legend>
                           <span id='prop_out'></span>
         </fieldset>				
           <span id="list_out">
                           <fieldset >
                           <strong>
-                          <legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+                          <legend style="color:red; font-weight:bold">Значения для полей-списков выбрать из:</legend>
                           </strong>
                           <table width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <tr>
@@ -493,7 +489,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
         </span>
 <fieldset>
                           <strong>
-                          <legend style="color:#FF0000; font-weight:bold">Тип данных<br>
+                          <legend style="color:red; font-weight:bold">Константы для поля<br>
                           </legend>
                           </strong><span id="const_out"></span>
         </fieldset>
@@ -501,7 +497,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 												
 <fieldset>
                           <strong>
-                          <legend style="color:#FF0000; font-weight:bold">Параметры<br>
+                          <legend style="color:red; font-weight:bold">Параметры<br>
                           </legend>
                           </strong><span id="properties_out"></span>
         </fieldset>
@@ -518,12 +514,12 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 <?
  if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==2)  
 		{ ?>
-      <fieldset ><legend style="color:#FF0000; font-weight:bold">Описание элемента дерева</legend>
+      <fieldset ><legend style="color:red; font-weight:bold">Описание элемента дерева</legend>
 Элемент таблицы
           <select id="cols"  name="cols"  onChange="this.form.submit()" <?=$dis;?>>
             <?=$cols_sp?>
           </select>
-          <fieldset ><legend  style="color:#FF0000; font-weight:bold">Заголовок</legend>
+          <fieldset ><legend  style="color:red; font-weight:bold">Заголовок</legend>
               Последовательность вывода
         <select name="col_por" id="col_por"  >
                   <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),$struct2['col_por']);?>
@@ -538,7 +534,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 				  ?>
                 </select>
         </fieldset>
-<fieldset ><legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+<fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" >
               <tr>
                 <td>Тип ввода:</td>
@@ -552,9 +548,9 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
               </tr>
               
               <tr>
-                <td><font color="#FF0000"><strong>имя поля</strong></font></td>
+                <td><font color="red"><strong>имя поля</strong></font></td>
                 <td><input id="pole_name2" name="pole_name2" type="text"  value="<?=$struct2['pole_name']?>" <?=$dis1;?>>
-                  <font color="#FF0000">&lt;-
+                  <font color="red">&lt;-
                   <select name="pole_name_2" id="pole_name_2"  onChange="document.getElementById('pole_name2').value=this.value" <?=$dis1;?>>
                     <?
 $cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
@@ -571,8 +567,8 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
             </table>
         </fieldset>
 
-<fieldset ><legend style="color:#FF0000; font-weight:bold">Атрибуты в поле</legend><span id='prop_out'></span></fieldset>
-<span id="list_out"><fieldset ><legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+<fieldset ><legend style="color:red; font-weight:bold">Атрибуты в поле</legend><span id='prop_out'></span></fieldset>
+<span id="list_out"><fieldset ><legend style="color:red; font-weight:bold">Значения для полей-списков выбрать из:</legend>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <tr>
                               <td>Умолчание<br>(SQL)</td>
@@ -592,16 +588,16 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
                           </fieldset>
         </span>	
 <fieldset >
-                  <legend style="color:#FF0000; font-weight:bold">Тип данных</legend>
+                  <legend style="color:red; font-weight:bold">Константы для поля</legend>
                   <span id="const_out"></span>
         </fieldset>	
 				<fieldset >
-                          <legend style="color:#FF0000; font-weight:bold">Параметры<br>
+                          <legend style="color:red; font-weight:bold">Параметры<br>
                           </legend>
                           <span id="properties_out"></span>
         </fieldset>
 		<fieldset >
-          <legend style="color:#FF0000; font-weight:bold">До записи поля:</legend>
+          <legend style="color:red; font-weight:bold">До записи поля:</legend>
                   <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
                     <tr>
                       <td width="25%">До записи поля:<br>                        </td>
@@ -618,7 +614,7 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
                   </table>
         </fieldset>
               <div style="text-align:right"><input name="del_struct" type="submit" id="del_struct4" style="font-family: Verdana, Arial, Helvetica, sans-serif;font-size: xx-small;color: #FFFFFF;
-			background-color: #FF0000;width: 118px;" value="Уничтожить интерфейс"></div>
+			background-color: red;width: 118px;" value="Уничтожить интерфейс"></div>
 
       </fieldset>
 <?
@@ -628,7 +624,7 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
  <?  if (!isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
 		{ ?>
       <fieldset >
-        <legend style="font-size:12px; color:#FF0000; font-weight:bold">Общие настройки</legend>
+        <legend style="font-size:12px; color:red; font-weight:bold">Общие настройки</legend>
 
         <table width="100%" border="1" cellpadding="0" cellspacing="0" >
           <tr>
@@ -652,21 +648,6 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
           </tr>
           
           <tr>
-      <tr>
-        <td>Использовать секцию настроек:</td>
-        <td colspan="2">
-        	<?php
-				$c=[[]];
-				foreach (array_keys($this->config) as $_c)
-					{
-						$c[$_c]=$_c;
-					}
-            	$select = new Element\Select("config_section");
-				$select->setValueOptions($c);
-				$select->setValue($struct0['caption_style']);
-				echo $this->FormElement($select);
-			?></td>
-      </tr>
           
           <tr>
             <td colspan="2">Ограничение уровней:
@@ -767,7 +748,7 @@ echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'valid
 if (isset($struct2)) echo "\n struct2=unserialize('".addslashes(serialize($struct2))."');\n";
  else echo "\n struct2=Array();\n";
 //получить список глобальных настроек
-
+/*
 $c=$ckey=[];
 if ($struct0['caption_style'])
 	{
@@ -776,7 +757,7 @@ if ($struct0['caption_style'])
 	}
 		
 echo "var const_sp=\"".simba::getSpValue ($c,$ckey,'')."\";\n";
-
+*/
 if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']>0)   echo 'ch_item('.$struct2['pole_type'].')';
 ?>
 
@@ -784,17 +765,7 @@ function ch_item(value)
 {
 //value - тип (код) поля ввода
 //************************ стили
-out='';
 if (!value) return
-//это цикл по кол-ву элементов внутри поля
-for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
-	out=out+"Element"+i+"<select name='pole_style["+i+"]' id='pole_style["+i+"]' >"+style_sp+"</select><br>";//генерируем списки стилей
-	if (struct2['pole_style'])
-		{_pole_style=struct2['pole_style'].split(',');
-			for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
-					if (_pole_style[i]) document.getElementById("pole_style["+i+"]").value=_pole_style[i];
-		}
-//************************* конец стилей
 //************************* начало атрибутов
 
 out='';
@@ -818,7 +789,10 @@ out='';
 //сами элементы для ыбора
 
 for (i=0;i<pole_consts_styles['constcount'][parseInt(value)];i++)
-	out=out+"<strong>"+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br></strong><select name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' >"+const_sp+"</select><br>";
+	{
+		//out=out+"<strong>"+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br></strong><select name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' >"+const_sp+"</select><br>";
+		out=out+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br><b>Application::$config</b><input size='100' type='text' name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' /><br>";
+	}
 	document.getElementById("const_out").innerHTML=out;
 //установим их в текущие состояния
 if (struct2['pole_global_const'])
@@ -876,48 +850,11 @@ document.getElementById("properties_out").innerHTML=out;//alert(out)
 
 if (struct2['validator']) selected_validator=unserialize(struct2['validator']);//поэлементное разложение (внутри поля)
 
-validator_f();
 }
 
 //**************************** начало вывода касаемо валидатора
 
 
-function validator_f()
-{//value в данном случае не имеет сысла, т.к. к коду кодя валидатор не привязан, type так же
-}
-
-function validator_add()
-{/*добавляет новый элемент путем добавления в массивы и перерисовкой всего 
-selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
-selected_validator['name']=Array('has_metas','str_len','between_str_len')
-selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
-*/
-if (!selected_validator) 
-	{//если в начале все было совсем пусто, назначим массив
-	selected_validator=Array();selected_validator['name']=Array();selected_validator['parametrs']=Array();
-	}
-selected_validator['name']=makeArray(selected_validator['name'])
-selected_validator['name'].push(document.getElementById('validator_type_list').value);
-selected_validator['parametrs']=makeArray(selected_validator['parametrs'])
-selected_validator['parametrs'].push('')
-validator_f()
-}
-
-function validator_del(value)
-{/*удаляет элемент путем добавления в массивы и перерисовкой всего 
-selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
-selected_validator['name']=Array('has_metas','str_len','between_str_len')
-selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
-//путем перебора сравгим имена, если совпадает, просто удалим в параллельных массивах данные
-*/
-
-for (k in selected_validator['name'])
-	if (selected_validator['name'][k]==value)
-		{delete(selected_validator['name'][k])
-		delete(selected_validator['parametrs'][k])
-		}
-validator_f()
-}
 
 function stripslashes( str ) 
 {

@@ -19,7 +19,7 @@ use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
 use Zend\Form\Element;
 
-//\Zend\Debug\Debug::dump($this->config["statpage"]);
+//\Zend\Debug\Debug::dump($this->config);
 
 $GLOBALS["form_item"]=new form_item($this,$this->config);
 
@@ -76,7 +76,7 @@ if (isset($_POST['save_all']))
 					'row_type'=>0,
 					'table_name'=>$_POST['interface_tabl_tek'],
 					'pole_global_const'=>$_POST['pole_global_const0'],
-					'caption_style'=>$_POST['config_section'],
+					'caption_style'=>"",//$_POST['config_section'],
 					'pole_style'=>$_POST['imp_exp'],
 					'col_name'=>$_POST['col_name0'],
 					'pole_name'=>$_POST['col___id'],
@@ -345,7 +345,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 
 ?>
 <form name="form1" method="post" action="#">
-  <div align="center" style="color:#FF0000; font-size:18px; font-weight:bold">Конструктор линейных интерфейсов</font> </div>
+  <div align="center" style="color:red; font-size:18px; font-weight:bold">Конструктор линейных интерфейсов</font> </div>
     
 
         <span class="zagolov">
@@ -353,7 +353,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
         </span>
         <!--касаемо интерфеса -->
  
-  <fieldset ><legend style="color:#FF0000; font-weight:bold">Интерфейс</legend>
+  <fieldset ><legend style="color:red; font-weight:bold">Интерфейс</legend>
        Текущий интерфейс
           <select name="interface_name"  id="interface_name"  onchange="this.form.submit()">
             <?=$interface_sp;?>
@@ -383,7 +383,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 <!--Общие параметры инетрфейса -->
 <?  if ( !isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
 		{ ?>
-<fieldset  style="background-color:#e2e2e2"><legend style="font-weight:bold; color:#FF0000">Множественные операции</legend>
+<fieldset  style="background-color:#e2e2e2"><legend style="font-weight:bold; color:red">Множественные операции</legend>
             <?
 			if ($struct0['table_name']>'') $save_enable='';
 			  $q=explode(',',$struct0['pole_prop']);
@@ -403,7 +403,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
             <input name="imp_exp" type="checkbox" id="imp_exp" value="1" <? if ($struct0['pole_style']>0) echo 'checked ';?>>
             Импорт/Экспорт
   </fieldset> 
-  <fieldset   style="background-color:#e2e2e2"><legend  style="font-weight:bold; color:#FF0000">Внешний вид:</legend>
+  <fieldset   style="background-color:#e2e2e2"><legend  style="font-weight:bold; color:red">Внешний вид:</legend>
           Стиль ввода данных:
             <select name="form_input_type"  id="form_input_type"  onChange="_msg_(this.value)">
               <?=simba::getSpValue1 (["Табличная","Форма с полями"],array(0,1,2),$struct0['col_por']);?>
@@ -444,24 +444,8 @@ if (value==2)
            
   </fieldset> 
       
-<fieldset   style="background-color:#e2e2e2"><legend style="font-weight:bold; color:#FF0000">Общие установки:</legend>
+<fieldset   style="background-color:#e2e2e2"><legend style="font-weight:bold; color:red">Общие установки:</legend>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" >
-
-      <tr>
-        <td>Использовать секцию настроек:</td>
-        <td colspan="2">
-        	<?php
-				$c=[[]];
-				foreach (array_keys($this->config) as $_c)
-					{
-						$c[$_c]=$_c;
-					}
-            	$select = new Element\Select("config_section");
-				$select->setValueOptions($c);
-				$select->setValue($struct0['caption_style']);
-				echo $this->FormElement($select);
-			?></td>
-      </tr>
 
 
       <tr>
@@ -492,7 +476,7 @@ if (value==2)
         <td colspan="2"><pre><? if ($struct0['table_name']>'') {$tab=simba::queryOneRecord('show create table '.$struct0['table_name']); echo $tab['Create Table'];} ?></pre></td>
       </tr>
       <tr>
-        <td><? if(!isset($_POST['col___id'])) $_POST['col___id']=NULL ;?>SQL удаления,<strong style="color='#FF0000'">$id</strong>уникальный идентификатор <?php echo ' <b>$'.$_POST['col___id'].'</b>';?></td>
+        <td><? if(!isset($_POST['col___id'])) $_POST['col___id']=NULL ;?>SQL удаления,<strong style="color='red'">$id</strong>уникальный идентификатор <?php echo ' <b>$'.$_POST['col___id'].'</b>';?></td>
         <td colspan="2"><textarea name="del_record" cols="135" rows="3" wrap="VIRTUAL"  id="del_record" ><?=stripslashes ($struct0['default_sql'])?></textarea></td>
       </tr>
       <tr>
@@ -552,7 +536,7 @@ if ($struct0['table_name']>'' && $_POST['cols']>'') $save_enable='';
 if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="disabled"';
 		?>
 <input name="id" type="hidden" value="<?=$struct2['id'];?>">
-<fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Колонки</legend>
+<fieldset  style="background-color:#e2e2e2"><legend style="color:red; font-weight:bold">Колонки</legend>
 	      Имя колонки
 	        <select name="cols" id="cols"  onChange="this.form.submit()" >
               <?=$cols_sp?>
@@ -564,7 +548,7 @@ if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="
 	          <?=simba::getSpValue1 (["первой строки таблицы","Середина таблицы","Последняя строка таблицы"],array(2,3,4),$_POST['row_type']);?>
         </select>
 	        <br>
-<fieldset ><legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+<fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
 	      Порядок вывода:
 	        <select name="col_por" id="col_por"  <?=$save_enable_cols; if ($_POST['row_type']==3) echo 'disabled="disabled"';   ?>>
               <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
@@ -619,24 +603,13 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
  <br>(Тип имен:$pole_dopN - имя дополнительного поля N=0-9; save,del - сохранение/удаление записи; exec - произвольное выполнение, get_interface_input - специальный
 входной параметр (см. документацию); любое другое - просто имя поля)</fieldset>
  
-   <fieldset >
-                  <legend style="color:#FF0000; font-weight:bold">-</legend>
-                    <span id='st_validator'></span>
-  </fieldset> 
- 
- 
- 
-  <fieldset >
-                  <legend style="color:#FF0000; font-weight:bold">-</legend>
-                    <span id="st_out"></span>
-  </fieldset>
 
 				  <fieldset >
-                  <legend style="color:#FF0000; font-weight:bold">Атрибуты:</legend>
+                  <legend style="color:red; font-weight:bold">Атрибуты:</legend>
                     <span id="prop_out"></span>
                   </fieldset>		  
 <fieldset >
-                  <legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+                  <legend style="color:red; font-weight:bold">Значения для полей-списков выбрать из:</legend>
                     <span id=list_out style="display:none"> таблицы:
                       <select name="tab_select" id="tab_select"  >
                         <?=$tab_list1;?>
@@ -647,15 +620,15 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
 </fieldset>
 <fieldset >
                   
-                    <legend style="color:#FF0000; font-weight:bold">Константы для поля:</legend>
+                    <legend style="color:red; font-weight:bold">Константы для поля:</legend>
                     <span id="const_out"></span>
   </fieldset>
 <fieldset >
                   
-                    <legend style="color:#FF0000; font-weight:bold">Параметры</legend>
+                    <legend style="color:red; font-weight:bold">Параметры</legend>
         <span id="properties_out"></span>
   </fieldset>
-				  <fieldset><legend style="color:#FF0000; font-weight:bold">Вызываемые функции</legend>
+				  <fieldset><legend style="color:red; font-weight:bold">Вызываемые функции</legend>
                     <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
                       <tr>
                         <td>До записи поля:</td>
@@ -675,7 +648,7 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
 {//внутренние функции применяемые для всей колонке
 	?>
 <fieldset >
-                    <legend style="color:#FF0000; font-weight:bold">Внутренние функции применяемые для всей колонки</legend>
+                    <legend style="color:red; font-weight:bold">Внутренние функции применяемые для всей колонки</legend>
         <?
 		$f_array=unserialize($struct2['col_function_array']);
 		$checked='';
@@ -691,7 +664,7 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
   </fieldset>
 <? } ?>
 
-<div align="right"><input name="del_struct" type="submit" id="del_struct" <?=$save_enable_cols;?> style="font-size: xx-small;color: #FFFFFF;	background-color: #FF0000;" value="Удалить выбранную структуру">
+<div align="right"><input name="del_struct" type="submit" id="del_struct" <?=$save_enable_cols;?> style="font-size: xx-small;color: #FFFFFF;	background-color: red;" value="Удалить выбранную структуру">
                                   </div>
 </fieldset>
 
@@ -726,7 +699,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 		 ?>
     <!--Начало дополнительного поля -->
 <input name="id" type="hidden" value="<?=$struct2['id'];?>">
-<fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Дополнительные поля в заголовке:</legend>
+<fieldset  style="background-color:#e2e2e2"><legend style="color:red; font-weight:bold">Дополнительные поля в заголовке:</legend>
     Конструируем поле номер:
           <select name="pole_dop_numb" id="pole_dop_numb"   onChange=this.form.submit()>
             <?=simba::getSpValue1 ($a,$a,$pole_dop_numb);?>
@@ -737,7 +710,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 
 	  <fieldset >
                     
-                      <legend style="color:#FF0000; font-weight:bold">Заголовок доп. поля</legend>
+                      <legend style="color:red; font-weight:bold">Заголовок доп. поля</legend>
                     
 				Текст:
                     <textarea name="caption" id="caption" cols="115" rows="1"   ><?
@@ -754,7 +727,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                       <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
                     </select>
   </fieldset>
-	<fieldset ><legend style="color:#FF0000; font-weight:bold">Поле ввода</legend>
+	<fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
 Тип:<select id="pole_type" name="pole_type"  onChange="ch_item(this.value,1);">
                           <?=create_pole_item_list($struct2['pole_type']); ?>
                           </select>
@@ -763,19 +736,15 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 Значение (умолчание)
 	<textarea name="value" cols="135" rows="1"  id="value" ><? if (isset($struct2['value'])) echo $struct2['value'];?></textarea>
 	</fieldset>
-<fieldset >
-                          <legend style="color:#FF0000; font-weight:bold">Стиль</legend>
-                          <span id=st_out></span>
-  </fieldset>
 
 <fieldset >
-                          <legend style="color:#FF0000; font-weight:bold">Атрибуты:</legend>
+                          <legend style="color:red; font-weight:bold">Атрибуты:</legend>
                           <span id=prop_out></span>
   </fieldset>
 	  
 <span id="list_out">
                           <fieldset >
-                              <legend style="color:#FF0000; font-weight:bold">Значения для полей-списков выбрать из:</legend>
+                              <legend style="color:red; font-weight:bold">Значения для полей-списков выбрать из:</legend>
                             <span id=list_out><table width="100%" border="0" cellpadding="0" cellspacing="0" >
                               <tr>
                                 <td>Умолчание:<br>SQL</td>
@@ -797,18 +766,18 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 
 <fieldset >
                           <strong>
-                            <legend style="color:#FF0000; font-weight:bold">Константы:</legend><br>
+                            <legend style="color:red; font-weight:bold">Константы:</legend><br>
                     </strong><span id="const_out"></span>
   </fieldset>
 
 <fieldset >
                           
-                            <legend style="color:#FF0000; font-weight:bold">Параметры</legend>
+                            <legend style="color:red; font-weight:bold">Параметры</legend>
                     <span id="properties_out"></span>
   </fieldset>
   </fieldset>
 <!-- вызываемые функции -->
-				  <fieldset  style="background-color:#e2e2e2"><legend style="color:#FF0000; font-weight:bold">Вызываемые функции</legend>
+				  <fieldset  style="background-color:#e2e2e2"><legend style="color:red; font-weight:bold">Вызываемые функции</legend>
             <table width="100%"  border="0" cellpadding="0" cellspacing="0" >
                       <tr>
                         <td nowrap>Перед выводом значения на экран:</td>
@@ -847,7 +816,7 @@ if (isset($struct2)) echo "\n struct2=unserialize('".addslashes(serialize($struc
  else echo "\n struct2=Array();\n";
 
 //получить список глобальных настроек
-
+/*
 $c=$ckey=[];
 if ($struct0['caption_style'])
 	{
@@ -856,25 +825,14 @@ if ($struct0['caption_style'])
 	}
 		
 echo "var const_sp=\"".simba::getSpValue ($c,$ckey,'')."\";\n";
+*/
 if (!empty($_POST['interface_razdel']))   echo 'ch_item('.$struct2['pole_type'].')';
  ?>
 
 function ch_item(value)
 {
+	if (!value) return
 //value - тип (код) поля ввода
-//************************ стили
-out='';
-if (!value) return
-//это цикл по кол-ву элементов внутри поля
-for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
-	out=out+"Element"+i+"<select name='pole_style["+i+"]' id='pole_style["+i+"]' >"+style_sp+"</select><br>";//генерируем списки стилей
-  document.getElementById("st_out").innerHTML=out;//выводим в контейнер
-	if (struct2['pole_style'])
-		{_pole_style=struct2['pole_style'].split(',');
-			for (i=0;i<pole_consts_styles['itemcount'][parseInt(value)];i++)
-					if (_pole_style[i]) document.getElementById("pole_style["+i+"]").value=_pole_style[i];
-		}
-//************************* конец стилей
 //************************* начало атрибутов
 
 out='';
@@ -898,7 +856,10 @@ out='';
 //сами элементы для ыбора
 
 for (i=0;i<pole_consts_styles['constcount'][parseInt(value)];i++)
-	out=out+"<strong>"+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br></strong><select name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' >"+const_sp+"</select><br>";
+	{
+		//out=out+"<strong>"+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br></strong><select name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' >"+const_sp+"</select><br>";
+		out=out+pole_consts_styles['const_count_msg'][parseInt(value)][i]+"<br><b>Application::$config</b><input size='100' type='text' name='pole_global_const["+i+"]' id='pole_global_const["+i+"]' /><br>";
+	}
 	document.getElementById("const_out").innerHTML=out;
 //установим их в текущие состояния
 if (struct2['pole_global_const'])
@@ -956,97 +917,10 @@ document.getElementById("properties_out").innerHTML=out;//alert(out)
 
 if (struct2['validator']) selected_validator=unserialize(struct2['validator']);//поэлементное разложение (внутри поля)
 
-validator_f();
+
 }
 
 //**************************** начало вывода касаемо валидатора
-
-
-function validator_f()
-{//value в данном случае не имеет сысла, т.к. к коду кодя валидатор не привязан, type так же
-/*
-
-*/
-value='';
-s='<input name="validator_item_add" type="button" value="+"  title="Добавить правило" onClick="validator_add()" /><select id="validator_type_list" name="validator_type_list" >';
-for (ss in validator['validator_list'])
-		{//генерируем выпадающий список только для первой строки
-		s+='<option value="'+ss+'" >'+validator['validator_list'][ss]+'</option>';
-		}
-s+="</select><br />";
-//пройдемся по ассоциативному массиву selected_validator['name'] для генерации отдельных элементов
-if (selected_validator)
-for (t in selected_validator['name']) 
-	{
-	for (ss in validator['validator_list'])
-		{//генерируем выпадающий список
-		if (ss==selected_validator['name'][t]) 
-			{s+='<input name="_selected_validator[name][]" type="hidden" value="'+selected_validator['name'][t]+'" />'
-			s+='<input name="'+selected_validator['name'][t]+'" type="button" value="-"  title="Удалить правило" onClick="validator_del(this.name)" /> '
-			s+=validator['validator_list'][ss]+' '
-			}
-		}
-
-		//генерируем параметры, если они есть
-		if (validator['validator_parametrs'][selected_validator['name'][t]]) 
-			parametrs_text=validator['validator_parametrs'][selected_validator['name'][t]].split("~");//получить массив текстов к параметров, если они есть
-			else parametrs_text=Array();
-	
-	
-		selected_validator_=Array();
-
-		if (selected_validator['parametrs']!== undefined && selected_validator['parametrs'][selected_validator['name'][t]]!== undefined) 
-			for (ttt in selected_validator['parametrs'][selected_validator['name'][t]]) 
-				{
-					if (selected_validator['parametrs'][selected_validator['name'][t]][ttt]) selected_validator_[ttt]=selected_validator['parametrs'][selected_validator['name'][t]][ttt];
-					else selected_validator_[ttt]='';
-				}
-	
-		for (pp in parametrs_text)
-			{
-			if (parametrs_text[pp]) 
-				{if (selected_validator_[pp]) vvv=selected_validator_[pp]; else vvv='';
-				s+=parametrs_text[pp]+'<input name="_selected_validator[parametrs]['+selected_validator['name'][t]+'][]" type="text" value="'+vvv+'" size="15"  />';
-				}
-			}
-		s+='<br />';
-
-	}
-if (document.getElementById("st_validator"))document.getElementById("st_validator").innerHTML=s
-}
-
-function validator_add()
-{/*добавляет новый элемент путем добавления в массивы и перерисовкой всего 
-selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
-selected_validator['name']=Array('has_metas','str_len','between_str_len')
-selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
-*/
-if (!selected_validator) 
-	{//если в начале все было совсем пусто, назначим массив
-	selected_validator=Array();selected_validator['name']=Array();selected_validator['parametrs']=Array();
-	}
-selected_validator['name']=makeArray(selected_validator['name'])
-selected_validator['name'].push(document.getElementById('validator_type_list').value);
-selected_validator['parametrs']=makeArray(selected_validator['parametrs'])
-selected_validator['parametrs'].push('')
-validator_f()
-}
-
-function validator_del(value)
-{/*удаляет элемент путем добавления в массивы и перерисовкой всего 
-selected_validator=Array();//структура выбранных валидаторов, их может быть несколкьо!
-selected_validator['name']=Array('has_metas','str_len','between_str_len')
-selected_validator['parametrs']=Array('','3','10,20');//каждый элемент - соотвествует selected_validator['name']!!! параметры через запятую
-//путем перебора сравгим имена, если совпадает, просто удалим в параллельных массивах данные
-*/
-
-for (k in selected_validator['name'])
-	if (selected_validator['name'][k]==value)
-		{delete(selected_validator['name'][k])
-		delete(selected_validator['parametrs'][k])
-		}
-validator_f()
-}
 
 function stripslashes( str ) 
 {

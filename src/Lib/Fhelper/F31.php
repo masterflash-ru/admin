@@ -39,8 +39,9 @@ class F31 extends Fupload
 								];
 
 	protected $itemcount=2;
-	protected $constcount=1;
-	protected $const_count_msg=["Относительный путь:"];
+	protected $constcount=2;
+	protected $const_count_msg=["Внутренняя папка обработки, ключи из конфига в виде массива от корня, например, [\"images\"][\"images_data_folder\"]:",
+								"PUBLIC Папка вебсервера, ключи из конфига в виде массива от корня, например, [\"images\"][\"public_folder_url\"]:"];
 	protected $properties_listid=[
 					            'names' => [0,1,2,3],
 								'help' => [0,1,2],
@@ -73,6 +74,8 @@ public function __construct($item_id)
 	
 public function render()
 {
+	$this->init();
+	$out1="";
 	$file_array=($this->properties['file_array']) ? $this->properties['file_array']:1;
 	$out='<table border="1" cellspacing="0" cellpadding="0">';
 	$vv=explode(',',$this->value);
@@ -81,32 +84,38 @@ public function render()
 		{
 			$vv[$i]=trim($vv[$i]);
 		$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
+		
 		//добавить крыжики удаления
 		if (!empty($vv[$i]))
 			{
-				$out1='<br><label>'.$this->view->formCheckbox("delete_".$nnn,1,NULL,['uncheckedValue'=>0]).'Удалить</label>';
-			}
-			else {$out1="";}
-		//добавить крыжик отмены авто ресайза фото, если конечно авторесайз включен
-		//if ($this->properties['img_resize_type']>'') $out1.='<br><span '.$this->atr[1].'>Не менять размер</span><input name="non_resize_'.$nnn.'" type="checkbox" value="1">';
+				$checkbox = new Element\Checkbox("delete_".$nnn);
+				$checkbox->setUseHiddenElement(true);
+				$checkbox->setCheckedValue(1);
+				$checkbox->setUncheckedValue(0);
+				$out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
+				}
 	
 	
 		//справочно
 		$out2='';
-		if ($this->properties['help']==0) $out2='<br><span '.$this->atr[1].'>Запись в:'.ROOT_FILE_SYSTEM.$this->const[0].'<br></span><b '.$this->atr[1].'>Файл: '.$vv[$i].'</b>';
+		if ($this->properties['help']==0) $out2='<br><span '.$this->atr[1].'>Запись в:'.$this->data_folder.'<br></span><b '.$this->atr[1].'>Файл: '.$vv[$i].'</b>';
 		if ($this->properties['help']==2) $out2='<b>Файл: '.$vv[$i].'</b>';
 	
 	$out.="<tr>";
 	if ($file_array>1)  {$out.=" <th width=1>$i:</th>";}
 	
-	$out.="	<td>".$this->view->formFile($nnn)."<br>$out2</td>
+	$out.="	<td>".$this->view->FormElement(new Element\File($nnn))."<br>$out2</td>
 		<td>$out1</td>
 		  </tr>";
 		}
-	$out.=$this->view->formHidden("file_array_".$this->name[0],$file_array);
-	$out.=$this->view->formHidden("value_array_".$this->name[0],$this->value);
 	
-	//$out.='<input name="-file_array_'.$this->name[0].'" type="hidden" value="'.$file_array.'"><input name="-value_array_'.$this->name[0].'" type="hidden" value="'.$this->value.'">';
+	$h1 = new Element\Hidden("file_array_".$this->name[0]);
+	$h1->setValue($file_array);
+	$out.= $this->view->FormElement($h1);
+
+	$h2 = new Element\Hidden("value_array_".$this->name[0]);
+	$h2->setValue($this->value);
+	$out.= $this->view->FormElement($h2);
 	
 	return $out.'</table>';
 
@@ -116,6 +125,7 @@ public function render()
 
 public function save()
 {
+	$this->init();
 	if ($this->properties['names']>0) $prefix=rand(); else $prefix='';
 	$file_array=$_POST["file_array_".$this->col_name][$this->id];// кол-во подэлементов внутри элемента
 	$infa_old=explode (',',$_POST["value_array_".$this->col_name][$this->id]);
@@ -131,14 +141,14 @@ public function save()
 	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]))	
 		{
 			$infa_[$iq]='';
-			@unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa_old[$iq]);
+			@unlink ($this->public_folder.$infa_old[$iq]);
 			$infa_old[$iq]='';
 		}
 	
 	
 	$rez=$this->file_upload(
 						array($this->id=>$this->col_name.$iq),
-						ROOT_FILE_SYSTEM.$this->const[0],
+						$this->data_folder,
 						$file_enable_extension,
 						(int) $this->properties['file_max_size'],//максимальный размер файла
 						0666,
@@ -149,10 +159,14 @@ public function save()
 	if ($rez['error']==0 && $rez['name']>'')
 		{
 			//проверим, изменилось ли имя файла, если да, тогда старый стереть!
-			 @unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa_old[$iq]);
+			 @unlink ($this->public_folder.$infa_old[$iq]);
 			//ошибки нет, записываем
 			$infa_[$iq]=$rez['name'];
-		
+	//переносим в PUBLIC папку
+		foreach ($infa_ as $img_item)
+			{
+				if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";}
+			}
 		}
 	
 		else  $infa_[$iq]=$infa_old[$iq];
@@ -167,17 +181,31 @@ public function save()
 
 public function del()
 {
+	$this->init();
 	if ($this->col_name  ) 
 		{
 			$n=simba::queryOneRecord('select '.$this->col_name.' from '.$this->tab_name.' where id='.$this->id);//получить имя файла (может быть список)
 			$infa=explode(',',$n[$this->col_name]);
 			for ($qi=0;$qi<count($infa);$qi++)		
 				{
-					@unlink (ROOT_FILE_SYSTEM.$this->const[0].$infa[$qi]);
+					@unlink ($this->public_folder.$infa[$qi]);
 				}
 		}
 
 }
 
+/*
+инициализирует пути данного помощника
+*/
+public function init()
+{
+	$this->root_file_system=getcwd().DIRECTORY_SEPARATOR;
+	$this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
+	$this->data_folder=getcwd().DIRECTORY_SEPARATOR.$this->const[0];
+	
+	if (!is_readable($this->public_folder)) {echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);}
+	if (!is_readable($this->data_folder)) {echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);}
+
+}
 
 }

@@ -1,0 +1,28 @@
+<script language="JavaScript" type="text/JavaScript">
+'use strict';
+function getparam()
+{
+	var url=location.pathname.split("/"),c=url.length;
+	return url[c-1];
+}
+
+function save()
+{
+to=getparam();
+opener.document.getElementById(to).value =CKEDITOR.instances.data__.getData();
+window.close()
+return false;
+}
+</script>
+
+<form action="" method="post"  enctype="multipart/form-data">
+<textarea name="data__" id="data__" class="ckeditor"></textarea>
+<script src="/htmledit/ckeditor.js"></script>
+<br>
+<input name="save_" type="button" id="save_" style="font-size:1rem" value="Сохранить и выйти" onClick="save();">
+</form>
+
+<script language="JavaScript" type="text/JavaScript">
+to=getparam();
+document.getElementById("data__").value = opener.document.getElementById(to).value
+</script>
