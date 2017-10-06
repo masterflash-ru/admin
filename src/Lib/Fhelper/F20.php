@@ -11,15 +11,13 @@ class F20 extends Fhelperabstract
 {
 	protected $hname="флажок (группа флажков)";
 	
-	protected $properties_keys=["item_list","value_list","window_width","window_height"];
+	protected $properties_keys=["item_list","window_width","window_height"];
 	protected $properties_text=["item_list"=>"SQL выборка, например, select id,name from table",
-								"value_list"=>"УСТАРЕЛО И НЕ ИСПОЛЬЗУЕТСЯ!",
 								"window_width"=>"Ширина области вывода группы в px (пусто-без прокрутки)",
 								"window_height"=>"Высота области вывода группы в px (пусто-без прокрутки)"
 								];
 	
 	protected $properties_item_type=["item_list"=>2,
-								"value_list"=>0,
 								"window_width"=>0,
 								"window_height"=>0
 								];
@@ -64,10 +62,9 @@ public function render()
 				$input = new Element\Checkbox($this->name[0]);
 				$input->setUseHiddenElement(true);
 				$input->setUncheckedValue(0);
-				$input->setCheckedValue((int)$this->value);
+				$input->setCheckedValue(1);
+				$input->setValue((int)$this->value);
 				return $this->view->formCheckbox($input);
-				
-				//return $this->view->formCheckbox($this->name[0],1,NULL,['uncheckedValue'=>0,'checked' => (boolean)(int)$this->value]);
 			}
 }
 

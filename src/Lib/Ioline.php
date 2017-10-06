@@ -195,7 +195,7 @@ while ($i<$count) //for ($i=0;;$i++)
 									$this,
 									$infa,
 									$this->struct2,
-									$this->struct2['pole_type'][$i],
+									$i,
 									$this->pole_dop,
 									$this->tab_name,
 									$this->pole__id,
@@ -264,7 +264,7 @@ $infa=$this->form_item->save_form_item($row_item,
 								$this,
 								$infa,
 								$this->struct2,
-								$this->struct2['pole_type'][$i],
+								$i,
 								$this->pole_dop,
 								$this->tab_name,
 								$this->pole__id,
@@ -434,15 +434,14 @@ if ($this->struct0['functions_befo_del'])
 
 }
 
-public function create_interface($interface_name,$flag_out_form=true,View $view=NULL)
+public function _create_interface($interface_name,$flag_out_form=true,View $view=NULL)
 {
-try{$this->_create_interface($interface_name,$flag_out_form,$view) ;}//стандартный обработчик
-			catch (Exception $e) {$this->set_error($e->getCode(),$e->getMessage());};
+$this->_create_interface($interface_name,$flag_out_form,$view) ;//стандартный обработчик
 }
 
 
 
-private function _create_interface($interface_name,$flag_out_form=true,$view)
+public function create_interface($interface_name,$flag_out_form=true,View $view=NULL)
 {
 	$this->line_table_obj->view=$view;
 //$flag_out_form - если ложь, тэг формы не выводить
@@ -518,44 +517,6 @@ if (isset($this->struct2['pole_type']))
 //пролучить общие настройки
 $this->struct0=simba::queryOneRecord('select * from design_tables where table_type=0 and interface_name="'.$this->interface_name.'" and row_type=0');
 
-/*
-//вначале системные настройки
-if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER."system_setting.ini"))
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER."system_setting.ini");
-					}
-					else 
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER."system_setting.ini");
-						}
-				foreach ($config->toArray() as $sysname=>$v)
-					{
-								if (!defined($sysname)) {define($sysname,$v['value'],true);}
-					}
-
-
-
-//смотрим на предмет настроечного файла, если он есть делаем константы из него
-if ($this->struct0['caption_style'])
-			{
-				if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']))
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']);
-					}
-					else 
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']);
-						}
-				foreach ($config->toArray() as $items) 
-					foreach ($items as $sysname=>$v)
-						{
-								if (!defined($sysname) && !is_array($v)) {define($sysname,$v,true);}
-						}
-
-			}
-*/
-
-
 //если у нас вывод в виде формы, тогда смотрим нужно ли выводить кнопки создать запись и переходы по записям (это хранится в колонке value)
 $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];
@@ -601,18 +562,14 @@ if (is_array($d))
 		{
 		if ($this->function_del_field_name) call_user_func($this->function_del_field_name,$d[0],$this);//нестандартный обработчик записи
 			else  {
-				try{$this->delete_field($d[0]);}//стандартный обработчик
-				catch (Exception $e) {$this->set_error($e->getCode(),$e->getMessage());};
-				}
+				$this->delete_field($d[0]);}//стандартный обработчик
 		}
 
 if (is_array($s))
 	{//сохранение/добваление
 	if ($this->function_save_field_name) call_user_func($this->function_save_field_name,$s[0],$this);//нестандартный обработчик записи
 		else  {
-				try{$this->save_field($s[0]);}//стандартный обработчик
-				catch (Exception $e) {$this->set_error($e->getCode(),$e->getMessage());};
-				}
+				$this->save_field($s[0]);}//стандартный обработчик
 	}
 
 
@@ -696,30 +653,6 @@ if ($this->struct0['functions_befo_out'])
 
 $this->result_sql=$arr;
 
-//если после записи были бракованные записи, тогда мы тут их добавим с теме же идентификаторами
-if (count ($this->error_row)>0)
-	{//имеются бракованные записи, добавляем
-	//цикл по идентификаторам (их поиск)
-	for ($jj=0;$jj<count ($this->error_row[$this->pole__id]);$jj++)
-		{
-		$id_=array_search($this->error_row[$this->pole__id][$jj],$arr[$this->pole__id]);//найдем существующий идентификатор, если нет, тогда просто добавим бракованную с року
-		if ($id_!==false)
-			{//нашли ковпадение
-				foreach ($this->error_row as $k=>$v) 
-					{$arr[$k][$id_]=$this->error_row[$k][$jj];//заменим то что было в базе на бракованное
-					//преобразовать ключи, т.к. были ключами идентификаторы таблицы, а надо теперь порядковый номер после выборки из ьаблицы, заодно удалить старое
-					if ($this->error_item[$k][$arr[$this->pole__id][$id_]]>'') {$this->error_item1[$k][$id_]=$this->error_item[$k][$arr[$this->pole__id][$id_]];}
-					}
-			}
-			else
-				{$qq=count($this->error_row[$this->pole__id])+1;
-				foreach ($this->error_row as $k=>$v) 
-					{//if ($this->error_item[$k][0]>'') {$this->error_item1[$k][$qq]=$this->error_item[$k][0];}
-					//$arr[$k][]=$this->error_row[$k][$jj];//добавим, т.к. ввели новую запись бракованную
-					}
-				}
-		}
-	}
 
 //если ввод в виде формы, то определить откуда брать список, если пусто, то просто нумерация
 if ($this->struct0['pole_type'] && isset($arr[$this->struct0['pole_type']])) $this->line_table_obj->form_input_array=$arr[$this->struct0['pole_type']];
@@ -770,8 +703,9 @@ if (isset($arr[$this->pole__id]) )
 	if ( isset($struct3['pole_name'])) 
 		foreach ($struct3['pole_name'] as $nnn) 
 			if ($nnn>'' && $nnn!='get_interface_input') 
-				{preg_match('/pole_dop([0-9]?)/',$nnn,$c) ;
-				if ($c[1]=='') throw new Exception(__CLASS__,8,[]);
+				{
+					preg_match('/pole_dop([0-9]?)/',$nnn,$c) ;
+					if ($c[1]=='') throw new Exception(__CLASS__,8,[]);
 				}
 	for ($i=0;$i<$count;$i++)
 		{//все оставшиеся строки таблицы порядок такойже как и для первой строки!!!!!!!!!!
@@ -803,23 +737,22 @@ if (isset($arr[$this->pole__id]) )
 
 
 				eval("\$sql__ = \"$sql__\";");
-				//$this->dop_sql=simba::spec_parse_sql($sql__);//парсинг сложных запросов, джля сложных списков
 				$this->dop_sql=simba::queryAllRecords($sql__);
 				}
 
-			//$style=simba::get_style_class_ fromtable(explode (',',$struct3['pole_style']),explode (',',$struct3['pole_prop']));//массив стилей полей (если двойное тогда 2 элемента
 			$pole_name=explode(',',$struct3['pole_name']);//получить имена полей
 			
 			$nnn=$this->line_table_obj->create_array_names($arr[$this->pole__id],$pole_name[0],(isset($pole_name[1]))?$pole_name[1]:NULL);
 			
-			//echo $i."\n";print_r($pole_name);echo "\n";
-			//print_r($arr[$this->pole__id]);
+			
+			if (!isset($arr[$struct3['col_name']])) {$arr[$struct3['col_name']]=[];}
 			
 			
 			$this->line_table_obj->sort_cols_flag[$i]=$struct3['sort_item_flag'];//флаги сортировки выбранных колонок
 			//это константа передаываемая пдля вывода
 			$const=simba::get_const(explode (',',$struct3['pole_global_const']),true);//получить константы в виде массива
-			//проверим наличие функции для вызова перед выводом
+			
+			//проверим наличие функции для вызова перед выводом всей колонки данного поля
 			if ($struct3['functions_befo_out']>'') 
 							{//получить имя функции из таблицы
 							$fn=$struct3['functions_befo_out'];
@@ -925,7 +858,7 @@ for ($i=0;$i<$count;$i++)
 			$fn($this,
 															NULL,//$arr[$this->struct2['col_name'][$i]],
 															$this->struct2,
-															$this->struct2['pole_type'][$i],
+															$i,
 															$this->pole_dop,
 															$this->tab_name,
 															$this->pole__id,

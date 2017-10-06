@@ -25,7 +25,8 @@ class F30 extends Fupload
 								"file_max_size",
 								"watermark",
 								"sql_for_delete_foto",
-								'images_optimize'
+								'images_optimize',
+								'public_to_public'
 								];
 	
 	protected $properties_text=["names"=>"Изменение имени загруженного файла:",
@@ -38,7 +39,8 @@ class F30 extends Fupload
 								"file_max_size"=>"Максимальный размер файла в байтах, если 0 или пусто, только ограничения PHP:",
 								"watermark"=>"Имя файла (с путем Относительно папки указаной в первой константе!) для наложения в виде водяного знака ",
 								"sql_for_delete_foto"=>"Выбирать SQL имя удаляемого файла:",
-								'images_optimize'=>"Оптимизация изображения:"
+								'images_optimize'=>"Оптимизация изображения:",
+								'public_to_public'=>'Загружать файл в публичную папку веба (влияет на удаление!)'
 								];
 	
 	protected $properties_item_type=["names"=>1,
@@ -51,19 +53,21 @@ class F30 extends Fupload
 								"file_max_size"=>0,
 								"watermark"=>0,
 								"sql_for_delete_foto"=>1,
-								'images_optimize'=>1
+								'images_optimize'=>1,
+								'public_to_public'=>1
 								];
 
 	protected $itemcount=2;
 	protected $constcount=2;
 	protected $const_count_msg=["Внутренняя папка обработки, ключи из конфига в виде массива от корня, например, [\"images\"][\"images_data_folder\"]:",
-								"PUBLIC Папка вебсервера, ключи из конфига в виде массива от корня, например, [\"images\"][\"public_folder_url\"]:"];
+								"PUBLIC Папка вебсервера, ключи из конфига в виде массива от корня, например, [\"images\"][\"public_folder_url\"]<br>ЕСЛИ ПУСТО, то обработку дальше должна делать сторонняя функция:"];
 	protected $properties_listid=[
 					            'names' => [0,1,2,3],
 								'help' => [0,1,2],
 								'img_resize_type' => ["n","w","h","wh"],
 								'sql_for_delete_foto' => [0,1],
 								'images_optimize' => [0,1],
+								'public_to_public'=>[0,1]
 								];
 
 protected $properties_listtext=['names'=>
@@ -91,7 +95,12 @@ protected $properties_listtext=['names'=>
             'images_optimize'=>[
                     "Нет",
                    "Да"
+				   ],
+            'public_to_public'=>[
+                    "Нет",
+                   "Да"
 				   ]
+		
 			];
 
 	protected $root_file_system;		//абсолютный путь к корню приложения
@@ -136,6 +145,7 @@ public function render()
 					}
 		$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
 		//добавить крыжики удаления
+		
 		if (!empty($vv[$i]))
 			{
 				$checkbox = new Element\Checkbox("delete_".$nnn);
@@ -189,7 +199,7 @@ public function save()
 	for($iq=0;$iq<$img_array;$iq++)
 	{
 	//проверим флажки удаления, если они установлены, тогда обнуляем элемент
-	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]))	
+	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]) && $this->public_folder )	
 		{
 			$infa_[$iq]='';
 			@unlink ($this->public_folder.$infa_old[$iq]);
@@ -210,11 +220,11 @@ public function save()
 	if ($rez['error']==0 && $rez['name']>'')
 		{
 		//проверим, изменилось ли имя файла, если да, тогда старый стереть!
-		 @unlink ($this->public_folder.$infa_old[$iq]);
+		 if ($this->public_folder) {@unlink ($this->public_folder.$infa_old[$iq]);}
 		//ошибки нет, записываем
 		$infa_[$iq]=$rez['name'];
 		
-		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['Resize_Service'];
+		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['Service_Name'];
 		
 			switch ((string)$this->properties['img_resize_type'])
 				{
@@ -289,13 +299,15 @@ public function save()
 				$f->filter($this->data_folder.$infa_[$iq]);
 			}
 
-	//переносим в PUBLIC папку
-		foreach ($infa_ as $img_item)
+	//переносим в PUBLIC папку если она указана
+		if ($this->public_folder && !empty($this->properties['public_to_public']))
 			{
-				if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";}
+				foreach ($infa_ as $img_item)
+					{
+						if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";}
+					}
 			}
 		}
-	
 		else  $infa_[$iq]=$infa_old[$iq];
 	}
 	
@@ -309,7 +321,7 @@ public function del()
 {
 	$this->init();
 
-	if ($this->col_name  && empty($this->properties['sql_for_delete_foto']) ) 
+	if ($this->col_name  && empty($this->properties['sql_for_delete_foto']) && $this->public_folder  && !empty($this->properties['public_to_public'])) 
 		{
 			$n=simba::queryOneRecord('select '.$this->col_name.' from '.$this->tab_name.' where id='.$this->id);//получить имя файла (может быть список)
 			$infa=explode(',',$n[$this->col_name]);
@@ -327,11 +339,15 @@ public function del()
 public function init()
 {
 	$this->root_file_system=getcwd().DIRECTORY_SEPARATOR;
-	$this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
 	$this->data_folder=getcwd().DIRECTORY_SEPARATOR.$this->const[0];
 	
-	if (!is_readable($this->public_folder)) {echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);}
 	if (!is_readable($this->data_folder)) {echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);}
+	$this->public_folder=NULL;
+	if ($this->const[1])
+		{
+			$this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
+			if (!is_readable($this->public_folder)) {echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);}
+		}
 
 }
 }
