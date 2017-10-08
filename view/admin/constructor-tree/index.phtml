@@ -149,7 +149,8 @@ if (isset($_POST['save_all']))
 			'properties'=>serialize($_POST['properties']),
 			'value'=>$_POST['value'],
 			'interface_name'=>$_POST['interface_name'],
-			'col_por'=>$_POST['col_por1']
+			'col_por'=>$_POST['col_por1'],
+			'functions_befo_out'=>$_POST['functions_befo_out'],
 			),'design_tables');
 
 	
@@ -424,7 +425,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 
          <!--Начало дополнительного поля -->
       <input name="id1" type="hidden" id="id1" value="<?=$struct2['id'];?>">
-      <fieldset ><legend><strong style="color:red;">Дополнительные поля перед деревом:</strong></legend>
+      <fieldset style="background-color:#e2e2e2" ><legend><strong style="color:red;">Дополнительные поля перед деревом:</strong></legend>
           Конструируем поле номер:
             <select  id="pole_dop_numb" name="pole_dop_numb"  <?=$dis;?> onChange=this.form.submit()>
               <?=simba::getSpValue1 ($a,$a,$pole_dop_numb);?>
@@ -436,16 +437,11 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
           (Дополнительный вывод до дерева: Поле получает имя<font color="red"><strong>$pole_dop<?=$pole_dop_numb ?></strong></font>и будет доступно из PHP (можно вставить в SQL инструкцию))
          <fieldset >
                     
-                    <legend  style="color:red; font-weight:bold"><strong>---</strong></legend>
+                    <legend  style="color:red; font-weight:bold"><strong>Заголовок дополнительного поля:</strong></legend>
                     Текст:
                     <textarea id="caption1" name="caption1" cols="128" rows="1" wrap="VIRTUAL"   <?=$dis;?>><? 
 				echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb];?></textarea>
                     
-                    <br>
-                    стиль
-                    <select name="caption_style1"  id="caption_style1" <?=$dis;?>>
-                      <?=""; /*echo simba::getSpValue ($style['name'],$style['id'],$struct2['caption_style']);*/?>
-                    </select>
            <br>Порядок вывода
            <select name="col_por1" id="col_por1"   <?=$dis;?>>
              <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
@@ -455,7 +451,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 				  <legend style="color:red; font-weight:bold">Поле ввода</legend>
 				  Тип:
 				  <select id="pole_type1" name="pole_type1"  <?=$dis; ?>  onChange="ch_item(this.value,1);">
-                    <? 	echo create_pole_item_list($struct2['pole_type']);?>
+                    <?=create_pole_item_list($struct2['pole_type']);?>
                   </select><br>
 				  Значение
 				  <textarea name="value1" cols="115" rows="1"  id="value1" <?=$dis1;?>="<?=$dis1;?>"><?=$struct2['value']; ?></textarea>
@@ -501,9 +497,26 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                           </legend>
                           </strong><span id="properties_out"></span>
         </fieldset>
-						
-						
       </fieldset>	
+
+<!-- вызываемые функции доп поля дерева-->
+				  <fieldset  style="background-color:#e2e2e2"><legend style="color:red; font-weight:bold">Вызываемые функции</legend>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0" >
+                      <tr>
+                        <td nowrap>Перед выводом значения на экран:</td>
+                        <td width="72%" nowrap><input type="text" name="functions_befo_out" value="<?=$struct2['functions_befo_out']?>" size="80" /></td>
+                        <td width="12%">&nbsp;</td>
+                        <td width="12%">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td width="4%" nowrap>&nbsp;</td>
+                        <td colspan="3" align="right" nowrap>
+                        <input type="submit" name="pole_dop_numb_del_b" value="Уничтожить поле"  class="del" /></td>
+                      </tr>
+                    </table>
+  </fieldset>
+<!-- конец вызываемые функции -->
+
           <!--Конец дополнительного поля -->
     <?
 	}
