@@ -86,15 +86,12 @@ return [
 									],
 								],
 							],
-							'getconfig' => [
-								'type' => Segment::class,
+							'entitygenerator' => [
+								'type' => Literal::class,
 								'options' => [
-									'route'    => '/getconfig/[:name]',
-									'constraints' => [
-                               			 'name' => '[a-zA-Z0-9_-]+',
-                           			 ],
+									'route'    => '/entity',
 									'defaults' => [
-										'controller' => Controller\GetConfigController::class,
+										'controller' => Controller\EntityController::class,
 										'action'     => 'index',
 									],
 								],
@@ -181,6 +178,7 @@ return [
 			Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
 			Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
 			Controller\BackupRestoreController::class => Controller\Factory\BackupRestoreControllerFactory::class,
+			Controller\EntityController::class => Controller\Factory\EntityControllerFactory::class,
         ],
     	
 		//если у контроллера нет коннструктора или он не нужен или пустой
@@ -199,7 +197,7 @@ return [
 		//краткое обращение внутри конроллера, например $this->access
         'aliases' => [
             'access' => Controller\Plugin\AccessPlugin::class,
-            'currentUser' => Controller\Plugin\CurrentUserPlugin::class,
+            //'currentUser' => Controller\Plugin\CurrentUserPlugin::class,
         ],
     ],
 	//помощник вывода меню админки
@@ -269,6 +267,10 @@ return [
                 ['actions' => '*', 'allow' => '+admin.login']
             ],
             Controller\CkeditorController::class => [
+                //допуски
+                ['actions' => '*', 'allow' => '+admin.login']
+            ],
+            Controller\EntityController::class => [
                 //допуски
                 ['actions' => '*', 'allow' => '+admin.login']
             ],

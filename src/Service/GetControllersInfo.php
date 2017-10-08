@@ -81,6 +81,11 @@ class GetControllersInfo
 		$info["backuprestore"]["urls"]["name"][]="Вход";
 		$info["backuprestore"]["urls"]["url"][]=$this->Router->assemble([], ['name' => 'adm/backuprestore']);
 
+		//генератор Entity
+		$info["entity"]["description"]="Генератор объектов";
+		$info["entity"]["urls"]["name"][]="Вход";
+		$info["entity"]["urls"]["url"][]=$this->Router->assemble([], ['name' => 'adm/entitygenerator']);
+
 
 		return $info;
 	}

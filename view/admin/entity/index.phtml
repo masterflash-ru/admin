@@ -1,0 +1,26 @@
+<h1>Генератор объектов из SQL</h1>
+<?php
+$form = $this->form;
+$form->prepare();
+
+
+$formLabel=$this->plugin('formLabel');
+
+echo $this->form()->openTag($form);
+?>
+
+<?php
+
+   $name = $form->get('sql');
+    echo $formLabel->openTag($name) . $name->getOption('label').$formLabel->closeTag();
+    echo "<div>".$this->formElement($name)."</div>";
+    echo $this->formElementErrors($name);
+?>
+<br>
+<?php
+    $submit = $form->get('submit');
+    echo $this->formElement($submit);
+?>
+<?= $this->form()->closeTag() ?>
+<br><br>
+<pre><?=$this->code;?></pre>
