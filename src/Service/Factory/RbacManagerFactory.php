@@ -16,7 +16,7 @@ public function __invoke(ContainerInterface $container, $requestedName, array $o
 		 $connection=$container->get('ADO\Connection');
 		 
         $authService = $container->get(AuthenticationService::class);
-        $cache = $container->get('FilesystemCache');
+        $cache = $container->get('DefaultSystemCache');
 		
         $assertionManagers = [];
         $config = $container->get('Config');

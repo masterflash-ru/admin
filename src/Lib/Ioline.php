@@ -107,9 +107,10 @@ function __construct($container,$view)
 	Simba::$connection=$container->get('ADO\Connection');
 	$this->connection=Simba::$connection;
 	$this->view=$view;
-	$this->cache=$container->get('FilesystemCache');
+	$this->cache=$container->get('DefaultSystemCache');
 	$this->config=$container->get('Config');
 	simba::setConfig($this->config);
+	simba::setContainer($container);
 	$this->container=$container;
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
@@ -382,7 +383,7 @@ for ($ii=0;$ii<count($this->struct2['col_name']);$ii++)
 		$fn($this,
 													'',
 													$this->struct2,
-													$this->struct2['pole_type'][$ii],
+													$ii,
 													$this->pole_dop,
 													$this->tab_name,
 													$this->pole__id,
@@ -395,7 +396,8 @@ for ($ii=0;$ii<count($this->struct2['col_name']);$ii++)
 	//проверим на псевданим это поле, если нет, тогда вызываем описатель
 	$_alias=explode(",",$this->struct0["col_name"]);
 	
-	if (!in_array($this->struct2["pole_name"][$ii],$_alias))
+	 //УДАЛЕН ПРОПУСК ОБАРБОТКИ УДАЛЕНИЯ ДЛЯ ПСЕВДОНИМОВ, 15-10-17
+	if (!in_array($this->struct2["pole_name"][$ii],$_alias) || true)
 		{
 		//непосредственно исполнить код в описателе phpDel
 		$this->form_item->del_form_item($id,$this->struct2['pole_type'][$ii],$this->tab_name,$col_name,$const,unserialize($this->struct2['properties'][$ii]));//исполним код PHP, которые есть в описателе

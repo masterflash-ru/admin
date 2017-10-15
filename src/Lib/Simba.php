@@ -16,17 +16,18 @@ class Simba
 	public static $flag=true;			//true -  разрешены мультизапросы
 	public static $connection;
 	public static $config;
+	public static $container;
 
 
 public static function setConfig($config)
 {
 	self::$config=$config;
-	
-	$k='return \Admin\Lib\Simba::$config'.'["images"]["images_data_folder"];';
-	//\Zend\Debug\Debug::dump( eval($k));
-	//\Zend\Debug\Debug::dump($config);
 }
 
+public static function setContainer($container)
+{
+	self::$container=$container;
+}
 
 
 //=получимть константу по ее идентификатору таблицы

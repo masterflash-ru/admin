@@ -99,6 +99,7 @@ public $button_all_operation_names=[];//имена кнопок "Сохрани�
 public  $view;
 public $form_item;
 public $config;
+	public $container;
 
 public function __toString()
 {return array('version'=>$this->version,'build'=>build);
@@ -119,6 +120,7 @@ $this->button_all_operation_names[2]='_optimize_table_';
 $this->button_all_operation_names[3]='_clear_cache_';
 $this->form_item=new form_item($view,$config);
 $this->config=$config;
+
 }
 
 

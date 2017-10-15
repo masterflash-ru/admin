@@ -13,7 +13,7 @@ use Images\Filter\ImgOptimize;
 
 class F30 extends Fupload 
 {
-	protected $hname="закачка фото + предосмотр уже существующего фото";
+	protected $hname="РУЧНАЯ закачка фото + предосмотр уже существующего фото";
 	protected $category=3;
 	protected $properties_keys=["names",
 								"help",
@@ -224,7 +224,7 @@ public function save()
 		//ошибки нет, записываем
 		$infa_[$iq]=$rez['name'];
 		
-		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['Service_Name'];
+		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['adapter'];
 		
 			switch ((string)$this->properties['img_resize_type'])
 				{

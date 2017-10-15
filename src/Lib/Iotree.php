@@ -114,7 +114,7 @@ $this->result_sql=[];
 	$this->connection=$container->get('ADO\Connection');
 	Simba::$connection=$this->connection;
 	$this->view=$view;
-	$this->cache=$container->get('FilesystemCache');
+	$this->cache=$container->get('DefaultSystemCache');
 	$this->config=$container->get('Config');
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
@@ -123,6 +123,7 @@ $this->result_sql=[];
 	$this->_form_item_=new form_item($view,$this->config);
 	$this->line_table_obj=new  tab_admin($view,$this->config);//экземпляр линейного интерфейса
 	simba::setConfig($this->config);
+	simba::setContainer($container);
 
 }//конец конструктора
 

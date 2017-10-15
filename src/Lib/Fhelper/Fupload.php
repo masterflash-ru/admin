@@ -38,7 +38,7 @@ real_name=> имена файлов которые были загружены (
 7 - неверное обращение к данной функции
 
 */
-
+$path=rtrim($path,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
 $max_file_size=(int)$max_file_size;
 if(is_array($name))

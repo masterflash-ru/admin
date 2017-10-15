@@ -25,6 +25,7 @@ abstract class Fhelperabstract
 	public $any_values;
 	public $zselect;
 	public $config;	//конфиг приложения
+
 	
 	//для записи
 	public $tab_name;
@@ -51,7 +52,6 @@ abstract class Fhelperabstract
 	
 public function __construct($item_id)
 {
-	//$layout = \Layout::getMvcInstance();
 
 	$this->item_id=$item_id;
 }
@@ -78,6 +78,8 @@ public function SetView($view)
 	$this->view=$view;
 }
 
+	
+	
 public function setConfig($config)
 {
 	$this->config=$config;

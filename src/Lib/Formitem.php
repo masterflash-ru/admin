@@ -39,6 +39,7 @@ public $errors=[];//хранит тексты ошибок обычно загр
 public $date_time_locale_format=[];//массив с форматом даты-времени данной локали
 public $view;
 public $config;		//конфиг приложения
+	public $container;	//контейнер приложения
 
 public function __construct ($view,$config)
 {//конструктор
@@ -94,6 +95,7 @@ public function get_items_name_id()
 			$f_id=(int)str_replace("F","",$item[0]);
 			$f=new $fn($f_id);
 			$f->SetView($this->view);
+			
 			$id[$f_id]=$f_id;
 			$name[$f_id]=$f_id."-".$f->Gethname();
 			$category[$f_id]=$f->Getcategory();
@@ -131,6 +133,7 @@ public function get_pole_consts_styles()
 			$f=new $fn($f_id);
 			$f->SetView($this->view);
 			$f->setConfig($this->config);
+			
 			$itemcount[$f_id]=$f->Getitemcount();
 			$constcount[$f_id]=$f->Getconstcount();
 			$const_count_msg[$f_id]=$f->Getconst_count_msg();
@@ -176,6 +179,7 @@ $row_item=$id;
 	$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 	$f=new $f($item_id);
 	$f->SetView($this->view);
+	
 	$f->setConfig($this->config);
 $item_count=$f->Getitemcount();
 
@@ -259,6 +263,7 @@ $id=$del_record;
 		$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 		$f=new $f($item_id);
 		$f->SetView($this->view);
+	
 		$f->setConfig($this->config);
 		$f->col_name=$col_name;
 		$f->tab_name=$tab_name;
@@ -297,6 +302,7 @@ $row_item=$id;
 		$f=new $f($item_id);
 		$f->SetView($this->view);
 		$f->setConfig($this->config);
+	
 		$f->col_name=$col_name;
 		$f->tab_name=$tab_name;
 		$f->const=$const;
