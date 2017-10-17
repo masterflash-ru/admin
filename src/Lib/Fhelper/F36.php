@@ -75,7 +75,7 @@ public function render()
 		$fck_connector_config->Enabled=true;//разрешить загрузку файлов
 		$fck_connector_config->FileTypesPath_File=$this->const[0];//путь к файлам и др. 
 		$fck_connector_config->FileTypesPath_Image=$this->const[0];//путь к файлам с картинками и др. 
-		
+
 		$js="";
 		if (!defined("_F36_")) 
 			{
