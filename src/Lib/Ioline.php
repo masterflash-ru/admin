@@ -707,7 +707,10 @@ if (isset($arr[$this->pole__id]) )
 			if ($nnn>'' && $nnn!='get_interface_input') 
 				{
 					preg_match('/pole_dop([0-9]?)/',$nnn,$c) ;
-					if ($c[1]=='') throw new Exception(__CLASS__,8,[]);
+					if ($c[1]=='') {
+                            //\Zend\Debug\Debug::dump($struct3); exit;
+                        throw new \Exception('Ошибка в строке '.__LINE__);
+                    }
 				}
 	for ($i=0;$i<$count;$i++)
 		{//все оставшиеся строки таблицы порядок такойже как и для первой строки!!!!!!!!!!
