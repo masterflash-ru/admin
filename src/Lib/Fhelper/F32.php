@@ -9,27 +9,20 @@ use Admin\Lib\Simba;
 use Zend\Form\Element;
 use Images\Service\ImagesLib;
 
-//use Images\Filter\ImgResize;
-//use Images\Filter\Watermark;
-//use Images\Filter\ImgOptimize;
-
 class F32 extends Fupload 
 {
 	protected $hname="закачка фото в хранилище + предосмотр уже существующего фото";
 	protected $category=3;
 	protected $properties_keys=["config_section",
 								"admin_img_name",
-								"img_array",
 								];
 	
 	protected $properties_text=["config_section"=>"Имя подсекции из конфига приложения из секции 'images_storage' (Функции интерфейса могут менять это значение):",
 								"admin_img_name"=>"Имя элемента выводимого из хранилища, если пусто, то 'admin_img'",
-								"img_array"=>"НЕ РАБОТАЕТ!!!!! Максимум фото в одном поле (массив), если 0 или пусто, тогда классически одно фото:",
 							   ];
 	
 	protected $properties_item_type=["config_section"=>1,
 									 "admin_img_name"=>1,
-								"img_array"=>0,
 								];
 
 	protected $itemcount=1;
@@ -37,25 +30,18 @@ class F32 extends Fupload
 
 	protected $properties_listid=[];
 
-protected $properties_listtext=[];
-
-	//protected $root_file_system;		//абсолютный путь к корню приложения
-	protected $data_folder;				//абсолютный путь к временной папке
-	protected $public_folder;			//абсолютный путь к папке публикации веб
+    protected $properties_listtext=[];
 
 						
 public function __construct($item_id)
 {
-		parent::__construct($item_id);
-		
+    parent::__construct($item_id);
 }
 	
 	
 	
 public function render()
 {
-	$this->init();
-
 	//извлечем из имени ID строки таблицы, КОСТЫЛИ
 	preg_match("/[0-9a-z]+\[([0-9]+)\][0-9-a-z\-_\[\]]?/ui",$this->name[0],$_id);
 	$id=(int)$_id[1];
@@ -65,8 +51,8 @@ public function render()
 		$this->properties['admin_img_name']="admin_img";
 	}
 	
-	
-	$img_array=($this->properties['img_array']) ? $this->properties['img_array']:1;
+	$img_array=1;
+    
 	$out='<table border="1" cellspacing="0" cellpadding="0">';
 	$vv=explode(',',$this->value);
 	$out1="";
@@ -76,23 +62,17 @@ public function render()
 			$out1.="<img src='".$this->view->imagestorage($this->properties["config_section"],$id,$this->properties['admin_img_name'],$this->default_value)."' />";
 
 			$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
-		//добавить крыжики удаления
+		  //добавить крыжики удаления
 		
-				$checkbox = new Element\Checkbox("delete_".$nnn);
-				$checkbox->setUseHiddenElement(true);
-				$checkbox->setCheckedValue(1);
-				$checkbox->setUncheckedValue(0);
-				$out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
+            $checkbox = new Element\Checkbox("delete_".$nnn);
+            $checkbox->setUseHiddenElement(true);
+            $checkbox->setCheckedValue(1);
+            $checkbox->setUncheckedValue(0);
+            $out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
 
-	
-	$out.="<tr>";
-	if ($img_array>1)  {$out.=" <th width=1>$i:</th>";}
-	
-	
-	//создаем элемент ФАЙЛ
-	$out.="	<td>".$this->view->FormElement(new Element\File($nnn))."</td>
-		<td>$out1</td>
-		  </tr>";
+
+            //создаем элемент ФАЙЛ
+            $out.="<tr><td>".$this->view->FormElement(new Element\File($nnn))."</td><td>$out1</td></tr>";
 		}
 
 	$h1 = new Element\Hidden("img_array_".$this->name[0]);
@@ -112,7 +92,18 @@ public function render()
 
 public function save()
 {
-	$this->init();
+	//настройки из конфига приложения
+	$image_storage=$this->config['images_storage'];
+	
+	$data_folder=getcwd().DIRECTORY_SEPARATOR.$image_storage["data_folder"].DIRECTORY_SEPARATOR;
+	
+	if (!is_readable($data_folder)) {
+        echo "<br>Папка <b>{$data_folder}</b> не существует! Создана!<br>";
+        if (!mkdir($data_folder,0777,true)) {
+            echo "Ошибка создания папки ".$data_folder;exit;
+        };
+    }
+
 
 	
 	$item_key_config_name=$this->properties["config_section"];
@@ -124,41 +115,34 @@ public function save()
 	
 	for($iq=0;$iq<$img_array;$iq++)
 	{
-	//проверим флажки удаления, если они установлены, тогда обнуляем элемент
-	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id])  )	
-		{
-			$this->del();
-		}
-		
-	
-	
-	$rez=$this->file_upload(
-						array($this->id=>$this->col_name.$iq),
-						$this->data_folder,
-						[],
-						0,//максимальный размер файла
-						0666,
-						"",
-						""//$this->properties['names']
-						);
+        //проверим флажки удаления, если они установлены, тогда обнуляем элемент
+        if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id])){
+                $this->del();
+        }
 
-	if ($rez['error']==0 && $rez['name']>'')
-		{
-			//проверим, изменилось ли имя файла, если да, тогда старый стереть!
-			 if ($this->public_folder) {@unlink ($this->public_folder.$infa_old[$iq]);}
-			//ошибки нет, записываем
-			$infa_[$iq]=$rez['name'];
+        $rez=$this->file_upload(
+                            array($this->id=>$this->col_name.$iq),
+                            $data_folder,
+                            [],
+                            0,//максимальный размер файла
+                            0666,
+                            "",
+                            ""
+                            );
 
-			$newfile=$infa_[$iq];
-			
-			$item_from_config=$this->config['images_storage']['items'][$item_key_config_name];
-			
-			$ImagesLib=Simba::$container->get(ImagesLib::class);
-			$ImagesLib->setMediaInfo($item_from_config);
-			$ImagesLib->saveImages($newfile,$item_key_config_name,$this->id);
-		}
-		else  $infa_[$iq]=$infa_old[$iq];
-	}
+        if ($rez['error']==0 && $rez['name']>''){
+                $ImagesLib=Simba::$container->get(ImagesLib::class);
+                $ImagesLib->deleteImage($item_key_config_name,$this->id);
+
+                //имя нового файла
+                $infa_[$iq]=$rez['name'];
+
+                $item_from_config=$this->config['images_storage']['items'][$item_key_config_name];
+
+                $ImagesLib->setMediaInfo($item_from_config);
+                $ImagesLib->saveImages($infa_[$iq],$item_key_config_name,$this->id);
+        } else {$infa_[$iq]=$infa_old[$iq];}
+        }
 	
 	$infa=implode(',',$infa_);//упаковать
 	$this->infa=$infa;
@@ -174,17 +158,4 @@ public function del()
 
 }
 
-/*
-инициализирует пути данного помощника
-*/
-public function init()
-{
-	//настройки из конфига приложения
-	$image_storage=$this->config['images_storage'];
-	
-	
-	$this->data_folder=getcwd().DIRECTORY_SEPARATOR.$image_storage["images_data_folder"].DIRECTORY_SEPARATOR;
-	
-	if (!is_readable($this->data_folder)) {echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);}
-}
 }
