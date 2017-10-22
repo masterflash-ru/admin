@@ -7,7 +7,7 @@ namespace Admin\Lib\Fhelper;
 
 use Admin\Lib\Simba;
 use Zend\Form\Element;
-use Images\Service\ImagesLib;
+use Storage\Service\ImagesLib;
 
 class F32 extends Fupload 
 {
@@ -17,8 +17,8 @@ class F32 extends Fupload
 								"admin_img_name",
 								];
 	
-	protected $properties_text=["config_section"=>"Имя подсекции из конфига приложения из секции 'images_storage' (Функции интерфейса могут менять это значение):",
-								"admin_img_name"=>"Имя элемента выводимого из хранилища, если пусто, то 'admin_img'",
+	protected $properties_text=["config_section"=>"Имя подсекции из конфига приложения из секции 'storage' (Функции интерфейса могут менять это значение): <br>",
+								"admin_img_name"=>"Имя элемента выводимого из хранилища в админке для предосмотра, если пусто, то 'admin_img'",
 							   ];
 	
 	protected $properties_item_type=["config_section"=>1,
@@ -27,10 +27,6 @@ class F32 extends Fupload
 
 	protected $itemcount=1;
 	protected $constcount=0;
-
-	protected $properties_listid=[];
-
-    protected $properties_listtext=[];
 
 						
 public function __construct($item_id)
@@ -93,8 +89,8 @@ public function render()
 public function save()
 {
 	//настройки из конфига приложения
-	$image_storage=$this->config['images_storage'];
-	
+	$image_storage=$this->config['storage'];
+
 	$data_folder=getcwd().DIRECTORY_SEPARATOR.$image_storage["data_folder"].DIRECTORY_SEPARATOR;
 	
 	if (!is_readable($data_folder)) {
@@ -104,7 +100,9 @@ public function save()
         };
     }
 
-
+	if (empty($this->properties['admin_img_name'])) {
+		$this->properties['admin_img_name']="admin_img";
+	}
 	
 	$item_key_config_name=$this->properties["config_section"];
 	
@@ -117,7 +115,8 @@ public function save()
 	{
         //проверим флажки удаления, если они установлены, тогда обнуляем элемент
         if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id])){
-                $this->del();
+            $this->del();
+            $infa_old[$iq]="";
         }
 
         $rez=$this->file_upload(
@@ -132,18 +131,18 @@ public function save()
 
         if ($rez['error']==0 && $rez['name']>''){
                 $ImagesLib=Simba::$container->get(ImagesLib::class);
-                $ImagesLib->deleteImage($item_key_config_name,$this->id);
+                $ImagesLib->deleteFile($item_key_config_name,$this->id);
 
                 //имя нового файла
                 $infa_[$iq]=$rez['name'];
 
-                $item_from_config=$this->config['images_storage']['items'][$item_key_config_name];
-
-                $ImagesLib->setMediaInfo($item_from_config);
-                $ImagesLib->saveImages($infa_[$iq],$item_key_config_name,$this->id);
+                $ImagesLib->selectStorageItem($item_key_config_name);
+                $infa_[$iq]=serialize($ImagesLib->saveImages($infa_[$iq],$item_key_config_name,$this->id));
+            
         } else {$infa_[$iq]=$infa_old[$iq];}
-        }
-	
+    }
+	/*пока только для одного элемента
+    нужно подумать как реализовать для массива*/
 	$infa=implode(',',$infa_);//упаковать
 	$this->infa=$infa;
 	return $this->infa;
@@ -154,8 +153,34 @@ public function del()
 {
 
 	$ImagesLib=Simba::$container->get(ImagesLib::class);
-	$ImagesLib->deleteImage($this->properties["config_section"],$this->id);
+	$ImagesLib->deleteFile($this->properties["config_section"],$this->id);
 
+}
+
+/*перегруженный метод
+*/
+public function Getproperties_listid()
+{
+    $config=$this->config;
+    if (isset($config["storage"]["items"])){
+        return ['config_section'=>array_merge([""],array_keys($config["storage"]["items"]))];
+    }
+	return [];
+}
+
+public function Getproperties_listtext()
+{
+    $config=$this->config;
+    $rez=[];
+    $rez[]="";
+    if (isset($config["storage"]["items"])){
+        foreach ($config["storage"]["items"] as $key=>$d){
+            if (!empty($d["description"])) {$rez[]=$d["description"];
+            } else {$rez[]=$key;}
+        }
+        return ['config_section'=>$rez];
+    }
+	return [];
 }
 
 }
