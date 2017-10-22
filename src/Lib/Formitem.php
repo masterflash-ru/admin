@@ -203,7 +203,7 @@ for ($i=0;$i<$item_count;$i++)
 							}
 					}
 			}
-		$zselect=[];
+		$zselect=[];$zselecti=[];
 		if (is_array($sp_id) && is_array($sp))
 			{
 				
