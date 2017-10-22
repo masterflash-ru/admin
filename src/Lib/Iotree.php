@@ -175,7 +175,7 @@ if ($this->struct0['validator'] && $this->struct0['sort_item_flag'])
 	{
 		$tags=explode(",",$this->struct0['validator']);
 		$this->cache->removeItems($tags);//ключи
-		$this->cache->clearByTags($tags);//теги
+		$this->cache->clearByTags($tags,true);//теги
 		
 	}
 
@@ -315,7 +315,7 @@ if ($this->struct0['validator'] && $this->struct0['sort_item_flag'])
 	{
 		$tags=explode(",",$this->struct0['validator']);
 		$this->cache->removeItems($tags);//ключи
-		$this->cache->clearByTags($tags);//теги
+		$this->cache->clearByTags($tags,true);//теги
 		
 	}
 
