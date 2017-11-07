@@ -1,7 +1,7 @@
 {
     "name": "masterflash-ru/admin",
     "description": "Админка со старым интерфейсом",
-    "type": "Project",
+    "type": "Service",
     "license": "BSD-3-Clause",
     "keywords": [
         "masterflash"
