@@ -38,6 +38,7 @@ function add_item($text,$url='',$level=0,$link_prop='',$title='',$id=0)
 {
 	$url=htmlspecialchars($url,ENT_NOQUOTES);
 	$url=preg_replace ("/\040/",'%20',$url);
+    $text=str_replace ("'","\'",$text);
 	$text=preg_replace("/\n|\r/",'',$text);	//в одну строку
 	$this->mnu['text'][$this->ss]=$text;
 	$this->mnu['url'][$this->ss]=$url;
