@@ -135,7 +135,19 @@ public function save()
 
                 //имя нового файла
                 $infa_[$iq]=$rez['name'];
-
+                //вариант, когда добавляе новую запись, смотрим следующий ID таблицы, если таблица указана
+                if ($this->tab_name && empty($this->id)) {
+                    $connection=Simba::$container->get('ADO\Connection');
+                    $rs=$connection->Execute("SELECT AUTO_INCREMENT
+                                                FROM information_schema.tables
+                                                WHERE
+                                                  table_name = '{$this->tab_name}'
+                                                  AND table_schema = DATABASE()");
+                    if (!$rs->EOF){
+                        $this->id=$rs->Fields->Item['AUTO_INCREMENT']->Value;
+                    }
+                }
+            
                 $ImagesLib->selectStorageItem($item_key_config_name);
                 $infa_[$iq]=serialize($ImagesLib->saveImages($infa_[$iq],$item_key_config_name,$this->id));
             
