@@ -68,7 +68,7 @@ public function render()
 
 
             //создаем элемент ФАЙЛ
-            $out.="<tr><td>".$this->view->FormElement(new Element\File($nnn))."</td><td>$out1</td></tr>";
+            $out.="<tr><td>".$this->view->FormElement(new Element\File($nnn))."</td></tr><tr><td>$out1</td></tr>";
 		}
 
 	$h1 = new Element\Hidden("img_array_".$this->name[0]);

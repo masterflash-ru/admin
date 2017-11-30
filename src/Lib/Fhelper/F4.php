@@ -36,8 +36,9 @@ public function render()
 	if ($this->properties['list_type']>0)
 		{
 			//$item_html=$this->view->formHidden($this->name[0],$this->value,$this->zatr);
-			$item_html= new Element\Hidden($this->name[0]);
-			$item_html->setValue($this->value);
+			$h= new Element\Hidden($this->name[0]);
+			$h->setValue($this->value);
+			$item_html=$this->view->FormElement($h);
 			for ($kk=0;$kk<count($this->sp_id);$kk++)
 				{
 					if ($this->sp_id[$kk]==$this->value)

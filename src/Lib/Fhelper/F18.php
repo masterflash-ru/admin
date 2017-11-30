@@ -6,6 +6,8 @@
 */
 namespace Admin\Lib\Fhelper;
 use Zend\Form\Element;
+use Admin\Lib\Simba;
+
 
 class F18 extends Fhelperabstract 
 {
@@ -36,6 +38,7 @@ public function __construct($item_id)
 	
 public function render()
 {
+
 	if ($this->properties['item_list'])
 		{
 			//в разрезе элемента, просто группа
@@ -51,8 +54,17 @@ public function render()
 		else
 			{//в разрезе колонки, одиночный
 				preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
-				return $this->view->formRadio($ar_name[1],($this->value)?$ar_name[2]:"",NULL,[$ar_name[2]=>""]).
-					$this->view->formHidden("flag_".$this->name[0],0);
+				$input = new Element\Radio($ar_name[1]);
+				$input->setValueOptions([1=>""]);
+				$input->setValue(($this->value) ? $ar_name[2]:"");
+			
+
+				$h= new Element\Hidden("flag_".$this->name[0]);
+				$h->setValue(0);
+
+			//return $this->view->formRadio($ar_name[1],($this->value) ? $ar_name[2]:"" ,NULL,[$ar_name[2]=>""]).
+			return $this->view->FormElement($input).
+					$this->view->FormElement($h);
 			}
 }
 
@@ -66,7 +78,8 @@ public function save()
 			if ($_POST[$this->col_name]==$this->id || $_POST[$this->col_name]=='')
 				 {
 					 if (!isset($this->properties['sql_delete'])) {$this->properties['sql_delete']='';}
-					\simba_kernel::$ado_connect->Execute("update ".$this->tab_name." set ".$this->col_name."=0 ".$this->properties['sql_delete'],$RecordsAffected,\ADO::adExecuteNoRecords);
+					$connection=Simba::$container->get('ADO\Connection');
+					$connection->Execute("update ".$this->tab_name." set ".$this->col_name."=0 ".$this->properties['sql_delete'],$RecordsAffected,adExecuteNoRecords);
 					//если выбранный флаг совпадает, тогда это 1 иначе нет, просто очистить
 					 $this->infa=1;
 				 }
