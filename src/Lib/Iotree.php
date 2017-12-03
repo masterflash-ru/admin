@@ -272,8 +272,10 @@ if (!$flag_error)
 			{
 				//обновление данных
 				$rs->Find($this->spec_poles[0]."=".(int)$id,0,adSearchForward);
-				foreach ($tab_rec as $field=>$value)
-					$rs->Fields->Item[$field]->Value=$value;
+					foreach ($tab_rec as $field=>$value){
+						if ($value=="null" || $value=="NULL") {$value=null;}
+						$rs->Fields->Item[$field]->Value=$value;
+					}
 				$rs->Update();
 			}
 		else
@@ -283,8 +285,10 @@ if (!$flag_error)
 				$rs->Fields->Item[$this->spec_poles[0]]->Value=$id;
 				$rs->Fields->Item[$this->spec_poles[2]]->Value=$level;
 				$rs->Fields->Item[$this->spec_poles[1]]->Value=$subid;//print_r($tab_rec );
-				foreach ($tab_rec as $field=>$value)
-					$rs->Fields->Item[$field]->Value=(string)$value;
+					foreach ($tab_rec as $field=>$value){
+						if ($value=="null" || $value=="NULL") {$value=null;}
+						$rs->Fields->Item[$field]->Value=$value;
+					}
 				$rs->Update();
 				
 			}

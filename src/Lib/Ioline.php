@@ -313,16 +313,22 @@ if (!$flag_error)
 				{
 					//обновление данных
 					$rs->Find($this->pole__id."='$id'",0,adSearchForward);
-					foreach ($tab_rec as $field=>$value)
+					foreach ($tab_rec as $field=>$value){
+						if ($value=="null" || $value=="NULL") {$value=null;}
 						$rs->Fields->Item[$field]->Value=$value;
+					}
+						
 					$rs->Update();
 				}
 			else
 				{
 					//добавление новой записи
 					$rs->AddNew();
-					foreach ($tab_rec as $field=>$value)
-						$rs->Fields->Item[$field]->Value=(string)$value;
+					foreach ($tab_rec as $field=>$value){
+						if ($value=="null" || $value=="NULL") {$value=null;}
+						$rs->Fields->Item[$field]->Value=$value;
+					}
+						
 					$rs->Update();
 					
 				}
