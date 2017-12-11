@@ -314,7 +314,7 @@ if (!$flag_error)
 					//обновление данных
 					$rs->Find($this->pole__id."='$id'",0,adSearchForward);
 					foreach ($tab_rec as $field=>$value){
-						if ($value=="null" || $value=="NULL") {$value=null;}
+						if ($value==="null" || $value==="NULL") {$value=null;}
 						$rs->Fields->Item[$field]->Value=$value;
 					}
 						
@@ -325,7 +325,7 @@ if (!$flag_error)
 					//добавление новой записи
 					$rs->AddNew();
 					foreach ($tab_rec as $field=>$value){
-						if ($value=="null" || $value=="NULL") {$value=null;}
+						if ($value==="null" || $value==="NULL") {$value=null;}
 						$rs->Fields->Item[$field]->Value=$value;
 					}
 						
