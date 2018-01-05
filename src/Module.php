@@ -27,7 +27,7 @@ public function onBootstrap(MvcEvent $event)
     $sharedEventManager = $eventManager->getSharedManager();
     // объявление слушателя для проверки авторизации админа 
     $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 100);
-	
+
 	//слушатель для получения списка описания контроллеров, методов для виуазльного создания меню
 	$sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
 

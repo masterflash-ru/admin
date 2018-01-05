@@ -12,7 +12,7 @@ use Zend\Form\Element;
 
 class F43 extends Fupload 
 {
-	protected $hname="НЕ РАБОТАЕТ! Закачка баннеров HTML5 и просмотр существующих";
+	protected $hname="Закачка баннеров HTML5 и просмотр существующих";
 	protected $category=100;
 
 	protected $itemcount=2;
@@ -28,14 +28,17 @@ public function __construct($item_id)
 	
 public function render()
 {
-	$v=unserialize($this->value);
+	$v=unserialize($this->value);//echo $_SERVER['DOCUMENT_ROOT']."/media/banner/".$v["folder"].'/'.$v["html"].'<br>';
 
-	$out="<label>ZIP файл с банером HTML5: ".$this->view->formFile("zip_".$this->name[0])."</label><br>\n";
-	$out.=$this->view->formHidden($this->name[0],htmlspecialchars($this->value,ENT_QUOTES));
+	$out="<label>ZIP файл с банером HTML5: ".$this->view->FormElement(new Element\File("zip_".$this->name[0]))."</label><br>\n";
+	$h1 = new Element\Hidden($this->name[0]);
+	$h1->setValue($this->value);
+	$out.= $this->view->FormElement($h1);
 
-	if (is_array($v) && count($v)>1)
+
+	if (is_array($v) && count($v)>1 && is_file($_SERVER['DOCUMENT_ROOT']."/media/banner/".$v["folder"].'/'.$v["html"]))
 		{//генерируем фрейм для вывода
-			$out.='<iframe frameborder="0" scrolling="no" width="'.$v["width"].'" height="'.$v["height"].'" src="/pic/banner/'.$v["folder"].'/'.$v["html"].'"></iframe>';
+			$out.='<iframe frameborder="0" scrolling="no" width="'.$v["width"].'" height="'.$v["height"].'" src="/media/banner/'.$v["folder"].'/'.$v["html"].'"></iframe>';
 		}
 		
 	return $out;
@@ -50,22 +53,22 @@ $v=unserialize($this->infa);
 
 if (!empty($_FILES["zip_".$this->col_name]["name"][$this->id]))
 {
-	if (is_array($v)  && isset($v['folder']) && $v['folder'] && is_dir(ROOT_FILE_SYSTEM."pic/banner/".$v['folder']))
+	if (is_array($v)  && isset($v['folder']) && $v['folder'] && is_dir($_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder']))
 		{
-			$path=ROOT_FILE_SYSTEM."pic/banner/".$v['folder'];
+			$path=$_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder'];
 			//удалим все в папке
 			$this->delFolder($path);
-			$path=ROOT_FILE_SYSTEM."pic/banner/".$v['folder'];
+			$path=$_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder'];
 			mkdir($path,0777);
 		}
 		else
 			{//создаем новую папку
 				$folder=md5(microtime());
-				$path=ROOT_FILE_SYSTEM."pic/banner/".$folder;
+				$path=$_SERVER['DOCUMENT_ROOT']."/media/banner/".$folder;
 				mkdir($path,0777);
 				$v["folder"]=$folder;
 			}
-	if (!is_dir(ROOT_FILE_SYSTEM."pic/banner/".$v['folder'])) {mkdir(ROOT_FILE_SYSTEM."pic/banner/".$v['folder'],0777);}
+	if (!is_dir($_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder'])) {mkdir($_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder'],0777);}
 	if ($_FILES["zip_".$this->col_name]["error"][$this->id] == UPLOAD_ERR_OK) 
 		   		{
 					$zip_file=md5(1000+microtime(true));
@@ -117,7 +120,7 @@ public function del()
 			$v=unserialize($n[$this->col_name]);
 			if (isset($v['folder']) && $v['folder'])
 				{
-					$path=ROOT_FILE_SYSTEM."pic/banner/".$v['folder'];
+					$path=$_SERVER['DOCUMENT_ROOT']."/media/banner/".$v['folder'];
 					$this->delFolder($path);
 				}
 		simba::queryOneRecord("update {$this->tab_name} set {$this->col_name}='".serialize([])."' where id={$this->id}");

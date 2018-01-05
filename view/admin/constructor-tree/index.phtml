@@ -404,7 +404,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
         </fieldset>     
         
         
-     <? if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==1)  
+     <?php if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==1)  
 		{
 		$pole_dop_numb=0;
 	if (isset($_POST['pole_dop_numb'])) $pole_dop_numb=(int)$_POST['pole_dop_numb'];//номер дополнительного поля (нумерация с 0)
@@ -439,8 +439,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                     
                     <legend  style="color:red; font-weight:bold"><strong>Заголовок дополнительного поля:</strong></legend>
                     Текст:
-                    <textarea id="caption1" name="caption1" cols="128" rows="1" wrap="VIRTUAL"   <?=$dis;?>><? 
-				echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb];?></textarea>
+                    <textarea id="caption1" name="caption1" cols="128" rows="1" wrap="VIRTUAL"   <?=$dis;?>><?php echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb];?></textarea>
                     
            <br>Порядок вывода
            <select name="col_por1" id="col_por1"   <?=$dis;?>>
@@ -518,14 +517,12 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 <!-- конец вызываемые функции -->
 
           <!--Конец дополнительного поля -->
-    <?
-	}
+    <?php }
 	?>
 
 
 <!--Начало элементы дерева -->
-<?
- if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==2)  
+<?php if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==2)  
 		{ ?>
       <fieldset ><legend style="color:red; font-weight:bold">Описание элемента дерева</legend>
 Элемент таблицы
@@ -538,8 +535,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                   <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),$struct2['col_por']);?>
                 </select>
                 Заголовок
-                <textarea name="caption2"  cols="60" rows="1" wrap="VIRTUAL"   id="caption2"><? 
-			if (isset($_POST['cols']) && isset($design_tables_text_interfase['caption_col_'.$_POST['cols']])) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']];?></textarea>
+                <textarea name="caption2"  cols="60" rows="1" wrap="VIRTUAL"   id="caption2"><?php if (isset($_POST['cols']) && isset($design_tables_text_interfase['caption_col_'.$_POST['cols']])) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']];?></textarea>
                 <br>
                 Стиль заголовка
                 <select id="caption_style2" name="caption_style2"  <?=$dis1;?>>
@@ -565,8 +561,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                 <td><input id="pole_name2" name="pole_name2" type="text"  value="<?=$struct2['pole_name']?>" <?=$dis1;?>>
                   <font color="red">&lt;-
                   <select name="pole_name_2" id="pole_name_2"  onChange="document.getElementById('pole_name2').value=this.value" <?=$dis1;?>>
-                    <?
-$cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
+                    <?php $cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
 $cols_['Field']=$cols['Field'];
 
 //добавить в массив столбцов дополнительные поля, не принадлежащие самой таблице
@@ -630,11 +625,10 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
 			background-color: red;width: 118px;" value="Уничтожить интерфейс"></div>
 
       </fieldset>
-<?
-}
+<?php }
 ?>
       <!--Общие параметры инетрфейса -->
- <?  if (!isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
+ <?php if (!isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
 		{ ?>
       <fieldset >
         <legend style="font-size:12px; color:red; font-weight:bold">Общие настройки</legend>
@@ -669,12 +663,11 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
           </tr>
           <tr>
             <td width="100">SQL создания табл.</td>
-            <td width="99%"><pre><? if (isset($tab['Create Table'])) echo $tab['Create Table'];?>&nbsp;</pre></td>
+            <td width="99%"><pre><?php if (isset($tab['Create Table'])) echo $tab['Create Table'];?>&nbsp;</pre></td>
           </tr>
           <tr>
             <td>Краткий HELP</td>
-            <td><textarea name="coment0" cols="137" rows="3" wrap="VIRTUAL"  id="coment0" <?=$dis;?>><? 
-			if (isset($design_tables_text_interfase['coment0'])) echo $design_tables_text_interfase['coment0'];?></textarea></td>
+            <td><textarea name="coment0" cols="137" rows="3" wrap="VIRTUAL"  id="coment0" <?=$dis;?>><?php if (isset($design_tables_text_interfase['coment0'])) echo $design_tables_text_interfase['coment0'];?></textarea></td>
           </tr>
           <tr>
             <td>Условие выборки для вывода содержимого (то, что после слова <strong>WHERE,</strong> запроса)</td>
@@ -694,23 +687,22 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
                 <input name="but[5]2" type="hidden" id="but[5]2" value="0">
                 
                             </td>
-            <td><label><input name="but[0]2" type="checkbox" id="but[0]2" value="1" <? if (isset($but[0]) && $but[0]) echo"checked"?>>
+            <td><label><input name="but[0]2" type="checkbox" id="but[0]2" value="1" <?php if (isset($but[0]) && $but[0]) echo"checked"?>>
                 &quot;Записать&quot;;</label>
-                <label><input name="but[1]2" type="checkbox" id="but[1]2" value="1" <? if (isset($but[1]) && $but[1]) echo"checked"?>>
+                <label><input name="but[1]2" type="checkbox" id="but[1]2" value="1" <?php if (isset($but[1]) && $but[1]) echo"checked"?>>
                 &quot;Новый подуровень&quot;;</label>
-                <label><input name="but[2]2" type="checkbox" id="but[2]2" value="1" <? if (isset($but[2]) && $but[2]) echo"checked"?>>
+                <label><input name="but[2]2" type="checkbox" id="but[2]2" value="1" <?php if (isset($but[2]) && $but[2]) echo"checked"?>>
                 &quot;Удалить&quot;;</label>
-                <label><input name="but[3]2" type="checkbox" id="but[3]2" value="1" <? if (isset($but[3]) && $but[3]) echo"checked"?>>
+                <label><input name="but[3]2" type="checkbox" id="but[3]2" value="1" <?php if (isset($but[3]) && $but[3]) echo"checked"?>>
                 &quot;Создать корневой элемент&quot;</label><br>
-                <label><input name="but[4]2" type="checkbox" id="but[4]2" value="1" <? if (isset($but[4]) && $but[4]) echo"checked"?>>
+                <label><input name="but[4]2" type="checkbox" id="but[4]2" value="1" <?php if (isset($but[4]) && $but[4]) echo"checked"?>>
                 &quot;Сохранить все&quot;;</label>
-                <label><input name="but[5]2" type="checkbox" id="but[5]2" value="1" <? if (isset($but[5]) && $but[5]) echo"checked"?>>
+                <label><input name="but[5]2" type="checkbox" id="but[5]2" value="1" <?php if (isset($but[5]) && $but[5]) echo"checked"?>>
             &quot;Оптимизировать таблицу&quot;</label></td>
           </tr>
           <tr>
             <td>общий заголовок:</td>
-            <td><textarea name="caption0" cols="137" rows="2" wrap="VIRTUAL"  id="caption0" <?=$dis;?>><? 
-			if (isset($design_tables_text_interfase['caption0'])) echo $design_tables_text_interfase['caption0'];?></textarea></td>
+            <td><textarea name="caption0" cols="137" rows="2" wrap="VIRTUAL"  id="caption0" <?=$dis;?>><?php if (isset($design_tables_text_interfase['caption0'])) echo $design_tables_text_interfase['caption0'];?></textarea></td>
           </tr>
           <tr>
             <td>стиль заголовка</td>
@@ -723,7 +715,7 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
       <tr>
         <td>Очищать кеш:</td>
         <td colspan="2"><input name="cache_clear" type="hidden" value="0" />
-        <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <? if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
+        <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <?php if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
       </tr>
       <tr>
         <td>Теги кеша для поиска</td>
@@ -738,8 +730,7 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
         
         </table>
         </fieldset>
-  <? 
-		}
+  <?php }
 		?>
          
  <input name="save_all" style="background-color:#00CC66; color:#000000; font-weight:bold" type="submit"  id="save_all" <?=$dis;?> value="Сохранить">
@@ -751,9 +742,7 @@ var style_sp="<?=get_style_list(0); ?>";
 var struct2=new Array();//текущие описания поля (все)
 var validator=Array();//касааемо валидатора
 var selected_validator=Array();
-<? 
-
-//массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
+<?php //массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
 echo "pole_consts_styles=unserialize('".str_replace("'","\'",serialize($pole_consts_styles))."');\n";
 echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'validator_parametrs'=>[]]  ))."');";//получить все что есть валидатору
 //все по структуре поля (того, что выбранор в данный момент)

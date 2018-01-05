@@ -381,11 +381,10 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 
 
 <!--Общие параметры инетрфейса -->
-<?  if ( !isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
+<?php if ( !isset($_POST['interface_razdel']) || $_POST['interface_razdel']==0)  
 		{ ?>
 <fieldset  style="background-color:#e2e2e2"><legend style="font-weight:bold; color:red">Множественные операции</legend>
-            <?
-			if ($struct0['table_name']>'') $save_enable='';
+            <?php if ($struct0['table_name']>'') $save_enable='';
 			  $q=explode(',',$struct0['pole_prop']);
 			  $global_action_name_=["Удалить выбранное","Сохранить все","Оптимизировать таблицу","Очистить кэш"];
 			  for ($i=0;$i<count($global_action_name_);$i++)
@@ -400,7 +399,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 <input name="id" type="hidden" value="<?=$struct0['id'];?>">
 
 <input name="imp_exp" type="hidden" id="imp_exp" value="0">
-            <input name="imp_exp" type="checkbox" id="imp_exp" value="1" <? if ($struct0['pole_style']>0) echo 'checked ';?>>
+            <input name="imp_exp" type="checkbox" id="imp_exp" value="1" <?php if ($struct0['pole_style']>0) echo 'checked ';?>>
             Импорт/Экспорт
   </fieldset> 
   <fieldset   style="background-color:#e2e2e2"><legend  style="font-weight:bold; color:red">Внешний вид:</legend>
@@ -410,11 +409,11 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
             </select>
             &nbsp;&nbsp;Для формы выводить элементы:<?php $form_elements_=unserialize($struct0['value'])?> 
             <input name="form_elements_new_record" type="hidden" id="form_elements_new_record" value="0">
-            <input name="form_elements_new_record" type="checkbox" id="form_elements_new_record" value="1" <? if ($form_elements_['form_elements_new_record']>0) echo 'checked ';?>>
+            <input name="form_elements_new_record" type="checkbox" id="form_elements_new_record" value="1" <?php if ($form_elements_['form_elements_new_record']>0) echo 'checked ';?>>
             Создать запись
 
             <input name="form_elements_jmp_record" type="hidden" id="form_elements_jmp_record" value="0">
-            <input name="form_elements_jmp_record" type="checkbox" id="form_elements_jmp_record" value="1" <? if ($form_elements_['form_elements_jmp_record']>0) echo 'checked ';?>>
+            <input name="form_elements_jmp_record" type="checkbox" id="form_elements_jmp_record" value="1" <?php if ($form_elements_['form_elements_jmp_record']>0) echo 'checked ';?>>
             Переходы по записям
             
             
@@ -456,8 +455,7 @@ if (value==2)
       </tr>
       <tr>
         <td>Краткий HELP</td>
-        <td colspan="2"><textarea name="coment0" id="coment0" cols="135" rows="3" wrap="VIRTUAL" ><?
-			if (isset($design_tables_text_interfase['coment0'])) echo $design_tables_text_interfase['coment0']; 
+        <td colspan="2"><textarea name="coment0" id="coment0" cols="135" rows="3" wrap="VIRTUAL" ><?php if (isset($design_tables_text_interfase['coment0'])) echo $design_tables_text_interfase['coment0']; 
 			 ?></textarea></td>
       </tr>
       <tr>
@@ -467,16 +465,15 @@ if (value==2)
       </tr>
       <tr>
         <td>общий заголовок таблицы:</td>
-        <td colspan="2"><textarea name="caption0" id="caption0" cols="135" rows="4" wrap="VIRTUAL" ><? 
-			if (isset($design_tables_text_interfase['caption0']) ) echo $design_tables_text_interfase['caption0']; 
+        <td colspan="2"><textarea name="caption0" id="caption0" cols="135" rows="4" wrap="VIRTUAL" ><?php if (isset($design_tables_text_interfase['caption0']) ) echo $design_tables_text_interfase['caption0']; 
 			?></textarea></td>
       </tr>
       <tr>
         <td>SQL создания табл.</td>
-        <td colspan="2"><pre><? if ($struct0['table_name']>'') {$tab=simba::queryOneRecord('show create table '.$struct0['table_name']); echo $tab['Create Table'];} ?></pre></td>
+        <td colspan="2"><pre><?php if ($struct0['table_name']>'') {$tab=simba::queryOneRecord('show create table '.$struct0['table_name']); echo $tab['Create Table'];} ?></pre></td>
       </tr>
       <tr>
-        <td><? if(!isset($_POST['col___id'])) $_POST['col___id']=NULL ;?>SQL удаления,<strong style="color='red'">$id</strong>уникальный идентификатор <?php echo ' <b>$'.$_POST['col___id'].'</b>';?></td>
+        <td><?php if(!isset($_POST['col___id'])) $_POST['col___id']=NULL ;?>SQL удаления,<strong style="color='red'">$id</strong>уникальный идентификатор <?php echo ' <b>$'.$_POST['col___id'].'</b>';?></td>
         <td colspan="2"><textarea name="del_record" cols="135" rows="3" wrap="VIRTUAL"  id="del_record" ><?=stripslashes ($struct0['default_sql'])?></textarea></td>
       </tr>
       <tr>
@@ -490,7 +487,7 @@ if (value==2)
       <tr>
         <td>При изменении данных очистить кеш</td>
         <td colspan="2"><input name="cache_clear" type="hidden" value="0" />
-        <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <? if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
+        <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <?php if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
       </tr>
       <tr>
         <td>Теги для поиска в кеше</td>
@@ -509,7 +506,7 @@ if (value==2)
                 <tr>
                   <td>Обработчик удаления записей</td>
                   <td><input type="text" value="<?=$struct0['functions_befo_del'];?>" name="functions_del_interface" /></td>
-                  <td ><? /*echo $interface['msg']['-----'];*/ ?>  </td>
+                  <td ><?php /*echo $interface['msg']['-----'];*/ ?>  </td>
                   <td >-</td>
                 </tr>
               </table>
@@ -519,15 +516,13 @@ if (value==2)
     </table>
 </fieldset>
 <!--Общие параметры инетрфейса КОНЕЦ -->
-  <? 
-  }
+  <?php }
   ?>
 
 
 
    <!--описатель колонок -->
-<? 
-//-------------------------------------------------------------------------------------------------------------------------------------------------
+<?php //-------------------------------------------------------------------------------------------------------------------------------------------------
  if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==2)  
 		{ 
 //===============настройки для 1-я строка до вывода всей таблицы row_type==2
@@ -542,7 +537,7 @@ if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="
               <?=$cols_sp?>
         </select>
 &nbsp;&nbsp;&nbsp;&nbsp;	         
-<input type="checkbox" name="sort_item_flag" value="1" <? if ($struct2['sort_item_flag']>0) echo 'checked ';?> >Разрешить сортировку колонки<br>
+<input type="checkbox" name="sort_item_flag" value="1" <?php if ($struct2['sort_item_flag']>0) echo 'checked ';?> >Разрешить сортировку колонки<br>
 	        Настройка для:
 	        <select name="row_type" id="row_type"  onChange="this.form.submit()" <?=$save_enable_cols;?> >
 	          <?=simba::getSpValue1 (["первой строки таблицы","Середина таблицы","Последняя строка таблицы"],array(2,3,4),$_POST['row_type']);?>
@@ -555,22 +550,19 @@ if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="
             </select>
             Порядок вывода<br>
 	        Заголовок:
-            <textarea name="caption"  cols="60" rows="1" wrap="VIRTUAL"  id="caption" <?=$save_enable_cols;?>><?
-			if (isset($design_tables_text_interfase['caption_col_'.$_POST['cols']]) ) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']]; 
+            <textarea name="caption"  cols="60" rows="1" wrap="VIRTUAL"  id="caption" <?=$save_enable_cols;?>><?php if (isset($design_tables_text_interfase['caption_col_'.$_POST['cols']]) ) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']]; 
 			   ?></textarea>
 	        <br />
           Тип ввода:
 	        <select name="pole_type" id="pole_type"  onChange="ch_item(this.value,2);" <?=$save_enable_cols;?>>
-              <?
-					echo create_pole_item_list($struct2['pole_type']); 
+              <?php echo create_pole_item_list($struct2['pole_type']); 
 					?>
 </select>
             <br>
           Значение (умолчание)
 	        <textarea name="value" cols="135" rows="1"  id="value" <?=$save_enable_cols;?> ><?=$struct2['value'];?></textarea><br />
           Текст (умолчание)
-	        <textarea name="values_message" cols="135" rows="1"  id="values_message" <?=$save_enable_cols;?> ><? 
-			if (isset($design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']])) echo $design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']];
+	        <textarea name="values_message" cols="135" rows="1"  id="values_message" <?=$save_enable_cols;?> ><?php if (isset($design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']])) echo $design_tables_text_interfase['values_message_'.$_POST['cols'].$_POST['row_type']];
 			?></textarea><br />
 
 <br />
@@ -578,8 +570,7 @@ if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="
 	        <input name="pole_name" id="pole_name" type="text" <?=$save_enable_cols;?>  value="<?=$struct2['pole_name'];?>">
 &lt;-
 <select name="pole_name_" id="pole_name_"  onChange="document.getElementById('pole_name').value=this.value">
-  <?
-$cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
+  <?php $cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
 if ($struct0['col_name']) 
 			{//проверим псевдонимы, если они есть, тогда их добавить к основному списку
 			$alias=explode(',',$struct0['col_name']);
@@ -644,13 +635,12 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
                       </tr>
                     </table>
                   </fieldset>
-<? if ($_POST['row_type']==3)
+<?php if ($_POST['row_type']==3)
 {//внутренние функции применяемые для всей колонке
 	?>
 <fieldset >
                     <legend style="color:red; font-weight:bold">Внутренние функции применяемые для всей колонки</legend>
-        <?
-		$f_array=unserialize($struct2['col_function_array']);
+        <?php $f_array=unserialize($struct2['col_function_array']);
 		$checked='';
 		foreach (["sum"=>"Сумма (sum)","count"=>"Кол-во строк (count)","min"=>"Минимум (min)","max"=>"Максимум (max)"] as $k=>$v) 
 			{if (is_array($f_array)) if (in_array($k,$f_array)) $checked='checked'; else $checked='';
@@ -662,20 +652,18 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
 		
 		?>
   </fieldset>
-<? } ?>
+<?php } ?>
 
 <div align="right"><input name="del_struct" type="submit" id="del_struct" <?=$save_enable_cols;?> style="font-size: xx-small;color: #FFFFFF;	background-color: red;" value="Удалить выбранную структуру">
                                   </div>
 </fieldset>
 
 <!--конец описателя колонок -->
-<?  
-}
+<?php }
 ?>
 
 
-<?  
-//--------------------------------------------------------------------------------------------------------------------------------------
+<?php //--------------------------------------------------------------------------------------------------------------------------------------
 if (isset($_POST['interface_razdel']) && $_POST['interface_razdel']==1)  
 		
 		{
@@ -713,8 +701,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                       <legend style="color:red; font-weight:bold">Заголовок доп. поля</legend>
                     
 				Текст:
-                    <textarea name="caption" id="caption" cols="115" rows="1"   ><?
-			if (isset($design_tables_text_interfase['caption_dop_'.$pole_dop_numb])) echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb]; 
+                    <textarea name="caption" id="caption" cols="115" rows="1"   ><?php if (isset($design_tables_text_interfase['caption_dop_'.$pole_dop_numb])) echo $design_tables_text_interfase['caption_dop_'.$pole_dop_numb]; 
 			 ?></textarea>
                     <br />
                     Порядок вывода
@@ -729,7 +716,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
   
 <br>
 Значение (умолчание)
-	<textarea name="value" cols="135" rows="1"  id="value" ><? if (isset($struct2['value'])) echo $struct2['value'];?></textarea>
+	<textarea name="value" cols="135" rows="1"  id="value" ><?php if (isset($struct2['value'])) echo $struct2['value'];?></textarea>
 	</fieldset>
 
 <fieldset >
@@ -743,7 +730,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                             <span id=list_out><table width="100%" border="0" cellpadding="0" cellspacing="0" >
                               <tr>
                                 <td>Умолчание:<br>SQL</td>
-                              <td><textarea name="default_sql" id="default_sql" cols="137" rows="2" wrap="VIRTUAL"  ><? if (isset($struct2['default_sql'])) echo stripslashes ($struct2['default_sql'])?></textarea></td>
+                              <td><textarea name="default_sql" id="default_sql" cols="137" rows="2" wrap="VIRTUAL"  ><?php if (isset($struct2['default_sql'])) echo stripslashes ($struct2['default_sql'])?></textarea></td>
                             </tr>
                               <tr>
                                 <td>Таблицы:</td>
@@ -753,7 +740,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                             </tr>
                               <tr>
                                 <td>или SQL:</td>
-                              <td><textarea name="pole_spisok_sql" id="pole_spisok_sql" cols="138" rows="2"  wrap="VIRTUAL" ><? if(isset($struct2['pole_spisok_sql'])) echo stripslashes ($struct2['pole_spisok_sql'])?></textarea></td>
+                              <td><textarea name="pole_spisok_sql" id="pole_spisok_sql" cols="138" rows="2"  wrap="VIRTUAL" ><?php if(isset($struct2['pole_spisok_sql'])) echo stripslashes ($struct2['pole_spisok_sql'])?></textarea></td>
                             </tr>
                           </table></span>
   </fieldset>
@@ -788,8 +775,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                     </table>
   </fieldset>
 <!-- конец вызываемые функции -->
-<?
-}
+<?php }
 
 ?><!-- конец Дополнительного поля -->
 <input name="save_all" type="submit"  id="save_all" <?=$save_enable;  ?> style="background-color:#00CC66; color:#000000; font-weight:bold" value="Записать все">	  </td>
@@ -800,9 +786,7 @@ var style_sp="<?=get_style_list(0); ?>";
 var struct2=new Array();//текущие описания поля (все)
 var validator=Array();//касааемо валидатора
 var selected_validator=null;
-<? 
-
-//массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
+<?php //массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
 echo "pole_consts_styles=unserialize('".str_replace("'","\'",serialize($pole_consts_styles))."');\n";
 echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'validator_parametrs'=>[]]  ))."');";//получить все что есть валидатору
 

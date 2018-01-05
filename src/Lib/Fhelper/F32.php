@@ -52,10 +52,14 @@ public function render()
 	$out='<table border="1" cellspacing="0" cellpadding="0">';
 	$vv=explode(',',$this->value);
 	$out1="";
+	$atr="";
+	foreach ($this->zatr as $k=>$a){
+		$atr=$k."='".$a."'";
+	}
 	for ($i=0;$i<$img_array;$i++)
 		{
 		
-			$out1.="<img src='".$this->view->imagestorage($this->properties["config_section"],$id,$this->properties['admin_img_name'],$this->default_value)."' />";
+			$out1.="<img {$atr} src='".$this->view->imagestorage($this->properties["config_section"],$id,$this->properties['admin_img_name'],$this->default_value)."' />";
 
 			$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
 		  //добавить крыжики удаления
