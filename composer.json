@@ -11,7 +11,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.0",
-"zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
+        "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
         "zendframework/zend-mvc": "^3.0.1",
         "zfcampus/zf-development-mode": "^3.0",
         "zendframework/zend-debug": "^2.5",
@@ -31,7 +31,8 @@
         "zendframework/zend-captcha": "^2.7",
         "zendframework/zend-code": "^3.2",
         "masterflash-ru/ado": "*",
-        "masterflash-ru/ckfinder": "*"
+        "masterflash-ru/ckfinder": "*",
+        "masterflash-ru/permissions": "*"
     },
     "autoload": {
         "psr-4": {
