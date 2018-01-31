@@ -31,6 +31,7 @@
         "zendframework/zend-captcha": "^2.7",
         "zendframework/zend-code": "^3.2",
         "masterflash-ru/ado": "*",
+        "masterflash-ru/permissions": "*",
         "masterflash-ru/ckfinder": "*"
     },
     "autoload": {
