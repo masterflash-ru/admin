@@ -3,12 +3,11 @@
  */
 
 namespace Admin;
+
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
-use Zend\Session\SessionManager;	
-use Admin\Service\AuthManager;
 use Zend\EventManager\Event;
-
+use Mf\Permissions\Service\AuthManager;
 use Admin\Service\GetControllersInfo;
 
 class Module
@@ -25,37 +24,32 @@ public function onBootstrap(MvcEvent $event)
     
 	$eventManager = $event->getApplication()->getEventManager();
     $sharedEventManager = $eventManager->getSharedManager();
-    // объявление слушателя для проверки авторизации админа 
-    $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 100);
+    // объявление слушателя для изменения макета на админский
+    $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 1);
 
 	//слушатель для получения списка описания контроллеров, методов для виуазльного создания меню
 	$sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
-
+	
 }
 
 /*слушатель для проверки авторизован ли админ*/
 public function onDispatch(MvcEvent $event)
  {
-        $controller = $event->getTarget();
-        $controllerName = $event->getRouteMatch()->getParam('controller', null);
-        $actionName = $event->getRouteMatch()->getParam('action', null);
+    $controller = $event->getTarget();
+    $controllerName = $event->getRouteMatch()->getParam('controller', null);
+    $actionName = $event->getRouteMatch()->getParam('action', null);
 
-	//  \Zend\Debug\Debug::dump(get_class_methods ($event->getApplication()->getMvcEvent()->getController() ));
-
-	    if ($controllerName!="Admin\Controller\LoginController")
-        {
-       		$authManager = $event->getApplication()->getServiceManager()->get(AuthManager::class);
-
-            $result = $authManager->filterAccess($controllerName, $actionName);
-           
-           if ($result==AuthManager::AUTH_REQUIRED) {return $controller->redirect()->toRoute('admin');}
+	if ($controllerName!="Admin\Controller\LoginController") {
+       	$authManager = $event->getApplication()->getServiceManager()->get(AuthManager::class);
+        $result = $authManager->filterAccess($controllerName, $actionName);
+        if ($result==AuthManager::AUTH_REQUIRED) {return $controller->redirect()->toRoute('admin');}
             	else if ($result==AuthManager::ACCESS_DENIED) {return $controller->redirect()->toRoute('admin403');}
-	
-			 //для данного модуля изменить макет
-			if (false === strpos($controllerName, __NAMESPACE__)) { return; }
-			$viewModel = $event->getViewModel();
-			$viewModel->setTemplate('layout/admin_layout');		
-		}   
+		
+		//для данного модуля изменить макет
+		if (false === strpos($controllerName, __NAMESPACE__)) { return; }
+		$viewModel = $event->getViewModel();
+		$viewModel->setTemplate('layout/admin_layout');		
+	}   
 }
 
 /*

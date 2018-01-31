@@ -5,7 +5,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Admin\View\Helper\Menu;
 use Zend\Session\SessionManager;
-use Admin\Service\RbacManager;
+use Mf\Permissions\Service\RbacManager;
 
 /**
  * This is the factory for Menu view helper. Its purpose is to instantiate the

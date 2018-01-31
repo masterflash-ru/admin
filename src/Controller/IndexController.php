@@ -1,12 +1,5 @@
 <?php
 /**
-
-
-для получения главного сервис-менеджера
-$this->getEvent()->getApplication()->getServiceManager()
-
-//получить конфиг приложения
-$this->getEvent()->getApplication()->GetConfig()
  */
 
 namespace Admin\Controller;
@@ -36,7 +29,8 @@ public function __construct ($authManager, $authService,$sessionManager)
 */
 public function indexAction()
 {
-  return new ViewModel();
+	$viewModel=new ViewModel();
+  return $viewModel;
 }
 
 

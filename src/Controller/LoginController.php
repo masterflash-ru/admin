@@ -1,12 +1,6 @@
 <?php
 /**
-
-
-для получения главного сервис-менеджера
-$this->getEvent()->getApplication()->getServiceManager()
-
-//получить конфиг приложения
-$this->getEvent()->getApplication()->GetConfig()
+вход в админку, вывод формы авторизации 
  */
 
 namespace Admin\Controller;
@@ -40,12 +34,14 @@ public function __construct ($authManager, $authService,$sessionManager)
 
 
 /*
-просто форма авторизации вывод
+*просто форма авторизации вывод
+*точка входа авторизации и входа в админку
 */
 public function loginAction()
 {
 	$form = new LoginForm();
-  return new ViewModel(["form"=>$form]);
+	$viewModel=new ViewModel(["form"=>$form]);
+  return $viewModel;
 }
 
 /*
@@ -54,6 +50,7 @@ public function loginAction()
 */
 public function dologinAction()
 {
+	/*резаультат формы авторизации в объект*/
 	$form = new LoginForm();
 	$form->setHydrator(new ReflectionHydrator);
 	$admins=new Login_Admin;
@@ -61,21 +58,23 @@ public function dologinAction()
 	
 	$form->setData($this->params()->fromPost());
 	
-	if (!$form->isValid()) {return $this->redirect()->toRoute('admin');}
+	if (!$form->isValid()) {/*ошибка*/
+		return $this->redirect()->toRoute('admin');
+	}
 
-	$result = $this->authManager->login($admins->getLogin(), $admins->getPassword());  
-
-  if ($result->getCode()!=Result::SUCCESS)  {return $this->redirect()->toRoute('admin');}
-  //\Zend\Debug\Debug::dump($this->params()->fromPost());
-  return $this->redirect()->toRoute('adm');
-  
+	$result = $this->authManager->login($admins->getLogin(), $admins->getPassword());
+	/*получим результат авторизации в виде и смотрим результат*/
+	if ($result->getCode()!=Result::SUCCESS) {
+		return $this->redirect()->toRoute('admin');//ошибка
+	}
+	/*доступ разрешен, редирект*/
+	return $this->redirect()->toRoute('adm');
 }
 
 public function e403Action()
 {
 	$this->getResponse()->setStatusCode(403);
-
-  return new ViewModel();
+	return new ViewModel();
 }
 
 
@@ -88,10 +87,8 @@ public function e403Action()
     {
         // Вызываем метод базового класса onDispatch() и получаем ответ
         $response = parent::onDispatch($e);        
-	
         // Устанавливаем admin лэйаут
         $this->layout()->setTemplate('layout/login_layout');                
-	
         // Возвращаем ответ
         return $response;
     }
