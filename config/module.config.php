@@ -8,8 +8,6 @@ namespace Admin;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-use Zend\Authentication\AuthenticationService;
-
 
 return [
 	//маршруты
@@ -187,19 +185,6 @@ return [
 			
         ],
 	],
-	//плагины контроллеров, грубоговоря это дополнительные перегруженные методы внутри контроллера
-    'controller_plugins' => [
-		//фабрики плагинов
-        'factories' => [
-           Controller\Plugin\AccessPlugin::class => Controller\Plugin\Factory\AccessPluginFactory::class,
-           //Controller\Plugin\CkeditorPlugin::class => Controller\Plugin\Factory\CkeditorFactory::class,
-        ],
-		//краткое обращение внутри конроллера, например $this->access
-        'aliases' => [
-            'access' => Controller\Plugin\AccessPlugin::class,
-            //'currentUser' => Controller\Plugin\CurrentUserPlugin::class,
-        ],
-    ],
 	//помощник вывода меню админки
     'view_helpers' => [
         'factories' => [
@@ -212,17 +197,20 @@ return [
 	
     'service_manager' => [
         'factories' => [//сервисы-фабрики
-            AuthenticationService::class => Service\Factory\AuthenticationServiceFactory::class,
-            Service\AuthAdapter::class => Service\Factory\AuthAdapterFactory::class,
-            Service\AuthManager::class => Service\Factory\AuthManagerFactory::class,
-			Service\RbacManager::class => Service\Factory\RbacManagerFactory::class,
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
 			
         ],
     ],
 
    
-   
+    'view_manager' => [
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+    ],
+	
+	//конфигурация хранения дампов
+	'backup_folder'=>"data/backup",
         /* Determine mode - 'restrictive' (default) or 'permissive'. 
 		всем, если мы поставим звездочку (*);
 		любому аутентифицированному пользователю, если мы поставим коммерческое at (@);
@@ -278,14 +266,4 @@ return [
         ]
     ],
 
-
-    'view_manager' => [
-        'template_path_stack' => [
-            __DIR__ . '/../view',
-        ],
-    ],
-	
-	//конфигурация хранения дампов
-	'backup_folder'=>"data/backup",
-	
 ];
