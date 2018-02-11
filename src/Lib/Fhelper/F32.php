@@ -7,7 +7,7 @@ namespace Admin\Lib\Fhelper;
 
 use Admin\Lib\Simba;
 use Zend\Form\Element;
-use Storage\Service\ImagesLib;
+use Mf\Storage\Service\ImagesLib;
 
 class F32 extends Fupload 
 {
