@@ -860,7 +860,7 @@ for ($i=0;$i<$count;$i++)
 
 	if ($this->struct2['functions_befo_out'][$i]>'') 
 			{//получить имя функции из таблицы
-			$fn=$this->struct2['functions_befo_out'][$i];//echo $f_[1];
+			$fn=$this->struct2['functions_befo_out'][$i];
 			$fn=new $fn;
 
 			$fn($this,
