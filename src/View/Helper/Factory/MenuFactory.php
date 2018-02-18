@@ -5,11 +5,12 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Admin\View\Helper\Menu;
 use Zend\Session\SessionManager;
-use Mf\Permissions\Service\RbacManager;
+
+use Zend\Authentication\AuthenticationService;
 
 /**
- * This is the factory for Menu view helper. Its purpose is to instantiate the
- * helper and init menu items.
+ * Фабрика помощника меню администратора
+ * 
  */
 class MenuFactory implements FactoryInterface
 {
@@ -17,9 +18,9 @@ class MenuFactory implements FactoryInterface
     {
        $connection=$container->get('ADO\Connection');
 	   $sessionManager = NULL;//$container->get(SessionManager::class);
-	   $RbacManager = $container->get(RbacManager::class);
+	   $AuthenticationService = $container->get(AuthenticationService::class);
         
-        return new Menu($connection,$RbacManager,$sessionManager);
+        return new $requestedName($connection,$sessionManager,$AuthenticationService);
     }
 }
 

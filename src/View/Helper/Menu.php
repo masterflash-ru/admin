@@ -14,13 +14,13 @@ class Menu extends AbstractHelper
 {
 	protected $connection;
 	protected $sessionManager;
-	protected $rbacManager;
+    protected $AuthenticationService;
 
-public function __construct ($connection,$rbacManager,$sessionManager)
+public function __construct ($connection,$sessionManager,$AuthenticationService)
 	{
 		$this->connection=$connection;
 		$this->sessionManager=$sessionManager;
-		$this->rbacManager=$rbacManager;
+		$this->AuthenticationService=$AuthenticationService;
 		
 	}
     
@@ -30,7 +30,7 @@ public function __construct ($connection,$rbacManager,$sessionManager)
      */
  public function render() 
     {
-		if (!$this->rbacManager->isGranted(null, "admin.login")) {return "<h1>403</h1>";}
+		if (1!==$this->AuthenticationService->getIdentity()) {return "<h1>403</h1>";}
 		$tree=new tree();
 		$tree->menu_name='menu_l';
 		if (isset($_COOKIE['menu_l'])) $tree->status_old=$_COOKIE['menu_l']; else $tree->status_old='';
