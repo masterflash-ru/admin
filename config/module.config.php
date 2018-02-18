@@ -1,7 +1,8 @@
 <?php
 /**
-админка из старой версии системы
-для работоспособности имеет кучу костылей!
+* админка из старой версии системы
+* для работоспособности имеет кучу костылей!
+* доступ разрешен только для root
  */
 
 namespace Admin;
@@ -211,59 +212,5 @@ return [
 	
 	//конфигурация хранения дампов
 	'backup_folder'=>"data/backup",
-        /* Determine mode - 'restrictive' (default) or 'permissive'. 
-		всем, если мы поставим звездочку (*);
-		любому аутентифицированному пользователю, если мы поставим коммерческое at (@);
-		конкретному аутентифицированному пользователю с заданным адресом эл. почты личности, если мы поставим (@identity)
-		любому аутентифицированному пользователю с заданной привилегией, если мы поставим знак плюса и имя привилегии (+permission).
-*/
-
-    'access_filter' => [
-        'options' => [
-            // The access filter can work in 'restrictive' (recommended) or 'permissive'
-            // mode. In restrictive mode all controller actions must be explicitly listed 
-            // under the 'access_filter' config key, and access is denied to any not listed 
-            // action for not logged in users. In permissive mode, if an action is not listed 
-            // under the 'access_filter' key, access to it is permitted to anyone (even for 
-            // not logged in users. Restrictive mode is more secure and recommended to use.
-            'mode' => 'restrictive'
-        ],
-
-        'controllers' => [
-            Controller\IndexController::class => [
-                //разрешение для входа
-                ['actions' => '*', 'allow' => '+admin.login'],
-            ],
-            Controller\ConstructorLineController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-            Controller\ConstructorTreeController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-	        Controller\TreeController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-            Controller\BackupRestoreController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-            Controller\LineController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-            Controller\CkeditorController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-            Controller\EntityController::class => [
-                //допуски
-                ['actions' => '*', 'allow' => '+admin.login']
-            ],
-			
-        ]
-    ],
 
 ];

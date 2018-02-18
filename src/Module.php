@@ -1,5 +1,7 @@
 <?php
 /**
+* админка с говнокодом
+*использует zend-mvc-plugin-identity
  */
 
 namespace Admin;
@@ -24,29 +26,29 @@ public function onBootstrap(MvcEvent $event)
     
 	$eventManager = $event->getApplication()->getEventManager();
     $sharedEventManager = $eventManager->getSharedManager();
-    // объявление слушателя для изменения макета на админский
+    // объявление слушателя для изменения макета на админский + проверка авторизации root
     $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 1);
 
-	//слушатель для получения списка описания контроллеров, методов для виуазльного создания меню
+	//слушатель для получения списка описания контроллеров, методов для визуального создания меню
 	$sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
-	
 }
 
 /*слушатель для проверки авторизован ли админ*/
 public function onDispatch(MvcEvent $event)
  {
-    $controller = $event->getTarget();
+    //для данного модуля изменить макет
     $controllerName = $event->getRouteMatch()->getParam('controller', null);
-    $actionName = $event->getRouteMatch()->getParam('action', null);
+    if (false === strpos($controllerName, __NAMESPACE__)) { return; }
 
 	if ($controllerName!="Admin\Controller\LoginController") {
-       	$authManager = $event->getApplication()->getServiceManager()->get(AuthManager::class);
-        $result = $authManager->filterAccess($controllerName, $actionName);
-        if ($result==AuthManager::AUTH_REQUIRED) {return $controller->redirect()->toRoute('admin');}
-            	else if ($result==AuthManager::ACCESS_DENIED) {return $controller->redirect()->toRoute('admin403');}
-		
-		//для данного модуля изменить макет
-		if (false === strpos($controllerName, __NAMESPACE__)) { return; }
+        $controller = $event->getTarget();
+       /*
+       *вход разрешен только root, ID=1 !
+		*/
+        if ($controller->identity()!=1) {
+            $controller->redirect()->toRoute('admin');
+        }
+        
 		$viewModel = $event->getViewModel();
 		$viewModel->setTemplate('layout/admin_layout');		
 	}   
