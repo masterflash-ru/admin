@@ -432,7 +432,7 @@ switch ($this->form_input_type)
 if (count($this->global_action)>0)
 	{//проверим кнопки какие выводить, какие нет
 	$out.='<tr><td bgcolor="#CCCCCC"><input name="_select_item_all_" type="checkbox" value="" OnClick="select_all(this)"></td><td colspan="'.count($this->col_name).'" bgcolor="#CCCCCC">';
-	if (isset($this->global_action[0]) && $this->global_action[0]>0)$out.='<input name="'.$this->button_all_operation_names[0].'" id="delete_selected_" type="button" onClick="snd(this.name,this)" disabled value="Удалить выбранное" style="font-size:10px; background-color:#FF0000;color:#FFFFFF;font-weight:bolder;">&nbsp;&nbsp;&nbsp; ';
+	if (isset($this->global_action[0]) && $this->global_action[0]>0)$out.='<input name="'.$this->button_all_operation_names[0].'" id="delete_selected_" type="button" onClick="snd(this.name,this)"  value="Удалить выбранное" style="font-size:10px; background-color:#FF0000;color:#FFFFFF;font-weight:bolder;">&nbsp;&nbsp;&nbsp; ';
 	if (isset($this->global_action[1]) && $this->global_action[1]>0)$out.='<input name="'.$this->button_all_operation_names[1].'" type="submit" value="Сохранить все" style="font-size:10px; background-color:#00ff00;font-weight:bolder;"> ';
 	if (isset($this->global_action[2]) && $this->global_action[2]>0)$out.='<input name="'.$this->button_all_operation_names[2].'" type="submit" value="Оптимизировать таблицу" style="font-size:10px;color:#ffffff; background-color:#0000ff;font-weight:bolder;"> ';
 	if (isset($this->global_action[3]) && $this->global_action[3]>0)$out.='<input name="'.$this->button_all_operation_names[3].'" type="submit" value="Очистить кэш" style="font-size:10px;color:#ffffff; background-color:#ff00ff;font-weight:bolder;"> ';
@@ -528,6 +528,7 @@ document.getElementById('global_action_id_array').value=''
 function select_check(obj)
 {
 var flag=false;
+document.getElementById('delete_selected_').disabled=true;
  for (i = 0; i < obj.form.elements.length; i++)
      {
          var item = obj.form.elements[i];
@@ -538,7 +539,7 @@ var flag=false;
 		 };
 	 }
 if (document.getElementById('delete_selected_')!=null) 	
-	{if (flag) document.getElementById('delete_selected_').disabled=false; else document.getElementById('delete_selected_').disabled=true;
+	{if (flag) document.getElementById('delete_selected_').disabled=false;
 	}
 }
 function select_all(obj)
