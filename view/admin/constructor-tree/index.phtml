@@ -100,13 +100,20 @@ if (isset($_POST['save_all']))
 	$pole_spisok_sql=implode (",",array($_POST['cols__id'],$_POST['cols__subid'],$_POST['cols__level']));
 //запись всей структуры в базу
 		//$row_type=0 это глобальные параметры
+        if (empty($_POST["permission"])){
+            $permission=484;
+        } else {
+            $permission=$_POST["permission"];
+            $permission=array_sum($_POST["permission"]);
+        }
+
 		simba::replaceRecord (
 			array(
 				'id'=>$_POST['id0'],
 				'row_type'=>0,
 				'table_name'=>$_POST['interface_tabl_tek'],
 				'table_type'=>1,
-				'caption_style'=>"",//$_POST['config_section'],
+                'caption_style'=>serialize(["chown_user"=>$_POST["chown_user"],"chown_group"=>$_POST["chown_group"],"permission"=>$permission]),//доступ
 				'pole_prop'=>$pole_spisok_sql,
 				'col_por'=>$_POST['col_por2'],
 				'pole_spisok_sql'=>$_POST['pole_spisok_sql0'],
@@ -675,7 +682,7 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
           </tr>
           <tr>
             <td>Дополнительная SQL для удаления.</td>
-            <td align="left"><textarea name="del_record" cols="135" rows="3" wrap="VIRTUAL"  id="del_record" <?echo $dis;?>><?=stripslashes ($struct0['default_sql'])?></textarea></td>
+            <td align="left"><textarea name="del_record" cols="135" rows="3" wrap="VIRTUAL"  id="del_record" <?=$dis;?>><?=stripslashes ($struct0['default_sql'])?></textarea></td>
           </tr>
           <tr>
             <td>Наличие кнопок:
@@ -729,7 +736,84 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
         
         
         </table>
+          <fieldset>
+            <legend><strong>Права доступа</strong></legend>
+              <table border="0" cellspacing="0" cellpadding="6">
+                <tr>
+                  <td colspan="2"><strong>Владелец:</strong></td>
+                </tr>
+                <tr>
+                    <td>Имя пользователя:</td>
+                    <td>Имя группы:</td>
+                  </tr>
+                <tr>
+                    <td><?php
+         $permission_arr=unserialize($struct0['caption_style']);
+         //\Zend\Debug\Debug::dump($permission_arr);
+         $g=simba::queryAllRecords("select id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name from users order by name");
+         $v=[0=>"Неизвестный"];
+         foreach ($g["id"] as $k=>$vv){
+             $v[$vv]=$g["name"][$k];
+         }
+         
+         $gr=new  Element\Select('chown_user');
+         $gr->setValueOptions($v);
+         $gr->setValue($permission_arr['chown_user']);
+         echo $this->formSelect($gr);
+         ?></td>
+                    <td><?php
+         $g=simba::queryAllRecords("select id,name from users_group order by name");
+         $v=[0=>"Неизвестная"];
+         foreach ($g["id"] as $k=>$vv){
+             $v[$vv]=$g["name"][$k];
+         }
+         
+         $gr=new  Element\Select('chown_group');
+         $gr->setValueOptions($v);
+         $gr->setValue($permission_arr['chown_group']);
+         echo $this->formSelect($gr);
+         ?></td>
+                  </tr>
+                   <tr>
+                  <td colspan="2"><strong>Доступ:</strong></td>
+                </tr>
+                  <tr>
+                      <td colspan="2"><?php
+$multiCheckbox = new Element\MultiCheckbox('permission');
+ $bits=[2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
+    1024 => 'бит SGID (При создании записи ID группы наследуются от родительской)',
+    512=> 'бит Sticky (Запрещает удалять не владельцу)',
+    256 =>'(r) чтение для владельца',
+    128=>'(w) запись для владельца' ,
+    64 =>'(x) запуск/поиск для владельца',
+    32=>'(r) чтение для группы',
+    16 =>'(w) запись для группы',
+    8=>'(x) запуск/поиск для группы',
+    4=>'(r) чтение для других',
+    2=>'(w) запись для других',
+    1=>'(x) запуск/поиск для других'
+];
+$multiCheckbox->setValueOptions($bits);
+$rez=[];
+foreach ($bits as $b=>$v){
+    if ($permission_arr["permission"] & $b){
+        $rez[]=$permission_arr["permission"] & $b;
+    }
+}
+     
+ $multiCheckbox->setValue($rez);
+$fc=$this->FormMultiCheckbox();
+$fc->setSeparator("<br/>");
+    echo $fc->render($multiCheckbox);    
+         
+         ?></td>
+
+                  </tr>
+           </table>
+              </fieldset>
+
         </fieldset>
+    
   <?php }
 		?>
          

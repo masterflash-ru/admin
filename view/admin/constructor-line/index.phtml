@@ -77,12 +77,17 @@ if (isset($_POST['save_all']))
             $form_spis_=$_POST['form_spis'][0];
         }
         
-        if (empty($_POST["permission"])){$_POST["permission"]=[];}
+        if (empty($_POST["permission"])){
+            $permission=484;
+        } else {
+            $permission=$_POST["permission"];
+            $permission=array_sum($_POST["permission"]);
+        }
 		simba::replaceRecord (array('id'=>$_POST['id'],
 					'row_type'=>0,
 					'table_name'=>$_POST['interface_tabl_tek'],
 					'pole_global_const'=>$_POST['pole_global_const0'],
-					'caption_style'=>serialize(["chown_user"=>$_POST["chown_user"],"chown_group"=>$_POST["chown_group"],"permission"=>$_POST["permission"]]),//доступ
+					'caption_style'=>serialize(["chown_user"=>$_POST["chown_user"],"chown_group"=>$_POST["chown_group"],"permission"=>$permission]),//доступ
 					'pole_style'=>"",//""$_POST['imp_exp'],
 					'col_name'=>$_POST['col_name0'],
 					'pole_name'=>$_POST['col___id'],
@@ -560,8 +565,7 @@ if (value==2)
                   <tr>
                       <td colspan="2"><?php
 $multiCheckbox = new Element\MultiCheckbox('permission');
-$multiCheckbox->setValueOptions([
-    2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
+ $bits=[2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
     1024 => 'бит SGID (При создании записи ID группы наследуются от родительской)',
     512=> 'бит Sticky (Запрещает удалять не владельцу)',
     256 =>'(r) чтение для владельца',
@@ -573,8 +577,16 @@ $multiCheckbox->setValueOptions([
     4=>'(r) чтение для других',
     2=>'(w) запись для других',
     1=>'(x) запуск/поиск для других'
-]);
-         $multiCheckbox->setValue($permission_arr["permission"]);
+];
+$multiCheckbox->setValueOptions($bits);
+$rez=[];
+foreach ($bits as $b=>$v){
+    if ($permission_arr["permission"] & $b){
+        $rez[]=$permission_arr["permission"] & $b;
+    }
+}
+     
+ $multiCheckbox->setValue($rez);
 $fc=$this->FormMultiCheckbox();
 $fc->setSeparator("<br/>");
     echo $fc->render($multiCheckbox);    
