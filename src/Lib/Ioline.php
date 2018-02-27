@@ -93,6 +93,9 @@ public $cache;
 public $config;
 public $container;
 public $EventManager;
+protected $permission;  //маска доступа
+protected $owner_user;     //ID юзера владельца
+protected $owner_group;     //ID группы владельца
 
 
 function __construct($container,$view)
@@ -527,13 +530,30 @@ $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];
 $this->line_table_obj->buttons_jmp_flag=$a['form_elements_jmp_record'];
 
+$p=@unserialize($this->struct0['caption_style']);
+if (isset($p["owner_user"])){
+    $this->owner_user=(int)$p["owner_user"];
+} else {
+    $this->owner_user=1;
+}
+if (isset($p["owner_group"])){
+    $this->owner_group=(int)$p["owner_group"];
+} else {
+    $this->owner_group=1;
+}
 
-
+if (isset($p["permission"])){
+    $this->permission=(int)$p["permission"];
+} else {
+    $this->permission=0777;
+}
+   
+    
 //запись
 //массовые операции global_action_id_array- список активных идентификаторов таблицы, т.е. те, которые выведены на экран
 if (isset($_POST[$this->button_save_all_name]))
 	{//массовая запись
-	$this->save_all() ;
+	   $this->save_all() ;
 	}
 
 

@@ -91,6 +91,11 @@ public $cache;
 public $config;
 public $EventManager;
 public $container;
+protected $permission;  //маска доступа
+protected $owner_user;     //ID юзера владельца
+protected $owner_group;     //ID группы владельца
+
+    
 
 function __construct($container,$view)
 {//начальная инициализация
@@ -384,43 +389,23 @@ $this->interface_name=$interface_name; //имя интерфейса
 //по идентификатору полуячить имя таблицы с которой работаем
 $this->struct0=simba::queryOneRecord ('select * from design_tables where table_type=1 and row_type=0 and interface_name="'.$this->interface_name.'"');
 
-/*
-//вначале системные настройки
-if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER."system_setting.ini"))
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER."system_setting.ini");
-					}
-					else 
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER."system_setting.ini");
-						}
-				foreach ($config->to[] as $sysname=>$v)
-					{
-								define($sysname,$v['value'],true);
-					}
+$p=@unserialize($this->struct0['caption_style']);
+if (isset($p["owner_user"])){
+    $this->owner_user=(int)$p["owner_user"];
+} else {
+    $this->owner_user=1;
+}
+if (isset($p["owner_group"])){
+    $this->owner_group=(int)$p["owner_group"];
+} else {
+    $this->owner_group=1;
+}
 
-
-
-//смотрим на предмет настроечного файла, если он есть делаем константы из него
-if ($this->struct0['caption_style'])
-			{
-				if (is_readable(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']))
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.ADMIN_FOLDER.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']);
-					}
-					else 
-					{
-						$config = new Config_ini(ROOT_FILE_SYSTEM.APP_FOLDER.SETTING_FOLDER.$this->struct0['caption_style']);
-						}
-				foreach ($config->to[] as $items) 
-					foreach ($items as $sysname=>$v)
-						{
-								define($sysname,$v,true);
-						}
-
-			}
-
-*/
+if (isset($p["permission"])){
+    $this->permission=(int)$p["permission"];
+} else {
+    $this->permission=0777;
+}
 
 
 $this->tab_name=$this->struct0['table_name'];//$tree_name=$this->struct0['tree_name'];
