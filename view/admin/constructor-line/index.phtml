@@ -71,13 +71,19 @@ if (isset($_POST['save_all']))
 {//запись
 	if ($_POST['interface_razdel']==0)
 		{//запись общих настроек
-		if ($_POST['form_input_type']==2) $form_spis_=implode(',',$_POST['form_spis']); else $form_spis_=$_POST['form_spis'][0];
+		if ($_POST['form_input_type']==2) {
+            $form_spis_=implode(',',$_POST['form_spis']);
+        } else {
+            $form_spis_=$_POST['form_spis'][0];
+        }
+        
+        if (empty($_POST["permission"])){$_POST["permission"]=[];}
 		simba::replaceRecord (array('id'=>$_POST['id'],
 					'row_type'=>0,
 					'table_name'=>$_POST['interface_tabl_tek'],
 					'pole_global_const'=>$_POST['pole_global_const0'],
-					'caption_style'=>"",//$_POST['config_section'],
-					'pole_style'=>$_POST['imp_exp'],
+					'caption_style'=>serialize(["chown_user"=>$_POST["chown_user"],"chown_group"=>$_POST["chown_group"],"permission"=>$_POST["permission"]]),//доступ
+					'pole_style'=>"",//""$_POST['imp_exp'],
 					'col_name'=>$_POST['col_name0'],
 					'pole_name'=>$_POST['col___id'],
 					'default_sql'=>$_POST['del_record'],
@@ -398,9 +404,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
 ?>
 <input name="id" type="hidden" value="<?=$struct0['id'];?>">
 
-<input name="imp_exp" type="hidden" id="imp_exp" value="0">
-            <input name="imp_exp" type="checkbox" id="imp_exp" value="1" <?php if ($struct0['pole_style']>0) echo 'checked ';?>>
-            Импорт/Экспорт
+
   </fieldset> 
   <fieldset   style="background-color:#e2e2e2"><legend  style="font-weight:bold; color:red">Внешний вид:</legend>
           Стиль ввода данных:
@@ -511,7 +515,78 @@ if (value==2)
                 </tr>
               </table>
 
-            </fieldset></td>
+            </fieldset>
+          <fieldset>
+            <legend><strong>Права доступа</strong></legend>
+              <table border="0" cellspacing="0" cellpadding="6">
+                <tr>
+                  <td colspan="2"><strong>Владелец:</strong></td>
+                </tr>
+                <tr>
+                    <td>Имя пользователя:</td>
+                    <td>Имя группы:</td>
+                  </tr>
+                <tr>
+                    <td><?php
+         $permission_arr=unserialize($struct0['caption_style']);
+         //\Zend\Debug\Debug::dump($permission_arr);
+         $g=simba::queryAllRecords("select id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name from users order by name");
+         $v=[0=>"Неизвестный"];
+         foreach ($g["id"] as $k=>$vv){
+             $v[$vv]=$g["name"][$k];
+         }
+         
+         $gr=new  Element\Select('chown_user');
+         $gr->setValueOptions($v);
+         $gr->setValue($permission_arr['chown_user']);
+         echo $this->formSelect($gr);
+         ?></td>
+                    <td><?php
+         $g=simba::queryAllRecords("select id,name from users_group order by name");
+         $v=[0=>"Неизвестная"];
+         foreach ($g["id"] as $k=>$vv){
+             $v[$vv]=$g["name"][$k];
+         }
+         
+         $gr=new  Element\Select('chown_group');
+         $gr->setValueOptions($v);
+         $gr->setValue($permission_arr['chown_group']);
+         echo $this->formSelect($gr);
+         ?></td>
+                  </tr>
+                   <tr>
+                  <td colspan="2"><strong>Доступ:</strong></td>
+                </tr>
+                  <tr>
+                      <td colspan="2"><?php
+$multiCheckbox = new Element\MultiCheckbox('permission');
+$multiCheckbox->setValueOptions([
+    2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
+    1024 => 'бит SGID (При создании записи ID группы наследуются от родительской)',
+    512=> 'бит Sticky (Запрещает удалять не владельцу)',
+    256 =>'(r) чтение для владельца',
+    128=>'(w) запись для владельца' ,
+    64 =>'(x) запуск/поиск для владельца',
+    32=>'(r) чтение для группы',
+    16 =>'(w) запись для группы',
+    8=>'(x) запуск/поиск для группы',
+    4=>'(r) чтение для других',
+    2=>'(w) запись для других',
+    1=>'(x) запуск/поиск для других'
+]);
+         $multiCheckbox->setValue($permission_arr["permission"]);
+$fc=$this->FormMultiCheckbox();
+$fc->setSeparator("<br/>");
+    echo $fc->render($multiCheckbox);    
+         
+         ?></td>
+
+                  </tr>
+           </table>
+              </fieldset>
+          
+          
+          </td>
       </tr>
     </table>
 </fieldset>
