@@ -1,21 +1,22 @@
 <?php
 
 /*
-вывод просто текста
+повторяет 48, только в модальном окне
 */
 
 namespace Admin\Lib\Fhelper;
 use Zend\Form\Element;
 
-class F48 extends Fhelperabstract 
+class F55 extends Fhelperabstract 
 {
-	protected $hname="огромный выбор в отдельном окне";
+	protected $hname="выбор в отдельном МОДАЛЬНОМ окне";
     protected $category=2;
 	protected $properties_keys=["window_width","window_height","columns"];
 	protected $properties_text=["window_width"=>"Ширина окна","window_height"=>"Высота окна","columns"=>"Колонок"];
 	protected $properties_item_type=["window_width"=>1,"window_height"=>1,"columns"=>1];
 	protected $itemcount=1;
 	protected $itemtype=1;
+    protected static $flag_dialog=true;
 	
 public function __construct($item_id)
 {
@@ -50,8 +51,9 @@ public function render()
 	  }
 	$out.='\');';
 	$out.='</script>';
+    if (F55::$flag_dialog){$out.='<div id="f55_dialog"></div>';F55::$flag_dialog=false;}
 	
-	$barr["onClick"]="create_window(\"{$names_}\")";
+	$barr["onClick"]="create_window55(\"{$names_}\")";
 	
 	$button = new Element\Button($this->name[0]."_");
 	$button->setValue($this->value);

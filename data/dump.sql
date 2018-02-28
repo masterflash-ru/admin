@@ -28,12 +28,10 @@ CREATE TABLE `admin_menu` (
   `level` int(11) NOT NULL DEFAULT '0' COMMENT 'Уровень в дереве',
   `subid` int(11) NOT NULL DEFAULT '0' COMMENT 'Ссылка на родителя (ключ)',
   `locale` char(20) NOT NULL COMMENT 'ID языка',
-  `roles` int(11) NOT NULL DEFAULT '0' COMMENT 'ID роли админа',
   `url` char(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `level` (`level`),
   KEY `subid` (`subid`),
-  KEY `roles` (`roles`),
   KEY `locale` (`locale`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -44,7 +42,20 @@ CREATE TABLE `admin_menu` (
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,'Система управления',0,0,'ru_RU',1,''),(2,'Меню администраторов',1,1,'ru_RU',1,'/adm/tree/admin_menu'),(3,'Навигация/структура сайта',0,0,'ru_RU',1,''),(4,'Резервир./восстановл. базы',1,1,'ru_RU',1,'/adm/backuprestore'),(5,'Меню сайта',1,3,'ru_RU',1,'/adm/tree/menu'),(6,'Интерфейсы',1,1,'ru_RU',1,''),(7,'Линейные интерфейсы',2,6,'ru_RU',1,'/adm/constructorline'),(8,'Древовидные интерфесы',2,6,'ru_RU',1,'/adm/constructortree'),(9,'Генератор Entity',1,1,'ru_RU',1,'/adm/entity');
+INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `locale`, `url`) VALUES 
+  (1, 'Система управления', 0, 0, 'ru_RU', ''),
+  (2, 'Меню администраторов', 1, 1, 'ru_RU', '/adm/tree/admin_menu'),
+  (3, 'Навигация/структура сайта', 0, 0, 'ru_RU', ''),
+  (4, 'Резервир./восстановл. базы', 1, 1, 'ru_RU', '/adm/backuprestore'),
+  (5, 'Меню сайта', 1, 3, 'ru_RU', '/adm/tree/menu'),
+  (6, 'Интерфейсы', 1, 1, 'ru_RU', ''),
+  (7, 'Линейные интерфейсы', 2, 6, 'ru_RU', '/adm/constructorline'),
+  (8, 'Древовидные интерфесы', 2, 6, 'ru_RU', '/adm/constructortree'),
+  (9, 'Генератор Entity', 1, 1, 'ru_RU', '/adm/entity'),
+  (10, 'Пользователи и группы', 1, 1, 'ru_RU', ''),
+  (11, 'Системные группы польз.', 2, 10, 'ru_RU', '/adm/line/users_group'),
+  (12, 'Группы пользователей', 2, 10, 'ru_RU', '/adm/line/users_group_nonsystem'),
+  (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/line/users');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +103,7 @@ CREATE TABLE `design_tables` (
 
 LOCK TABLES `design_tables` WRITE;
 /*!40000 ALTER TABLE `design_tables` DISABLE KEYS */;
-INSERT INTO `design_tables` VALUES (1,'admin_menu','admin_menu',1,'1,1,1,1,1,0','',0,0,' locale=\'$pole_dop0\' and roles=\'$pole_dop1\' order by id','','id,subid,level','','','','','','','','','','','',0,''),(2,'admin_menu','admin_menu',1,'','',1,0,'create temporary table sp1 (id char(11), name char(50)) ENGINE=MEMORY; insert into sp1 (id,name) values (\"ru_RU\",\"ru_RU\"); select * from sp1','','onChange=\"this.form.submit()\"','4','','','select id from sp1','','','','','a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}','','',0,''),(3,'admin_menu','admin_menu',1,'','',1,0,'select id,name from role order by name','','','4','','','select id,name from role order by name limit 1','','','','','a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}','','',0,''),(4,'admin_menu','admin_menu',1,'roles','',2,0,'','','','0','','pole_dop1','','','','','','','','N;',0,''),(5,'admin_menu','admin_menu',1,'locale','',2,0,'','','','0','','pole_dop0','','','','','','','','N;',0,''),(6,'admin_menu','admin_menu',1,'name','',2,1,'','','size=\"50\"','2','','name','','','','','','N;','','N;',0,''),(7,'admin_menu','admin_menu',1,'url','',2,2,'','','','9','','url','','','','\\Admin\\Lib\\Func\\AdminMenu','','a:1:{i:0;s:1:\"1\";}','','N;',0,'');
+INSERT INTO `design_tables` VALUES (1,'admin_menu','admin_menu',1,'1,1,1,1,1,0','',0,0,' locale=\'$pole_dop0\'  order by id','','id,subid,level','','','','','','','','','','','',0,''),(2,'admin_menu','admin_menu',1,'','',1,0,'create temporary table sp1 (id char(11), name char(50)) ENGINE=MEMORY; insert into sp1 (id,name) values (\"ru_RU\",\"ru_RU\"); select * from sp1','','onChange=\"this.form.submit()\"','4','','','select id from sp1','','','','','a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}','','',0,''),(5,'admin_menu','admin_menu',1,'locale','',2,0,'','','','0','','pole_dop0','','','','','','','','N;',0,''),(6,'admin_menu','admin_menu',1,'name','',2,1,'','','size=\"50\"','2','','name','','','','','','N;','','N;',0,''),(7,'admin_menu','admin_menu',1,'url','',2,2,'','','','9','','url','','','','\\Admin\\Lib\\Func\\AdminMenu','','a:1:{i:0;s:1:\"1\";}','','N;',0,'');
 /*!40000 ALTER TABLE `design_tables` ENABLE KEYS */;
 UNLOCK TABLES;
 

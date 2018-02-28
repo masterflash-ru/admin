@@ -113,7 +113,7 @@ if (isset($_POST['save_all']))
 				'row_type'=>0,
 				'table_name'=>$_POST['interface_tabl_tek'],
 				'table_type'=>1,
-                'caption_style'=>serialize(["chown_user"=>$_POST["chown_user"],"chown_group"=>$_POST["chown_group"],"permission"=>$permission]),//доступ
+                'caption_style'=>serialize(["owner_user"=>$_POST["owner_user"],"owner_group"=>$_POST["owner_group"],"permission"=>$permission]),//доступ
 				'pole_prop'=>$pole_spisok_sql,
 				'col_por'=>$_POST['col_por2'],
 				'pole_spisok_sql'=>$_POST['pole_spisok_sql0'],
@@ -750,15 +750,18 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
                     <td><?php
          $permission_arr=unserialize($struct0['caption_style']);
          //\Zend\Debug\Debug::dump($permission_arr);
+         if (empty($permission_arr['owner_user'])) {$permission_arr['owner_user']=0;}
+         if(empty($permission_arr['owner_group'])){$permission_arr['owner_group']=0;}
+         if (empty($permission_arr["permission"])){$permission_arr["permission"]=0744;}
          $g=simba::queryAllRecords("select id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name from users order by name");
          $v=[0=>"Неизвестный"];
          foreach ($g["id"] as $k=>$vv){
              $v[$vv]=$g["name"][$k];
          }
          
-         $gr=new  Element\Select('chown_user');
+         $gr=new  Element\Select('owner_user');
          $gr->setValueOptions($v);
-         $gr->setValue($permission_arr['chown_user']);
+         $gr->setValue($permission_arr['owner_user']);
          echo $this->formSelect($gr);
          ?></td>
                     <td><?php
@@ -768,9 +771,9 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
              $v[$vv]=$g["name"][$k];
          }
          
-         $gr=new  Element\Select('chown_group');
+         $gr=new  Element\Select('owner_group');
          $gr->setValueOptions($v);
-         $gr->setValue($permission_arr['chown_group']);
+         $gr->setValue($permission_arr['owner_group']);
          echo $this->formSelect($gr);
          ?></td>
                   </tr>

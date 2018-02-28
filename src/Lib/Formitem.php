@@ -479,6 +479,75 @@ for (win_name in db_item48)
 
 
 //***********************************************конец для поля 48
+function create_window55(win_name)
+{
+columns=db_item48[win_name][\"columns\"]//кол-во колонок в окне
+if (columns==0 || columns=='') columns=2;//по умоляанию 2
+col=0;row=0;//текущее состояние
+out='<table width=\"100%\" border=\"0\" class=\"win55\">';
+i=0;
+row_no_end=true;
+while (row_no_end)
+	{//цикл по строкам
+	out+='<tr>';
+	for (c=0;c<columns;c++)
+		{//цикл по колонкам
+		if (db_item48[win_name].length>i) 
+				{selected='';
+				if (db_item48[win_name][i].selected_flag>0) selected='checked';
+				out+='<td><label>';
+                out+='<input name=\"checkbox['+i+']\" type=\"checkbox\" value=\"'+db_item48[win_name][i].array_key+'\"' + selected +' />';
+                out+='<span id=\"text__'+i+'\">'+db_item48[win_name][i].array_value+'</span>';
+                out+='</label></td>';
+				}
+			else {row_no_end=false;out+='<td>&nbsp;</td>';}
+		i++;
+		}
+	out+='</tr>'
+	}
+
+out+='</table><div align=\"center\"><input name=\"save55[]\" type=\"button\" value=\"'+db_item48[win_name][\"button_caption\"]+'\" onClick=\"save55(\''+win_name+'\')\" /></div>';
+ww=db_item48[win_name][\"window\"][0];//ширина окна
+hh=db_item48[win_name][\"window\"][1];//высота экрана
+if (ww==0 || ww=='') ww=400;
+if (hh==0 || hh=='') hh=\"auto\";
+$( \"#f55_dialog\" ).html(out);
+$( \"#f55_dialog\" ).dialog({
+      resizable: true,
+      height: hh,
+      width: ww,
+      modal: true,
+
+});
+}
+
+function save55(win_name)
+{
+var value=[],text_=[];
+$( \"#f55_dialog\" ).dialog(\"close\");
+$( \"#f55_dialog input:checked\" ).each(
+    function (index){value[index]=$(this).val();text_[index]=$(this).next().text();}
+);
+document.getElementById(db_item48[win_name][\"io_item\"]).value=value.join(\",\");
+document.getElementById(db_item48[win_name][\"io_item\"]+\"_text\").innerHTML=text_.join(\",\");
+}
+
+function f56(url,w,h)
+{
+
+$( \"#f56_dialog\" ).dialog({
+      resizable: true,
+      height: h+65,
+      width: w+30,
+      modal: true,
+      open: function(ev, ui){
+             $('#iframe56').attr({'src':url,'width':w,'height':h});
+          }
+
+});
+
+
+}
 
 
 function data___clock()
