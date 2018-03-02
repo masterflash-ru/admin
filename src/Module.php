@@ -42,13 +42,14 @@ public function onDispatch(MvcEvent $event)
 
 	if ($controllerName!="Admin\Controller\LoginController") {
         $controller = $event->getTarget();
+        $user=$controller->User();
+
        /*
        *вход разрешен только root, ID=1 !
 		*/
-        if ($controller->identity()!=1) {
+        if ($user->identity()!=1) {
             $controller->redirect()->toRoute('admin');
         }
-        
 		$viewModel = $event->getViewModel();
 		$viewModel->setTemplate('layout/admin_layout');		
 	}   
