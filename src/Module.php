@@ -43,7 +43,9 @@ public function onDispatch(MvcEvent $event)
 	if ($controllerName!="Admin\Controller\LoginController") {
         $controller = $event->getTarget();
         $user=$controller->User();
-
+        /*имя метода контроллера*/
+        //$actionName = $event->getRouteMatch()->getParam('action', null);
+        //$actionName = str_replace('-', '', lcfirst(ucwords($actionName, '-')));
        /*
        *вход разрешен только root, ID=1 !
 		*/

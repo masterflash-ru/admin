@@ -168,8 +168,7 @@ return [
 	//контроллеры
     'controllers' => [
         'factories' => [
-		
-			//если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
+            //если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
 			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
 			Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
@@ -185,6 +184,12 @@ return [
            Controller\CkeditorController::class => Controller\CkeditorController::class,
 			
         ],
+        /*доступы для контроллеров, запуск* /
+        'permission' => [
+            Controller\IndexController::class=>[
+                "index" => [1,1,0710],
+            ],
+        ],*/
 	],
 	//помощник вывода меню админки
     'view_helpers' => [
