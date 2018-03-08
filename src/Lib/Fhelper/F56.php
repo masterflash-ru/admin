@@ -83,7 +83,7 @@ public function render()
     
 
     if (F56::$flag_dialog){$out='<div id="f56_dialog" style="display:none"><iframe frameborder="0" id="iframe56" src=""></iframe></div>';F56::$flag_dialog=false;}
-        else {$iut="";}
+        else {$out="";}
 	return implode("",$jmp_html).$this->view->FormElement($input).$out;
 }
 
