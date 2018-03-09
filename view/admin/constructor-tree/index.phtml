@@ -753,7 +753,11 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
          if (empty($permission_arr['owner_user'])) {$permission_arr['owner_user']=0;}
          if(empty($permission_arr['owner_group'])){$permission_arr['owner_group']=0;}
          if (empty($permission_arr["permission"])){$permission_arr["permission"]=0744;}
-         $g=simba::queryAllRecords("select id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name from users order by name");
+         $g=simba::queryAllRecords("select u.id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name 
+                from users as u, users_ext as ue
+                    where u.id=ue.id
+                    order by name");
+
          $v=[0=>"Неизвестный"];
          foreach ($g["id"] as $k=>$vv){
              $v[$vv]=$g["name"][$k];
