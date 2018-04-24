@@ -469,7 +469,7 @@ $this->struct2=simba::queryOneRecord ('select table_name,functions_befo_out from
 
 
 $this->tab_name=$this->struct2['table_name'];
-if (!$this->tab_name && !$this->struct2['functions_befo_out']) {throw new Exception(__CLASS__,3,[]);}
+if (!$this->tab_name && !$this->struct2['functions_befo_out']) {throw new Exception("Не указана таблица для вывода или нет обработчика выборки данных");}
 //загрузим текстовый интерфейс для выбранной таблицы из ьаблицы с текстами
 $c=simba::queryAllRecords("select item_name,text from design_tables_text_interfase where 
 							table_type=0 and interface_name='".$this->interface_name."'");

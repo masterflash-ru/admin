@@ -26,7 +26,7 @@ class F39 extends Fhelperabstract
 								];
 	protected $itemcount=2;
 	protected $constcount=1;
-	protected $const_count_msg=["Относительный путь к библиотеке изображений, ключи из конфига в виде массива от корня, например, [\"statpage\"]['media_folder']:"];
+	protected $const_count_msg=["Относительный путь к библиотеке изображений, ключи из конфига в виде массива от корня, например, ['public_media_folder']:"];
 	protected $properties_listid=[
 								'html_editor_default_theme'=>["default"],
 					            'html_editor_default_toolbars' =>["default"]
