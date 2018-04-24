@@ -937,7 +937,7 @@ return $count;//возвращает кол-во колонок в таблиц�
 private function create_dop_filelds ($row_type=1)
 {
 //получить настройки доп поля ввода до основной таблицы
-$this->struct1=simba::queryAllRecords ('select * from design_tables where table_type=0 and row_type='.$row_type.' and interface_name="'.$this->interface_name.'" order by col_por');
+$this->struct1=simba::queryAllRecords ('select * from design_tables where table_type=0 and row_type='.$row_type.' and interface_name="'.$this->interface_name.'" order by col_por,id');
 $dcount=simba::numRows();
 for ($jjj=0;$jjj<$dcount;$jjj++)
 {
