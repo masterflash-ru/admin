@@ -174,8 +174,6 @@ $id=$item_id;
 $row_item=$id;
 
 
-//\Zend\Debug\Debug::dump($this);
-
 	$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 	$f=new $f($item_id);
 	$f->SetView($this->view);
@@ -204,30 +202,35 @@ for ($i=0;$i<$item_count;$i++)
 					}
 			}
 		$zselect=[];$zselecti=[];
-		if (is_array($sp_id) && is_array($sp))
-			{
-				
-				if (empty($sp_group_array))
-					{//простой список
-						foreach ($sp_id as $k=>$v)
-							{
-								$zselect[$v]=$sp[$k];
-							}
-					}
-					else
-						{//с элементами options
-							foreach ($sp_group_array as $zk=>$zgr)
-								{
-									foreach ($sp_id[$zk] as $k=>$v)
-										{
-											$zselecti[$v]=$sp[$zk][$k];
-										}
-									$zselect[$zgr]=$zselecti;
-									$zselecti=[];
-								}
-							
-						}
-			}
+		if (is_array($sp_id) && is_array($sp)){
+            if (empty($sp_group_array))	{//простой список
+                foreach ($sp_id as $k=>$v){
+                    if (is_null($k)){
+                        $k="null";
+                    }
+                    if (is_null($v)){
+                        $v="null";
+                    }
+
+                    $zselect[$v]=$sp[$k];
+                }
+            } else {//с элементами options
+                foreach ($sp_group_array as $zk=>$zgr) {
+                    foreach ($sp_id[$zk] as $k=>$v)	{
+                        if (is_null($k)){
+                            $k="null";
+                        }
+                        if (is_null($v)){
+                            $v="null";
+                        }
+
+                        $zselecti[$v]=$sp[$zk][$k];
+                    }
+                    $zselect[$zgr]=$zselecti;
+                    $zselecti=[];
+                }
+            }
+        }
 		
 	}
 

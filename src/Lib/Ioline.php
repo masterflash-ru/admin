@@ -229,34 +229,32 @@ $infa=$this->form_item->save_form_item($row_item,
 		if ($this->error_form_item[$col_name][$row_item]['code']>0) $flag_error=true;//код был больше 0, значит ошибка
 
 		//для специальных полей другая обработка!
-		if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c) || $this->struct2['pole_name'][$i]=='get_interface_input')
-			{//обработка дополнительного поля
-			if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c)) 
-				{//print_r($col_name);
-				if (!isset($c[1]) || $c[1]=='') {throw new Exception("Ошибка в доп. поле");return false;}
-				if (isset($this->pole_dop[$c[1]]) && $this->pole_dop[$c[1]]) $tab_rec[$this->struct2['col_name'][$i]]=$this->pole_dop[$c[1]];
-							else {
-							//если pole_dop пустое значение, тогда восстановить старое значение из таблицы, если оно там ввобще есть
-								$n=simba::queryOneRecord('select '.$this->struct2['col_name'][$i].' from '.$this->tab_name.' where '.$this->pole__id.'="'.$id.'"');
-								$tab_rec[$this->struct2['col_name'][$i]]=$n[$this->struct2['col_name'][$i]];
-								}
-				}
+		if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c) || $this->struct2['pole_name'][$i]=='get_interface_input')	{
+            //обработка дополнительного поля
+			if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c)) {
+				if (!isset($c[1]) || $c[1]=='') {
+                    throw new Exception("Ошибка в доп. поле");return false;
+                }
+				if (isset($this->pole_dop[$c[1]]) && $this->pole_dop[$c[1]]!="") {
+                    if ($this->pole_dop[$c[1]]=="null" || $this->pole_dop[$c[1]]=="NULL") {
+                        $tab_rec[$this->struct2['col_name'][$i]]=null;
+                    } else {
+                        $tab_rec[$this->struct2['col_name'][$i]]=$this->pole_dop[$c[1]];
+                    }
+                } else {
+                    //если pole_dop пустое значение, тогда восстановить старое значение из таблицы, если оно там ввобще есть
+                    $n=simba::queryOneRecord('select '.$this->struct2['col_name'][$i].' from '.$this->tab_name.' where '.$this->pole__id.'="'.$id.'"');
+                    $tab_rec[$this->struct2['col_name'][$i]]=$n[$this->struct2['col_name'][$i]];
+                }
+            }
 			//обработка поля внешных данных get_interface_input
-			if ($this->struct2['pole_name'][$i]=='get_interface_input') 
-			
-					{//если первичный ключ берется из get_interface_input то его нужно обработать
-						$tab_rec[$this->struct2['col_name'][$i]]=$this->get_interface_input;
-						if ($this->struct2['col_name'][$i]==$this->pole__id) $id=$this->get_interface_input;
-					
-					}
-			
-	
-			
-			//print_r($tab_rec);
-			}
-			else
-				{
-			//проверим наличие функции обработки, если она указана, применим ее
+			if ($this->struct2['pole_name'][$i]=='get_interface_input') {
+                //если первичный ключ берется из get_interface_input то его нужно обработать
+                $tab_rec[$this->struct2['col_name'][$i]]=$this->get_interface_input;
+                if ($this->struct2['col_name'][$i]==$this->pole__id) $id=$this->get_interface_input;
+            }
+        } else {
+            //проверим наличие функции обработки, если она указана, применим ее
 			if ($this->struct2['functions_after'][$i]>'') 
 					{//получить имя функции из таблицы
 						$fn=$this->struct2['functions_after'][$i];
@@ -505,7 +503,10 @@ if (isset($this->struct2['pole_type']))
 															(isset($_POST[$c.$i])) ? $_POST[$c.$i]:NULL,
 																unserialize($this->struct2['properties'][$i])
 																);
-			}
+			if ($this->pole_dop[$i]=="null" || $this->pole_dop[$i]=="NULL") {
+                $this->pole_dop[$i]=null;
+            }
+        }
 		else {$this->pole_dop[$i]=0;}
 		$a=$this->pole_dop[$i];
 		if ($this->isSerialized($a))
@@ -952,38 +953,42 @@ if ($this->struct1['pole_type'][$jjj]>0)
 		$sql__= preg_replace ("/\"/",'\\\"',$sql__);
 		$sql__=str_replace('$pole_dop','$this->pole_dop',$sql__);//т.к. работаем в объекте, поправим $pole_dopN на $this->pole_dopN
 		$sql__=str_replace('$get_interface_input','$this->get_interface_input',$sql__);//поправим для внешних данных
-		eval("\$sql__ = \"$sql__\";");//echo $sql__;
-		//$this->dop_sql=simba::spec_parse_sql($sql__);
+		eval("\$sql__ = \"$sql__\";");
+
 		$this->dop_sql=simba::queryAllRecords($sql__);
-		//if (simba::$errorMessage) throw new Exception(__CLASS__,5,array($jjj)); 
+
 		//==================проверим, если значение поля входит в диапозон выборки SQL тогда все хорошо, в противном случае надо это поле обнулить
 		//т.к. возможно что это поле зависит от состояния предыдущих полей, т.е. надо присвоить значение по умолчанию
-		if (isset($this->dop_sql['id'][0]) && is_array($this->dop_sql['id'][0]))
-			{//вариант для сложного списка
-			$_fl_=false;
-			for($x=0;$x<count($this->dop_sql['id']);$x++) if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'][$x])) {$_fl_=true;break;}
-			if (!$_fl_) $this->pole_dop[$jjj]=0;
-			} 
-			else //вариант для простого списка
-			if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'])) {$this->pole_dop[$jjj]=0;}
+            if (isset($this->dop_sql['id'][0]) && is_array($this->dop_sql['id'][0])){//вариант для сложного списка
+
+                $_fl_=false;
+                for($x=0;$x<count($this->dop_sql['id']);$x++) {
+                    if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'][$x])) {$_fl_=true;break;}
+                }
+                if (!$_fl_) {$this->pole_dop[$jjj]=0;}
+            } else {
+                //вариант для простого списка
+                if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'])) {$this->pole_dop[$jjj]=0;}
+            }
 		}
-		
 	//если значение пустое и указано значение по умолчанию, тогда установить 
-		if (($this->pole_dop[$jjj]==''  ) && $this->struct1['default_sql'][$jjj]) 
-			{$sql__=stripslashes($this->struct1['default_sql'][$jjj]);
+    
+		if (($this->pole_dop[$jjj]==='') && $this->struct1['default_sql'][$jjj]) {
+            
+            $sql__=stripslashes($this->struct1['default_sql'][$jjj]);
 			$sql__=str_replace('$pole_dop','$this->pole_dop',$sql__);//т.к. работаем в объекте, поправим $pole_dopN на $this->pole_dopN
 			$sql__=str_replace('"$get_interface_input"','\'$get_interface_input\'',$sql__);
 			$sql__=str_replace('$get_interface_input','$this->get_interface_input',$sql__);//поправим для внешних данных
 			
 			eval("\$sql__ = \"$sql__\";");
-			$df=simba::queryOneRecord($sql__);//if (simba::$errorMessage) throw new Exception(__CLASS__,6,array($jjj)) ;
+			$df=simba::queryOneRecord($sql__);
 			$this->pole_dop[$jjj]=$df['id'];
 			$a=$this->pole_dop[$jjj]; 
 
 
-			eval("\$this->pole_dop$jjj = \"$a\";");//echo "def=$a; jjj=$jjj<br>";//eval ("echo \$this->pole_dop$jjj;");
-			
-			} else $a=NULL;
+			eval("\$this->pole_dop$jjj = \"$a\";");
+        } else {$a=NULL;}
+
 		if ($this->struct1['functions_befo_out'][$jjj]>'') 
 				{//получить имя функции из таблицы
 

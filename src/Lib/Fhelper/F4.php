@@ -33,6 +33,9 @@ public function __construct($item_id)
 	
 public function render()
 {
+    if (is_null($this->value)) {
+        $this->value="null";
+    }
 	if ($this->properties['list_type']>0)
 		{
 			//$item_html=$this->view->formHidden($this->name[0],$this->value,$this->zatr);
