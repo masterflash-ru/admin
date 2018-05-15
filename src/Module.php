@@ -49,10 +49,13 @@ public function onDispatch(MvcEvent $event)
        /*
        *вход разрешен только root, ID=1 !
 		*/
+        $viewModel = $event->getViewModel();
         if ($user->identity()!=1) {
             $controller->redirect()->toRoute('admin');
+            $viewModel->setTemplate('layout/admin_layout_empty');
+            return;
         }
-		$viewModel = $event->getViewModel();
+		
 		$viewModel->setTemplate('layout/admin_layout');		
 	}   
 }
