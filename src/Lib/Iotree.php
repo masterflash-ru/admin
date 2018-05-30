@@ -1,5 +1,7 @@
 <?php
 /*
+30.5.18 - обработка дерева переделана на интераторах, для увеличения скорости
+
 21.4.17 - добавлен параметр view из ZEND, для генерации полей этим фреймворком
 
 17.4.15 - изменен алгоритм обработки настроек из ini файлов
@@ -19,6 +21,8 @@ use Zend\EventManager\EventManager;
 use ADO\Service\RecordSet;
 use Admin\Lib\Simba;
 use Admin\Lib\Tree;
+use RecursiveIteratorIterator;
+use RecursiveArrayIterator;
 
 class ioTree
 {
@@ -691,11 +695,6 @@ return $this->print_html;
 
 
 
-
-
-
-
-
 //внутренние
 
 private function get_tree_id ($subid,$lev,$id=0)
@@ -717,10 +716,138 @@ private function get_tree_id ($subid,$lev,$id=0)
 	}
 }
 
+public function create_tree($subid,$lev)
+{
+    $array=[];
+    while (!$this->rs->EOF){
+        $r=[];
+        foreach ($this->rs->DataColumns->Item_text as $column_name=>$columninfo){
+            $r[$column_name]=$this->rs->Fields->Item[$column_name]->Value;
+        }    
+        $array[]=$r;
+        $this->rs->MoveNext();
+    }
+        $tree=[];
+    
+    foreach($array as $cat) {
+        $tree[$cat['id']] = $cat;
+        unset($tree[$cat['id']]['id']);
+    }
+     $tree['0'] = array(
+         'subid' => '',
+         'title' => 'Корень',
+         'category_url' => ''
+     );
+    foreach ($tree as $id => $node) {
+        if (isset($node['subid']) && isset($tree[$node['subid']])) {
+            $tree[$node['subid']]['___sub___'][$id] =& $tree[$id];
+        }
+    }
+    //итоговое дерево
+    $tree=$tree[0]['___sub___'];
+    
+//\Zend\Debug\Debug::dump($tree);
+     $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($tree),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+    foreach ($iterator as $id=>$item){
+        if (!is_array($item)){
+            continue;
+        }
+        if ($id==="___sub___"){
+            continue;
+        }
+        $depth = $iterator->getDepth();
+        if ($depth>0){
+            $depth=$depth/2;
+        }
+        $i=0;
+		//работаем в определенном уровне и выводим поля которые указаны при конструировании
+        $data='';
+		for ($j=0;$j<count($this->struct2['pole_type']);$j++){//это цикл по полям
+            //инициализируем переменные на всякий случай
+            if (!isset($this->sp['pole_style'][$j]))$this->sp['pole_style'][$j]=NULL;
+            if (!isset($this->sp['pole_prop'][$j]))$this->sp['pole_prop'][$j]=NULL;
+            if (!isset($this->sp['sql'][$j]['name']))$this->sp['sql'][$j]['name']=NULL;
+            if (!isset($this->sp['sql'][$j]['id']))$this->sp['sql'][$j]['id']=NULL;
+            if (!isset($this->sp['sql'][$j]['sp_group_array']))$this->sp['sql'][$j]['sp_group_array']=NULL;
+            if (!isset($this->sp['const'][$j]))$this->sp['const'][$j]=NULL;
+            if (!isset($this->sp['caption_style'][$j]))$this->sp['caption_style'][$j]=NULL;
+            
+            if (isset($this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]])){
+                    $data.=htmlentities ($this->interface_txt['caption_col_'.$this->struct2['pole_name'][$j]],ENT_COMPAT,"UTF-8");
+                }
+			//работаем с функцией до вывода поля на экран
+			if ($this->struct2['functions_befo_out'][$j]>'') {//получить имя функции из таблицы
+                $fn=$this->struct2['functions_befo_out'][$j];
+                $fn=new $fn;
+                    
+                $const=explode (',',$this->sp['const'][$j]);//массив констант
+                
+                $item[$this->struct2['col_name'][$j]]=$fn
+																	($this,
+																	//$this->result_sql[$this->struct2['col_name'][$j]][$i],//сама инфа
+																	$item[$this->struct2['col_name'][$j]],
+																	$this->struct2,
+																	$this->struct2['pole_type'][$j],
+																	$this->pole_dop,
+																	$this->tab_name,
+																	$this->spec_poles[0],
+																	$const,
+																	//$this->result_sql[$this->spec_poles[0]],
+																	$id,
+																	0,
+																	$i,
+																	$j ,  //порядковый номер элемента  в элементе строки (ТОЛЬКО ДЛЯ ДЕРЕВА!)
+																	$item
+																	);
 
+                    $this->sp['const'][$j]=implode (',',$const);//обратно в список, т.к. наша функция может изменять константы
+				}
+			
+            //само поле поле по его идентификатору
+            
+            
+			$data.=$this->_form_item_->create_form_item
+						(
+							$this->struct2['pole_type'][$j],
+							$this->struct2['pole_name'][$j].'['.$id.']',
+							$item[$this->struct2['col_name'][$j]],
+								
+							$this->sp['pole_style'][$j].' '.$this->sp['pole_prop'][$j],
+							
+							$this->sp['sql'][$j]['name'],
+							$this->sp['sql'][$j]['id'],
+							$this->sp['sql'][$j]['sp_group_array'],
+			
+							$this->sp['const'][$j],
+							$this->struct2['value'][$j],
+							unserialize($this->struct2['properties'][$j])
+						);
+			}
+			$data2="";
+			//кнопки в текущей строке, если они выбраны
+			if ($this->but[0]) $b0="<input type=\"submit\" name=\"save[".$id  ."]\" value=\"запись\">"; else $b0='';
+			if ($this->but[1]) $b1="<input type=\"submit\" name=\"create[".$id."]\" value=\"нов.подуров.\">"; else $b1='';
+			if ($this->but[2]) $b2="<input type=\"submit\" name=\"del[".$id."]\" value=\"удал\" class=\"del\">"; else $b2='';
+	
+			if ($this->struct0['col_por'] && $this->struct0['col_por']<$lev1) $data2.=$b0.$b2;	else 	$data2.=$b0.$b1.$b2;
+			
+			$data2.="<input name=\"level[".$id."]\" type=\"hidden\" value=\"".$item[$this->spec_poles[2]]."\">
+					<input name=\"subid[".$id ."]\" type=\"hidden\" value=\"".$item[$this->spec_poles[1]]."\">
+					<input name=\"id_[]\" type=\"hidden\" value=\"".$id."\">";
+			
+			$data.=htmlentities ($data2,ENT_NOQUOTES | ENT_XHTML,"UTF-8");
 
+        
+        $this->tree_obj->add_item($data,'',$depth,'','',$id);
+    }
 
-function create_tree($subid,$lev)
+}
+
+/*
+function create_tree111($subid,$lev)
 {
 //получить список подразделов
 //$this->rs - основной RS, его клонируем что бы не обращаться к базе
@@ -738,10 +865,9 @@ preg_match("/order +by +([a-z0-9]+) *([a-z]*)/i",$this->sql,$arr);
 /*
 $arr [1] - имя поля для сортировки
 $arr [2]  - ASC  DESC или пусто что равносильно ASC
-*/
+* /
 
-
-$clone_rs->Filter=$this->spec_poles[2]."=".$lev." and ".$this->spec_poles[1]."=".(int)$subid.preg_replace("/order +by +([a-z0-9]+) *([a-z]*)/i","",$this->sql);//фильтруем записи
+$clone_rs->Filter=$this->spec_poles[1]."=".(int)$subid.preg_replace("/order +by +([a-z0-9]+) *([a-z]*)/i","",$this->sql);//фильтруем записи
 
 if (!empty($arr [1]))
 	{
@@ -842,7 +968,7 @@ while (!$clone_rs->EOF)
 			$clone_rs->MoveNext();
 		}
 	}
-
+*/
 
 
 }
