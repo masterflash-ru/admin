@@ -744,7 +744,11 @@ public function create_tree($subid,$lev)
         }
     }
     //итоговое дерево
-    $tree=$tree[0]['___sub___'];
+    if (!empty($tree[0]['___sub___'])){
+        $tree=$tree[0]['___sub___'];
+    } else {
+        $tree=[];
+    }
     
 //\Zend\Debug\Debug::dump($tree);
      $iterator = new RecursiveIteratorIterator(

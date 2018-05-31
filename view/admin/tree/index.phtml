@@ -5,34 +5,11 @@ use Admin\Lib\Iotree;
 
 
 $io_tree_interface=new Iotree($this->container,$this);
-
+$ss0000=microtime(true);
 $io_tree_interface->create_interface($this->table);
 $io_tree_interface->print_interface();
+
 
 if (isset($io_tree_interface->design_tables_text_interfase['coment0'])) echo $io_tree_interface->design_tables_text_interfase['coment0'];
 
 
-
-/*
-//разберемся с возможными ошибками
-$ee=$io_tree_interface->get_interface_status();//получить весь статус
-//вначале общие ошибки
-$m='';
-if (isset($ee['global_error_code']) && count($ee['global_error_code'])>0)
-	{foreach ($ee['global_error_message'] as $v)
-		$m.=$v.'\n';
-	echo '<script type="text/javascript">alert("'.$m.'")</script>';
-	}
-
-//теперь по строкам
-$m='';
-if (isset($ee['row_item']) && count($ee['row_item'])>0)
-	{foreach ($ee['column_name'] as $col)
-		foreach ($ee['error_form_item'][$col] as $row_numb=>$row_item)
-			{
-			if ($row_item['code']>0) $m.='(colName:'.$col.',rowID:'.$row_numb.') '.$row_item['message'].'\n';
-			}
-	if ($m>'') echo '<script type="text/javascript">alert("'.$m.'")</script>';
-	}
-
-*/
