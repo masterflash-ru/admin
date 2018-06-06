@@ -627,6 +627,7 @@ $sql=$this->struct0['pole_spisok_sql'];
 $sql= preg_replace ("/\"/",'\\\"',$sql);
 $sql=str_replace('$pole_dop','$this->pole_dop',$sql);//т.к. работаем в объекте, поправим $pole_dopN на $this->pole_dopN
 $sql=str_replace('$get_interface_input','$this->get_interface_input',$sql);//поправим для внешних данных
+
 eval("\$sql = \"$sql\";");
 
 //разбираемся с сортировками, если они есть и щелкнули на заголовок таблицы
@@ -965,15 +966,15 @@ if ($this->struct1['pole_type'][$jjj]>0)
                 for($x=0;$x<count($this->dop_sql['id']);$x++) {
                     if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'][$x])) {$_fl_=true;break;}
                 }
-                if (!$_fl_) {$this->pole_dop[$jjj]=0;}
+                if (!$_fl_) {$this->pole_dop[$jjj]="";}
             } else {
                 //вариант для простого списка
-                if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'])) {$this->pole_dop[$jjj]=0;}
+                if (@!in_array($this->pole_dop[$jjj],$this->dop_sql['id'])) {$this->pole_dop[$jjj]="";}
             }
 		}
 	//если значение пустое и указано значение по умолчанию, тогда установить 
     
-		if (($this->pole_dop[$jjj]==='') && $this->struct1['default_sql'][$jjj]) {
+		if ( $this->pole_dop[$jjj]==='' && $this->struct1['default_sql'][$jjj]) {
             
             $sql__=stripslashes($this->struct1['default_sql'][$jjj]);
 			$sql__=str_replace('$pole_dop','$this->pole_dop',$sql__);//т.к. работаем в объекте, поправим $pole_dopN на $this->pole_dopN
