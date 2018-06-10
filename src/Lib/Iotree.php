@@ -660,10 +660,10 @@ for ($i=0;$i<$count;$i++)
 $this->rs=new RecordSet();
 $this->rs->CursorType = adOpenKeyset;
 $this->rs->MaxRecords=0;
-$this->rs->open("SELECT * FROM  ".$this->tab_name." where 1=1 ".$this->sql,$this->connection);
+$this->rs->open("SELECT * FROM  ".$this->tab_name,$this->connection);
 
 
-$this->create_tree(0,0); 
+$this->create_tree(0,0);
 
 
 $this->line_table_obj->flag_out_form=false;//не выводить форму
@@ -731,7 +731,7 @@ public function create_tree($subid,$lev)
     
     foreach($array as $cat) {
         $tree[$cat['id']] = $cat;
-        unset($tree[$cat['id']]['id']);
+       // unset($tree[$cat['id']]['id']);
     }
      $tree['0'] = array(
          'subid' => '',
