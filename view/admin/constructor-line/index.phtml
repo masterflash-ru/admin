@@ -101,6 +101,7 @@ if (isset($_POST['save_all']))
 					'properties'=>$_POST['functions_save_interface'],
 					'functions_befo_out'=>$_POST['functions_load_interface'],
 					'functions_befo_del'=>$_POST['functions_del_interface'],
+                     'functions_after'=>$_POST['functions_after_save_interface'],               
 					'validator'=>$_POST['cache_tags'],
 					'sort_item_flag'=>$_POST['cache_clear'],
 					'pole_spisok_sql'=>$_POST['pole_spisok_sql0']
@@ -515,8 +516,8 @@ if (value==2)
                 <tr>
                   <td>Обработчик удаления записей</td>
                   <td><input type="text" value="<?=$struct0['functions_befo_del'];?>" name="functions_del_interface" /></td>
-                  <td ><?php /*echo $interface['msg']['-----'];*/ ?>  </td>
-                  <td >-</td>
+                  <td >Функция которая вызывается ПОСЛЕ записи/обновления строки в базе</td>
+                  <td ><input type="text" value="<?=$struct0['functions_after'];?>" name="functions_after_save_interface" /></td>
                 </tr>
               </table>
 
@@ -715,9 +716,9 @@ echo simba::getSpValue ($cols['Field'],$cols_['Field'],'id');
 				  <fieldset><legend style="color:red; font-weight:bold">Вызываемые функции</legend>
                     <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
                       <tr>
-                        <td>До записи поля:</td>
+                        <td>До обработки поля:</td>
                         <td><input type="text" name="functions_befo" value="<?= $struct2['functions_befo'];?>" /></td>
-                        <td >После записи поля:</td>
+                        <td >После обработки поля:</td>
                         <td ><input type="text" name="functions_after" value="<?=$struct2['functions_after'];?>" /></td>
                       </tr>
                       <tr>

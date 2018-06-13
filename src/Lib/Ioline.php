@@ -333,7 +333,19 @@ if (!$flag_error)
 					$rs->Update();
 					
 				}
-			
+			//вызываем функцию после обновления записей, нужно для связных таблиц с внешними ключами
+			if ($this->struct0['functions_after']>'') 
+					{//получить имя функции из таблицы
+						$fn=$this->struct0['functions_after'];
+						$fn=new $fn;
+						$infa=$fn(
+								$this,
+								$tab_rec,
+								$id
+							); 
+
+					}
+
 			}
 	}
 }
