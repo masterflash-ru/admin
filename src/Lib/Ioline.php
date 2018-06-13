@@ -187,6 +187,7 @@ while ($i<$count) //for ($i=0;;$i++)
 		for ($p=0;$p<count($c_);$p++) {$const[$p]=simba::get_const($c_[$p]);}
 		if (isset($_POST[$this->struct2['pole_name'][$i]][$id])) $infa=$_POST[$this->struct2['pole_name'][$i]][$id];
 			else $infa=NULL;
+     
 		//проверим, еуказана ли функциЯ которая вызовется до записи поля
 			if ($this->struct2['functions_befo'][$i]>'') 
 					{
@@ -304,7 +305,10 @@ if (!$flag_error)
 		else //нет обработчика, записываем по умолчанию 
 			{//если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
 			$alt_name=explode(',',$this->struct0['col_name']);//получить список псевдонимов, если они есть
-			foreach ($alt_name as $v) unset($tab_rec[$v]);
+            $tab_rec1=$tab_rec;
+			foreach ($alt_name as $v) {
+                unset($tab_rec[$v]);
+            }
 			//simba::replaceRecord ($tab_rec,$this->tab_name);//print_r($tab_rec);
 					// переделано на RS
 			$rs=new RecordSet();
@@ -340,7 +344,7 @@ if (!$flag_error)
 						$fn=new $fn;
 						$infa=$fn(
 								$this,
-								$tab_rec,
+								$tab_rec1,
 								$id
 							); 
 

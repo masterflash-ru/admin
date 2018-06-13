@@ -53,7 +53,7 @@ public function render()
 /*обработчик записи, возвращает обработанное*/
 public function save()
 {
-	return implode(",",$this->infa);
+    return implode(",",$this->infa);
 	
 }
 
