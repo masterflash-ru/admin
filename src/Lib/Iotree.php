@@ -763,6 +763,7 @@ public function create_tree($subid,$lev)
             continue;
         }
         $depth = $iterator->getDepth();
+        $lev1=$depth;
         if ($depth>0){
             $depth=$depth/2;
         }
