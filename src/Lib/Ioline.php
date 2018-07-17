@@ -118,7 +118,7 @@ function __construct($container,$view)
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
 	$this->EventManager->addIdentifiers(["simba.admin"]);
-	$this->form_item=new form_item($view,$this->config);
+	$this->form_item=new form_item($view,$this->config,$container->get('ADO\Connection'));
 	$this->line_table_obj=new tab_admin($view,$this->config);
 }//конец конструктора
 

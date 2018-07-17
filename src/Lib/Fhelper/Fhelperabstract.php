@@ -25,6 +25,7 @@ abstract class Fhelperabstract
 	public $any_values;
 	public $zselect;
 	public $config;	//конфиг приложения
+    public $connection; //соденение с базой НЕ РЕАЛИЗОВАНО!
 
 	
 	//для записи

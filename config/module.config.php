@@ -95,6 +95,17 @@ return [
 									],
 								],
 							],
+                    
+							'tovar_category_parameters' => [
+								'type' => Literal::class,
+								'options' => [
+									'route'    => '/tovar_category_parameters',
+									'defaults' => [
+										'controller' => Controller\TovarController::class,
+										'action'     => 'index',
+									],
+								],
+							],
 
 				],//'child_routes'
 			],
@@ -177,6 +188,7 @@ return [
 			Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
 			Controller\BackupRestoreController::class => Controller\Factory\BackupRestoreControllerFactory::class,
 			Controller\EntityController::class => Controller\Factory\EntityControllerFactory::class,
+            Controller\TovarController::class => Controller\Factory\TovarControllerFactory::class,
         ],
     	
 		//если у контроллера нет коннструктора или он не нужен или пустой

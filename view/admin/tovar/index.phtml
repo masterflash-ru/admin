@@ -1,0 +1,258 @@
+<?php
+use Admin\Lib\Tabadmin;
+use Admin\Lib\Simba;
+
+
+$tb=new Tabadmin($this,$this->config);
+$tree_ids=[];
+$caption=[];
+$tovar_category=(int)$_GET["tovar_category"];
+$tovar_id=(int)$_GET["tovar"];
+
+$tree_ids[]=$tovar_category;
+_un_tree($tovar_category,$tree_ids);
+$parameters=Simba::queryAllRecords("select 
+        p.*,
+        (select GROUP_CONCAT(`values` separator '~') from `tovar_category_parameters_list` as l where l.tovar_category_parameters=p.id) as list
+            from tovar_category_parameters as p
+                where p.tovar_category in(". implode(",",$tree_ids) .")");
+
+//]итаем типы цен
+$money_type=Simba::queryAllRecords("select * from tovar_price_type");
+
+
+//операции
+
+@$s=array_keys($_POST["save"]);//это идентификатор строки когда нажали кнопку сохранить
+@$d=array_keys($_POST["del"]);//это идентификатор строки когда нажали кнопку сохранить
+
+
+//удаление
+if (is_array($d)){
+    $combination=(int)$d[0];
+    Simba::query("delete from tovar_category_parameters_value 
+                    where 
+                        tovar_catalog = {$tovar_id} and
+                        tovar_category = {$tovar_category} and 
+                        parameters_combination_number ={$combination}"
+                        );
+    Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id);
+    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id);
+}
+
+
+//запись /добавление
+if (is_array($s)){
+    $combination=(int)$s[0];
+    $articul=$_POST["articul"][$combination];
+    $ostatok=$_POST["ostatok"][$combination];
+    
+    $price=[];
+    //цены
+    foreach ($money_type["sysname"] as $mt){
+        $price[]=$_POST["money_{$mt}"][$combination];
+    }
+    
+    foreach ($parameters["id"] as $k=>$field_id){
+        $values[$field_id]=$_POST["parameter_{$field_id}"][$combination];
+    }
+    foreach ($money_type["sysname"] as $k=>$mt){
+        $moneys[$mt]=$_POST["money_{$mt}"][$combination];
+    }
+    
+    //запись
+    if (empty($combination)){
+        //добавление новой
+        //вычислим новый номер комбинации параметров
+        $p=Simba::queryOneRecord("select max(parameters_combination_number) as c from tovar_category_parameters_value");
+        if (empty($p['c'])){
+            $combination=1; //начальное условие (пуск каталога)
+        }
+        $combination=$p['c']+1;
+        //
+        //само добавление в базу
+    }
+    
+    //удалим старое значение везде
+    Simba::query("delete from tovar_category_parameters_value 
+                    where 
+                        tovar_catalog = {$tovar_id} and
+                        tovar_category = {$tovar_category} and 
+                        parameters_combination_number ={$combination}"
+                        );
+    
+    foreach ($parameters["id"] as $k=>$field_id){
+        $value=$values[$field_id];
+        if (is_array($value)){
+            //если отмечено несколько флажков или несколько полей
+            $value=implode("~",$value);
+        }
+                    Simba::ReplaceRecord([
+                        "tovar_catalog"=>(int)$tovar_id,
+                        "tovar_category"=>(int)$tovar_category,
+                        "tovar_category_parameters"=>$field_id,
+                        "parameters_combination_number"=>$combination,
+                        "value"=>$value
+                        ],"tovar_category_parameters_value");
+
+    }
+        Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id);
+        //остаток,артикул
+        Simba::ReplaceRecord([
+                        "tovar_catalog"=>(int)$tovar_id,
+                        "tovar_category_parameters_value"=>$combination,
+                        "articul"=>$articul,
+                        "ostatok"=>$ostatok
+                        ],"tovar_catalog_sklad");
+        
+        //цены
+    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id);
+    foreach ($money_type["sysname"] as $k=>$mt){
+        Simba::ReplaceRecord([
+            "tovar_catalog"=>(int)$tovar_id,
+            "tovar_category_parameters_value"=>$combination,
+            "price"=>str_replace(",",".",$moneys[$mt]),
+            "tovar_price_type"=>$mt,
+            "currency"=>"RUB"
+        ],"tovar_catalog_price");
+        
+    }
+        
+
+}
+
+
+
+//\Zend\Debug\Debug::dump($parameters);
+foreach ($parameters["field_type"] as $k=>$field){
+    $list=explode("~",$parameters["list"][$k]);
+    $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list);
+}
+$caption=$parameters["name"];
+
+
+//добавляем 
+$caption[]="Артикул";
+$caption[]="Остаток";
+$tb->row_start_type(false,2,'articul[0]','');
+$tb->row_start_type(false,2,'ostatok[0]','size=5');
+
+foreach ($money_type["sysname"] as $k=>$mt){
+    $caption[]=$money_type["name"][$k]."<br>в базовой валюте";
+    $tb->row_start_type(false,2,'money_'.$mt.'[0]','size=10');
+}
+
+$caption[]="Операция";
+
+
+$tb->row_start_type(false,19,'save[0]','',0,0,0,0,0,array(1,"Добавить"));
+
+$tb->col_name=$caption;
+
+//выборка для генерации строк
+$arr=Simba::queryAllRecords("select * from tovar_category_parameters_value 
+                where 
+                    tovar_catalog={$tovar_id} and 
+                    tovar_category={$tovar_category}");
+//преобразуем массив, для передачи его в генератор интерфейса
+//id  в нем это номер комбинации параметров
+if (Simba::numRows()){
+    $rez["id"]=array_values(array_unique($arr["parameters_combination_number"]));
+} else {
+    $rez["id"]=[];
+}
+
+    
+
+
+
+//\Zend\Debug\Debug::dump($rez);
+
+$val=[];
+foreach ($parameters["field_type"] as $k=>$field){
+    $list=explode("~",$parameters["list"][$k]);
+    $name=$tb->create_array_names($rez["id"],'parameter_'.$parameters["id"][$k]);
+    $tb->row_def_type(false,$field,$name,'',$list,$list);
+    
+    foreach ($rez["id"] as $combination){
+        //значение
+        
+        $arr=Simba::queryAllRecords("select value from tovar_category_parameters_value 
+                    where 
+                        tovar_catalog={$tovar_id} and 
+                        tovar_category_parameters={$parameters["id"][$k]} and
+                        parameters_combination_number={$combination} and
+                        tovar_category={$tovar_category}");
+        if (Simba::numRows()>1){
+            $val[]=implode("~",$arr["value"]);
+        } else {
+            $val[]=$arr["value"][0];
+        }
+    }
+    $tb->row_all_value (false,$val);$val=[];
+}
+
+//выборка артикула и остатка
+$val["articul"]=[];
+$val["ostatok"]=[];
+foreach ($rez["id"] as $combination){
+    $arr=Simba::queryOneRecord("select * from tovar_catalog_sklad 
+                    where 
+                        tovar_catalog={$tovar_id} and 
+                        tovar_category_parameters_value={$combination}");
+    if (Simba::numRows()){
+        $val["articul"][]=$arr["articul"];
+        $val["ostatok"][]=$arr["ostatok"];
+    }
+}
+$name=$tb->create_array_names($rez["id"],'articul');
+$tb->row_def_type(false,2,$name);
+$tb->row_all_value (false,$val["articul"]);
+$name=$tb->create_array_names($rez["id"],'ostatok');
+$tb->row_def_type(false,2,$name,'size=5');
+$tb->row_all_value (false,$val["ostatok"]);
+
+//выборка цен
+$val=[];
+foreach ($money_type["sysname"] as $k=>$mt){
+    $name=$tb->create_array_names($rez["id"],'money_'.$mt);
+    $tb->row_def_type(false,2,$name,'size=10');
+    
+    foreach ($rez["id"] as $combination){
+        $arr=Simba::queryOneRecord("select price from tovar_catalog_price 
+                        where 
+                            tovar_catalog={$tovar_id} and
+                            tovar_price_type='{$mt}' and
+                            tovar_category_parameters_value={$combination}");
+        $val[]=$arr["price"];
+    }
+    $tb->row_all_value (false,$val);
+    $val=[];
+}
+
+
+
+$name=$tb->create_array_names($rez["id"],'save','del');
+$tb->row_def_type(false,17,$name,'',0,0,0,0,0,array(1,0,'Сохранить,Удалить'));
+
+
+$tb->tab_print();
+
+
+
+
+
+
+/*обратный проход дерева для получения всех параметров до 0-го уровня*/
+function _un_tree($id,&$tree_ids)
+{
+
+    $t=Simba::queryOneRecord("select id,subid,level from tovar_category where id=".(int)$id);
+    if ($t["level"]!=0){
+        $tree_ids[]=(int)$t["subid"];
+        _un_tree($t["subid"],$tree_ids);
+    }
+}
+
+?>
+<b>Все изменения производятся локально внутри этого окошка!</b>

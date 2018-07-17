@@ -39,11 +39,12 @@ public $errors=[];//хранит тексты ошибок обычно загр
 public $date_time_locale_format=[];//массив с форматом даты-времени данной локали
 public $view;
 public $config;		//конфиг приложения
-	public $container;	//контейнер приложения
+	public $connection;	//соединение с базой
 
 public function __construct ($view,$config)
 {//конструктор
 	$this->config=$config;
+    //$this->connection=$connection;
 	$this->date_time_locale_format=[
 									"date_time_format"=>"%d.%m.%Y %H:%M:%S",
 									"date_format"=>"%d.%m.%Y",
@@ -105,8 +106,8 @@ return [
 	'id'=>$id,
 	'name'=>$name,
 	'category'=>$category,
-	'category_list'=>array(1,2,3,4,5,6,7,100),
-	'category_list_name'=>["простые поля ввода","выбор вариантов","файлы","HTML редактор","Дата время","Кнопки","Изображения","прочее"]
+	'category_list'=>array(1,2,3,4,5,6,7,100,101),
+	'category_list_name'=>["простые поля ввода","выбор вариантов","файлы","HTML редактор","Дата время","Кнопки","Изображения","прочее","Специальные для каталога/магазина"]
 	];
 }
 
@@ -161,8 +162,22 @@ return
 }
 
 
-//выборка их XML описателя           1        2      3      4   5     6       7            8       9                 10                  11                   12             13
-public function create_form_item ($item_id,$name_,$value,$atr_,$sp,$sp_id,$sp_group_array,$c,$default_value='',$properties_=[],$line_row_type='',$default_text='',$any_values=[])
+//выборка их XML описателя  
+public function create_form_item (
+    $item_id,               //1
+    $name_,                 //2
+    $value,                 //3
+    $atr_,                  //4
+    $sp,                    //5
+    $sp_id,                 //6
+    $sp_group_array,        //7
+    $c,                     //8
+    $default_value='',      //9
+    $properties_=[],        //10
+    $line_row_type='',      //11
+    $default_text='',       //12
+    $any_values=[]          //13
+)
 {
 	$name=@explode (",",$name_);
 	$atr=@explode (",",$atr_);
@@ -235,6 +250,7 @@ for ($i=0;$i<$item_count;$i++)
 	}
 
 		$f->name=$name;
+        $f->connection=$this->connection;
 		$f->value=$value;
 		$f->atr=$atr;
 		$f->zatr=$zatr;
@@ -265,6 +281,7 @@ public function del_form_item($del_record,$item_id,$tab_name,$col_name,$const,$p
 $id=$del_record;
 		$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 		$f=new $f($item_id);
+    $f->connection=$this->connection;
 		$f->SetView($this->view);
 	
 		$f->setConfig($this->config);
@@ -292,10 +309,11 @@ public function save_form_item($id,$item_id,$tab_name,$col_name,$const,$infa,$pr
 */
 if (is_array($infa)) 
 		{
-			foreach ($infa as &$i)
-				{
-					$i=htmlspecialchars_decode($i,ENT_COMPAT);
-				}
+			foreach ($infa as &$i)	{
+                if (!is_array($i)){
+                    $i=htmlspecialchars_decode($i,ENT_COMPAT);
+                }
+            }
 		}
 	else
 	{$infa=htmlspecialchars_decode($infa,ENT_COMPAT);}
@@ -303,6 +321,7 @@ if (is_array($infa))
 $row_item=$id;
 		$f="\\Admin\\Lib\\Fhelper\\F".$item_id;
 		$f=new $f($item_id);
+    $f->connection=$this->connection;
 		$f->SetView($this->view);
 		$f->setConfig($this->config);
 	
@@ -590,6 +609,32 @@ setTimeout('data___clock()',3000)
 data___clock();
 
 \$( function() {\$('.dtpicker' ).datetimepicker();});
+
+/*F100*/
+function f100_ini()
+{
+    $('.f100_del').on('click',function(){
+    var id=$(this).attr('data-id');alert(id);
+    $('#'+id).remove();
+    $(this).remove();
+    });
+}
+var f100=100;
+$('.f100_add').on('click',function(){
+    var id=$(this).attr('data-id');
+    var inp='<br><input name=\"'+id+'\" id=\"f100_'+f100+'\" type=\"text\"><button type=\"button\" class=\"f100_del\" data-id=\"f100_'+f100+'\">-</button>';
+    $('.f100-container').append(inp);
+    f100_ini();
+    f100++;
+});
+f100_ini();
+
+setInterval(function(){
+if ( $('iframe').is('#ff101')) {
+document.getElementById('ff101').height = document.getElementById('ff101').contentWindow.document.body.scrollHeight+10;}
+}
+,2000);
+
 ";
 $out.="</script>";
 return $out;
