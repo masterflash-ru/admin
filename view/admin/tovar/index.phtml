@@ -13,7 +13,7 @@ $tree_ids[]=$tovar_category;
 _un_tree($tovar_category,$tree_ids);
 $parameters=Simba::queryAllRecords("select 
         p.*,
-        (select GROUP_CONCAT(`values` separator '~') from `tovar_category_parameters_list` as l where l.tovar_category_parameters=p.id) as list
+        (select GROUP_CONCAT(`values`  order by `values` asc separator '~') from `tovar_category_parameters_list` as l where l.tovar_category_parameters=p.id) as list
             from tovar_category_parameters as p
                 where p.tovar_category in(". implode(",",$tree_ids) .")");
 
