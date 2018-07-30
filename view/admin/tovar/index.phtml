@@ -21,29 +21,58 @@ $parameters=Simba::queryAllRecords("select
 $money_type=Simba::queryAllRecords("select * from tovar_price_type");
 
 
-//операции
+//массовые операции
+if (isset($_POST["_save_all_"])){
+    //сохранить все
+    foreach (explode(",",$_POST["global_action_id_array"]) as $id){
+        save_field((int)$id,$tovar_id,$tovar_category,$money_type,$parameters);
+    }
+}
+//массовое удаление
+if (isset($_POST["delete_selected_"])){
+    //сохранить все
+    foreach (explode(",",$_POST["global_action_id_array"]) as $id){
+        delete_row((int)$id,$tovar_id,$tovar_category);
+    }
+}
 
+
+
+
+
+//одиночные операции
 @$s=array_keys($_POST["save"]);//это идентификатор строки когда нажали кнопку сохранить
 @$d=array_keys($_POST["del"]);//это идентификатор строки когда нажали кнопку сохранить
 
 
 //удаление
 if (is_array($d)){
-    $combination=(int)$d[0];
+    delete_row((int)$d[0],$tovar_id,$tovar_category);
+}
+ 
+
+function delete_row($combination,$tovar_id,$tovar_category)
+{
     Simba::query("delete from tovar_category_parameters_value 
                     where 
                         tovar_catalog = {$tovar_id} and
                         tovar_category = {$tovar_category} and 
                         parameters_combination_number ={$combination}"
                         );
-    Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id);
-    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id);
+    Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
+    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
 }
 
 
 //запись /добавление
 if (is_array($s)){
-    $combination=(int)$s[0];
+    save_field((int)$s[0],$tovar_id,$tovar_category,$money_type,$parameters);
+}
+    
+function save_field ($combination,$tovar_id,$tovar_category,$money_type,$parameters)
+{//одиночная запись
+
+    
     $articul=$_POST["articul"][$combination];
     $ostatok=$_POST["ostatok"][$combination];
     
@@ -99,7 +128,7 @@ if (is_array($s)){
                         ],"tovar_category_parameters_value");
 
     }
-        Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id);
+        Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
         //остаток,артикул
         Simba::ReplaceRecord([
                         "tovar_catalog"=>(int)$tovar_id,
@@ -109,7 +138,7 @@ if (is_array($s)){
                         ],"tovar_catalog_sklad");
         
         //цены
-    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id);
+    Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
     foreach ($money_type["sysname"] as $k=>$mt){
         Simba::ReplaceRecord([
             "tovar_catalog"=>(int)$tovar_id,
@@ -162,7 +191,7 @@ $tb->col_name=$caption;
 $arr=Simba::queryAllRecords("select * from tovar_category_parameters_value 
                 where 
                     tovar_catalog={$tovar_id} and 
-                    tovar_category={$tovar_category}");
+                    tovar_category={$tovar_category} order by parameters_combination_number");
 //преобразуем массив, для передачи его в генератор интерфейса
 //id  в нем это номер комбинации параметров
 if (Simba::numRows()){
@@ -175,7 +204,7 @@ if (Simba::numRows()){
 
 
 
-//\Zend\Debug\Debug::dump($rez);
+//\Zend\Debug\Debug::dump($_POST);
 
 $val=[];
 $flag_null_value=false; //флаг наличия null в значениях, это отменяет вывод вариантов выбора
@@ -194,14 +223,14 @@ foreach ($parameters["field_type"] as $k=>$field){
     
     
 
-    foreach ($rez["id"] as $combination){
+    foreach ($rez["id"] as $combination_n){
         //значение
         
         $arr=Simba::queryAllRecords("select value from tovar_category_parameters_value 
                     where 
                         tovar_catalog={$tovar_id} and 
                         tovar_category_parameters={$parameters["id"][$k]} and
-                        parameters_combination_number={$combination} and
+                        parameters_combination_number={$combination_n} and
                         tovar_category={$tovar_category}");
         if (Simba::numRows()>1){
             if (is_null($arr["value"])) {
@@ -270,6 +299,9 @@ foreach ($money_type["sysname"] as $k=>$mt){
 $name=$tb->create_array_names($rez["id"],'save','del');
 $tb->row_def_type(false,17,$name,'',0,0,0,0,0,array(1,0,'Сохранить,Удалить'));
 
+//массовые операции
+$tb->global_action_id_array=implode(",",$rez["id"]);
+$tb->global_action=[1,1];
 
 $tb->tab_print();
 
