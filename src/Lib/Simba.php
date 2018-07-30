@@ -142,13 +142,14 @@ public static function replaceRecord ($rec_array,$tablename)
     $s=NULL;
     $ss=NULL;
     $RecordsAffected=0;
-    $lst=array_keys($rec_array); $j=count($lst);
+    $lst=array_keys($rec_array); 
+    $j=count($lst);
     for ($i=0; $i<$j; $i++)  {
         //работаем с именами полей
         $s.=$lst[$i].","; 
         //теперь значения
         if (is_null($rec_array[$lst[$i]])){
-            $ss.='null ';
+            $ss.='null ,';
         } else {
             $ss.="'".addslashes ($rec_array[$lst[$i]])."',";
         }
