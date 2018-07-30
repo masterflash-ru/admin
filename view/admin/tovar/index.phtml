@@ -83,10 +83,13 @@ if (is_array($s)){
     
     foreach ($parameters["id"] as $k=>$field_id){
         $value=$values[$field_id];
+        if ($value=="null"){
+            $value=null;
+        }
         if (is_array($value)){
             //если отмечено несколько флажков или несколько полей
             $value=implode("~",$value);
-        }
+        }//\Zend\Debug\Debug::dump($value);
                     Simba::ReplaceRecord([
                         "tovar_catalog"=>(int)$tovar_id,
                         "tovar_category"=>(int)$tovar_category,
@@ -126,7 +129,13 @@ if (is_array($s)){
 //\Zend\Debug\Debug::dump($parameters);
 foreach ($parameters["field_type"] as $k=>$field){
     $list=explode("~",$parameters["list"][$k]);
-    $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list);
+    if ($field==4){
+        //для выпадающего списка добавим пустое первое поле
+        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list,0,0,0,[0,1,2]);
+        
+    } else {
+        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list);
+    }
 }
 $caption=$parameters["name"];
 
@@ -145,7 +154,7 @@ foreach ($money_type["sysname"] as $k=>$mt){
 $caption[]="Операция";
 
 
-$tb->row_start_type(false,19,'save[0]','',0,0,0,0,0,array(1,"Добавить"));
+
 
 $tb->col_name=$caption;
 
@@ -169,11 +178,22 @@ if (Simba::numRows()){
 //\Zend\Debug\Debug::dump($rez);
 
 $val=[];
+$flag_null_value=false; //флаг наличия null в значениях, это отменяет вывод вариантов выбора
 foreach ($parameters["field_type"] as $k=>$field){
     $list=explode("~",$parameters["list"][$k]);
     $name=$tb->create_array_names($rez["id"],'parameter_'.$parameters["id"][$k]);
-    $tb->row_def_type(false,$field,$name,'',$list,$list);
     
+    if ($field==4){
+        //для выпадающего списка добавим пустое первое поле
+        $tb->row_def_type(false,$field,$name,'',$list,$list,0,0,0,[0,1,2]);
+        
+    } else {
+        $tb->row_def_type(false,$field,$name,'',$list,$list);
+    }
+
+    
+    
+
     foreach ($rez["id"] as $combination){
         //значение
         
@@ -184,12 +204,27 @@ foreach ($parameters["field_type"] as $k=>$field){
                         parameters_combination_number={$combination} and
                         tovar_category={$tovar_category}");
         if (Simba::numRows()>1){
+            if (is_null($arr["value"])) {
+                $flag_null_value=true;
+            }
             $val[]=implode("~",$arr["value"]);
         } else {
             $val[]=$arr["value"][0];
+            if (is_null($arr["value"][0])) {
+                $flag_null_value=true;
+            }
+
         }
     }
-    $tb->row_all_value (false,$val);$val=[];
+    $tb->row_all_value (false,$val);
+    $val=[];
+}
+
+//если хоть одно значение null то ничего не добавляем
+if (!$flag_null_value){
+    $tb->row_start_type(false,19,'save[0]','',0,0,0,0,0,array(1,"Добавить"));
+} else {
+    $tb->row_start_type(false,1,'---');
 }
 
 //выборка артикула и остатка
@@ -255,4 +290,7 @@ function _un_tree($id,&$tree_ids)
 }
 
 ?>
-<b>Все изменения производятся локально внутри этого окошка!</b>
+<b>Все изменения производятся локально внутри этого окошка!<br>
+<br>
+Для отключения выбора параметров на сайте создайте запись с параметрами ПУСТО
+</b>

@@ -138,21 +138,26 @@ foreach (self::$rs->DataColumns as $DataColumn_item)
 //запись информации в базу
 public static function replaceRecord ($rec_array,$tablename)
 {//$rec_array ключи-это имена полей, значение - то что записываем
-//$tablename имя таблицы в которую пишем 
-$s=NULL;
-$ss=NULL;
-$RecordsAffected=0;
-$lst=array_keys($rec_array); $j=count($lst);
-for ($i=0; $i<$j; $i++) 
-			 {//работаем с именами полей
-			$s.=$lst[$i].","; 
-			//теперь значения
-			$ss.="'".addslashes ($rec_array[$lst[$i]])."',";
-			}
-	$s=substr($s,0,strlen($s)-1);$ss=substr($ss,0,strlen($ss)-1);
-	$sql="replace into $tablename ($s) values ($ss)";
-	//\Zend\Debug\Debug::dump($sql);
-	self::$connection->Execute($sql,$RecordsAffected,adExecuteNoRecords);
+    //$tablename имя таблицы в которую пишем 
+    $s=NULL;
+    $ss=NULL;
+    $RecordsAffected=0;
+    $lst=array_keys($rec_array); $j=count($lst);
+    for ($i=0; $i<$j; $i++)  {
+        //работаем с именами полей
+        $s.=$lst[$i].","; 
+        //теперь значения
+        if (is_null($rec_array[$lst[$i]])){
+            $ss.='null ';
+        } else {
+            $ss.="'".addslashes ($rec_array[$lst[$i]])."',";
+        }
+    }
+        $s=substr($s,0,strlen($s)-1);
+        $ss=substr($ss,0,strlen($ss)-1);
+        $sql="replace into $tablename ($s) values ($ss)";
+        //\Zend\Debug\Debug::dump($sql);
+        self::$connection->Execute($sql,$RecordsAffected,adExecuteNoRecords);
 	}
 
 
