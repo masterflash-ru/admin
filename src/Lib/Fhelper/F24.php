@@ -41,7 +41,7 @@ public function render()
 
 public function save()
 {
-	$this->infa=serialize(["robots"=>$_POST["robots_".$this->col_name][$this->id], "canonical"=>$_POST["canonical_".$this->col_name][$this->id] ]);
+	$this->infa=serialize(["robots"=>$_POST["robots_".$this->col_name][$this->id], "canonical"=>trim($_POST["canonical_".$this->col_name][$this->id]) ]);
 	return $this->infa;
 }
 
