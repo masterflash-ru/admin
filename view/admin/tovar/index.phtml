@@ -3,6 +3,8 @@ use Admin\Lib\Tabadmin;
 use Admin\Lib\Simba;
 
 simba::query("SET SESSION group_concat_max_len = 1000000");
+simba::$container=$this->container;
+
 
 $tb=new Tabadmin($this,$this->config);
 $tree_ids=[];
@@ -62,6 +64,10 @@ function delete_row($combination,$tovar_id,$tovar_category)
                         );
     Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
     Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
+	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
+
 }
 
 
@@ -73,6 +79,9 @@ if (is_array($s)){
 function save_field ($combination,$tovar_id,$tovar_category,$money_type,$parameters)
 {//одиночная запись
 
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
+	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
     
     $articul=$_POST["articul"][$combination];
     $ostatok=$_POST["ostatok"][$combination];

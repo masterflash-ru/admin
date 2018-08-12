@@ -13,12 +13,14 @@ class TovarController extends AbstractActionController
 {
 	protected $connection;
     protected $config;
+    protected $container;
 
-public function __construct ($connection,$config)
+public function __construct ($connection,$config,$container)
 	{
 		$this->connection=$connection;
         Simba::$connection=$connection;
     $this->config=$config;
+    $this->container=$container;
 	}
 
 
@@ -27,7 +29,7 @@ public function __construct ($connection,$config)
 public function indexAction()
 {
 	$view=new ViewModel();
-	$view->setVariables(["config"=>$this->config]);
+	$view->setVariables(["config"=>$this->config,"container"=>$this->container]);
 	return $view;
 }
 

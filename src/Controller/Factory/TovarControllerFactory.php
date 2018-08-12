@@ -13,7 +13,7 @@ class TovarControllerFactory implements FactoryInterface
     {
 		$config = $container->get('Config');
 		$connection=$container->get('ADO\Connection');
-		return new $requestedName($connection,$config);
+		return new $requestedName($connection,$config,$container);
     }
 }
 
