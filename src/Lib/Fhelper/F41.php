@@ -65,7 +65,7 @@ public function render()
 	
 		$input1 = new Element\Textarea($this->name[0]);
 		$input1->setValue($this->value);
-		$input1->setAttributes(["style"=>"width:10rem;height:5rem"]);
+		$input1->setAttributes($this->zatr);
 		$input1->setAttribute("id",$name);
 		return $this->view->FormElement($input1).$js;
 }
