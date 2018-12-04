@@ -17,13 +17,10 @@ class IndexControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-       // $connection=$container->get('ADO\Connection');
         $authManager = $container->get(AuthManager::class);
         $authService = $container->get(AuthenticationService::class);
        $sessionManager = $container->get(SessionManager::class);
-		
-		
-		return new IndexController( $authManager, $authService,$sessionManager);
+       return new IndexController( $authManager, $authService,$sessionManager);
     }
 }
 

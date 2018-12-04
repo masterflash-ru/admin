@@ -120,7 +120,7 @@ $this->value_for_error['row_item']=[]; // ID строк которые были 
 $this->get_interface_input='';
 $this->result_sql=[];
 	
-	$this->connection=$container->get('ADO\Connection');
+	$this->connection=$container->get('DefaultSystemDb');
 	Simba::$connection=$this->connection;
 	$this->view=$view;
 	$this->cache=$container->get('DefaultSystemCache');

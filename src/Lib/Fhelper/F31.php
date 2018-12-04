@@ -126,7 +126,7 @@ public function save()
                 $infa_[$iq]=$rez['name'];
                 //вариант, когда добавляе новую запись, смотрим следующий ID таблицы, если таблица указана
                 if ($this->tab_name && empty($this->id)) {
-                    $connection=Simba::$container->get('ADO\Connection');
+                    $connection=Simba::$container->get('DefaultSystemDb');
                     $rs=$connection->Execute("SELECT AUTO_INCREMENT
                                                 FROM information_schema.tables
                                                 WHERE

@@ -13,11 +13,12 @@ class ConstructorLineControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-       $connection=$container->get('ADO\Connection');
+       $connection=$container->get('DefaultSystemDb');
 	   $sessionManager = $container->get(SessionManager::class);
-		//имя базы данных из конфига
+
 		$config = $container->get('Config');
-		define ("DBNAME",$config["db"]["database"]);
+        /*парсим строку соединения с базой и извлекаем имя нашей базы данных, это костыль для конструкторов интерфейса*/
+		define ("DBNAME",trim(parse_url($connection->ConnectionString, PHP_URL_PATH),"/"));
 		return new ConstructorLineController($connection,$sessionManager,$config);
     }
 }

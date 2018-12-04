@@ -10,14 +10,14 @@ use Zend\Form\Element;
 //создание дампа
 if (isset($_POST['back']) && $_POST['back_name']) 
 	{
-	passthru("mysqldump --user=".$this->config["db"]["login"]." --host ".$this->config["db"]["host"]." --password=".$this->config["db"]["password"]." -R --add-drop-table ".$this->config["db"]["database"]." > $directory".$_POST['back_name']);
+	passthru("mysqldump --user=".$this->config["databases"]['DefaultSystemDb']["login"]." --host ".$this->config["databases"]['DefaultSystemDb']["host"]." --password=".$this->config["databases"]['DefaultSystemDb']["password"]." -R --add-drop-table ".$this->config["databases"]['DefaultSystemDb']["database"]." > $directory".$_POST['back_name']);
 
 	echo "Выполнено<strong>$directory".$_POST['back_name']."</strong>";
 	}
 //восстановление
 if (isset($_POST['restore']) && $_POST['restore_name']) 
 	{
-	passthru("mysql --user=".$this->config["db"]["login"]." --host ".$this->config["db"]["host"]." --password=".$this->config["db"]["password"]." < $directory".$_POST['restore_name']);
+	passthru("mysql --user=".$this->config["databases"]['DefaultSystemDb']["login"]." --host ".$this->config["databases"]['DefaultSystemDb']["host"]." --password=".$this->config["databases"]['DefaultSystemDb']["password"]." < $directory".$_POST['restore_name']);
 	
 	echo "Выполнено";
 	}

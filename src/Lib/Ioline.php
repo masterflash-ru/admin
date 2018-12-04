@@ -107,7 +107,7 @@ function __construct($container,$view)
 	$this->value_for_error['row_item']=[]; // ID строк которые были обработаны
 	$this->get_interface_input='';
 	$this->cap=[];
-	Simba::$connection=$container->get('ADO\Connection');
+	Simba::$connection=$container->get('DefaultSystemDb');
 	$this->connection=Simba::$connection;
 	$this->view=$view;
 	$this->cache=$container->get('DefaultSystemCache');
@@ -118,7 +118,7 @@ function __construct($container,$view)
 	$SharedEventManager=$container->get('SharedEventManager');
 	$this->EventManager=new EventManager($SharedEventManager);
 	$this->EventManager->addIdentifiers(["simba.admin"]);
-	$this->form_item=new form_item($view,$this->config,$container->get('ADO\Connection'));
+	$this->form_item=new form_item($view,$this->config,$container->get('DefaultSystemDb'));
 	$this->line_table_obj=new tab_admin($view,$this->config);
 }//конец конструктора
 

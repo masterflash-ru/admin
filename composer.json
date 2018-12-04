@@ -29,7 +29,7 @@
         "zendframework/zend-serializer": "^2.8",
         "zendframework/zend-captcha": "^2.7",
         "zendframework/zend-code": "^3.2",
-        "masterflash-ru/ado": "*",
+        "masterflash-ru/ado": "^2.0",
         "masterflash-ru/permissions": "*",
         "masterflash-ru/ckfinder": "*"
     },

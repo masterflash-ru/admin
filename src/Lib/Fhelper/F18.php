@@ -78,7 +78,7 @@ public function save()
 			if ($_POST[$this->col_name]==$this->id || $_POST[$this->col_name]=='')
 				 {
 					 if (!isset($this->properties['sql_delete'])) {$this->properties['sql_delete']='';}
-					$connection=Simba::$container->get('ADO\Connection');
+					$connection=Simba::$container->get('DefaultSystemDb');
 					$connection->Execute("update ".$this->tab_name." set ".$this->col_name."=0 ".$this->properties['sql_delete'],$RecordsAffected,adExecuteNoRecords);
 					//если выбранный флаг совпадает, тогда это 1 иначе нет, просто очистить
 					 $this->infa=1;
