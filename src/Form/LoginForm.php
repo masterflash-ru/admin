@@ -2,7 +2,6 @@
 namespace Admin\Form;
 
 use Zend\Form\Form;
-//use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilter;
 
 class LoginForm extends Form
@@ -17,7 +16,7 @@ class LoginForm extends Form
      
         
         $this->setAttribute('method', 'post');
-        $this->setAttribute('action', '/admin/doadmin');
+        $this->setAttribute('action', '/admin');
        
         
 		$this->addElements();

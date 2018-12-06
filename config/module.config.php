@@ -136,19 +136,6 @@ return [
                     ],
                 ],
 			],			
-			//собственно вход (авторизация)
-			'admin_dologin' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/admin/doadmin',
-					'verb' => 'post',
-                    'defaults' => [
-                        'controller' => Controller\LoginController::class,
-                        'action'     => 'dologin',
-                    ],
-                ],
-            ],
-
 			//ошибка 403
             'admin403' => [
                 'type' => Literal::class,

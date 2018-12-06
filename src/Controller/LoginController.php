@@ -10,7 +10,6 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
 
 use Admin\Form\LoginForm;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
 use Admin\Entity\Login as Login_Admin;
 
 use Zend\Authentication\Result;
@@ -39,44 +38,48 @@ public function __construct ($authManager, $authService,$sessionManager)
 */
 public function loginAction()
 {
-	$form = new LoginForm();
-	$viewModel=new ViewModel(["form"=>$form]);
-  return $viewModel;
+    
+    $prg = $this->prg();
+    if ($prg instanceof Response) {
+        //сюда попадаем когда форма отправлена, производим редирект
+        return $prg;
+    }
+
+    $view=new ViewModel();
+
+    $form = new LoginForm();    
+    
+    if ($prg === false){
+      //вывод страницы и формы
+      $view->setVariables(["form"=>$form]);
+      return $view;
+    }
+
+    $form->setData($prg);
+
+    if ($form->isValid()) {
+        //данные в норме
+        $info=$form->getData();
+
+        $result = $this->authManager->login($info["login"], $info["password"]);
+        /*получим результат авторизации в виде и смотрим результат*/
+        if ($result->getCode()==Result::SUCCESS) {
+            /*успешная авторизация*/
+           return $this->redirect()->toRoute('adm');
+        }
+        $view->setVariables(["error"=>true]);
+    }
+
+    $view->setVariables(["form"=>$form]);
+    return $view;
 }
 
-/*
-собственно авторизация
-сюда переходим при входе в админку
-*/
-public function dologinAction()
-{
-	/*резаультат формы авторизации в объект*/
-	$form = new LoginForm();
-	$form->setHydrator(new ReflectionHydrator);
-	$admins=new Login_Admin;
-  	$form->bind($admins);
-	
-	$form->setData($this->params()->fromPost());
-	
-	if (!$form->isValid()) {/*ошибка*/
-		return $this->redirect()->toRoute('admin');
-	}
-
-	$result = $this->authManager->login($admins->getLogin(), $admins->getPassword());
-	/*получим результат авторизации в виде и смотрим результат*/
-	if ($result->getCode()!=Result::SUCCESS) {
-		return $this->redirect()->toRoute('admin');//ошибка
-	}
-	/*доступ разрешен, редирект*/
-	return $this->redirect()->toRoute('adm');
-}
 
 public function e403Action()
 {
 	$this->getResponse()->setStatusCode(403);
 	return new ViewModel();
 }
-
 
 
 /*
