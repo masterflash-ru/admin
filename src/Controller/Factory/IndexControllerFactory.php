@@ -5,7 +5,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Admin\Controller\IndexController;
 
-use Mf\Permissions\Service\AuthManager;
+use Mf\Users\Service\AuthManager;
 
 use Zend\Authentication\AuthenticationService;
 

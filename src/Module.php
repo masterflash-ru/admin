@@ -9,7 +9,6 @@ namespace Admin;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use Zend\EventManager\Event;
-use Mf\Permissions\Service\AuthManager;
 use Admin\Service\GetControllersInfo;
 
 class Module
