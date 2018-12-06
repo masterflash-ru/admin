@@ -10,7 +10,6 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
 
 use Admin\Form\LoginForm;
-use Admin\Entity\Login as Login_Admin;
 
 use Zend\Authentication\Result;
 
@@ -20,15 +19,11 @@ use Zend\Authentication\Result;
 class LoginController extends AbstractActionController
 {
 	protected $authManager;
-	protected $authService;
-	protected $sessionManager;
 
 
-public function __construct ($authManager, $authService,$sessionManager)
+public function __construct ($authManager)
 	{
 		$this->authManager=$authManager;
-		$this->authService=$authService;
-		$this->sessionManager=$sessionManager;
 	}
 
 
