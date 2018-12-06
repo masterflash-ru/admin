@@ -18,12 +18,10 @@
         "zendframework/zend-session": "^2.7",
         "zendframework/zend-navigation": "^2.8",
         "zendframework/zend-router": "^3.0",
-        "zendframework/zend-authentication": "^2.5",
         "zendframework/zend-hydrator": "^2.2",
         "zendframework/zend-inputfilter": "^2.7",
         "zendframework/zend-form": "^2.10",
         "zendframework/zend-i18n": "^2.7",
-        "zendframework/zend-crypt": "^3.2",
         "zendframework/zend-mvc-plugin-identity": "^1.0",
         "zendframework/zend-cache": "^2.7",
         "zendframework/zend-serializer": "^2.8",
@@ -31,7 +29,6 @@
         "zendframework/zend-code": "^3.2",
         "masterflash-ru/ado": "^2.0",
         "masterflash-ru/permissions": "*",
-        "masterflash-ru/users": "*",
         "masterflash-ru/ckfinder": "*"
     },
     "autoload": {
