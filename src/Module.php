@@ -38,24 +38,25 @@ public function onDispatch(MvcEvent $event)
     //для данного модуля изменить макет
     $controllerName = $event->getRouteMatch()->getParam('controller', null);
     if (false === strpos($controllerName, __NAMESPACE__)) { return; }
-
-	if ($controllerName!="Admin\Controller\LoginController") {
-        $controller = $event->getTarget();
-        $user=$controller->User();
-        /*имя метода контроллера*/
-        //$actionName = $event->getRouteMatch()->getParam('action', null);
-        //$actionName = str_replace('-', '', lcfirst(ucwords($actionName, '-')));
-       /*
-       *вход разрешен только root, ID=1 !
-		*/
-        $viewModel = $event->getViewModel();
-        if ($user->identity()!=1) {
-            $controller->redirect()->toRoute('admin');
-            $viewModel->setTemplate('layout/admin_layout_empty');
-            return;
+    $controller = $event->getTarget();
+    $user=$controller->User();
+    $viewModel = $event->getViewModel();
+    
+    $acl=$controller->acl()->isAllowed("x");
+    if (!$acl){
+        if ($user){
+            //авторизованы, но доступ запрещен
+            $controller->redirect()->toRoute('accessdenied');
+        } else {
+            //не авторизованы, просто запрещено
+            $controller->redirect()->toRoute('admin403');
         }
-		
-		$viewModel->setTemplate('layout/admin_layout');		
+        $viewModel->setTemplate('layout/admin_layout_empty');
+        return;
+    }
+    if ($controllerName!="Admin\Controller\LoginController") {
+        /*для всех контроллеров меняем макет вывода*/
+		$viewModel->setTemplate('layout/admin_layout');
 	}   
 }
 

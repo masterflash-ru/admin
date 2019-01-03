@@ -21,7 +21,11 @@ public function __construct ($connection,$sessionManager,$AuthenticationService)
 		$this->connection=$connection;
 		$this->sessionManager=$sessionManager;
 		$this->AuthenticationService=$AuthenticationService;
-		
+		/*\Zend\Debug\Debug::dump(
+        
+        get_class_methods($this)
+        
+        );*/
 	}
     
     /**

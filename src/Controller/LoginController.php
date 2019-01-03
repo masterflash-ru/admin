@@ -19,6 +19,7 @@ use Zend\Authentication\Result;
 class LoginController extends AbstractActionController
 {
 	protected $authManager;
+    protected $accessdenied;
 
 
 public function __construct ($authManager)
@@ -40,7 +41,8 @@ public function loginAction()
         return $prg;
     }
 
-    $view=new ViewModel();
+    $view=new ViewModel(["error"=>$this->accessdenied]);
+    $view->setTemplate("admin/login/login");
 
     $form = new LoginForm();    
     
@@ -62,7 +64,7 @@ public function loginAction()
             /*успешная авторизация*/
            return $this->redirect()->toRoute('adm');
         }
-        $view->setVariables(["error"=>true]);
+        $view->setVariables(["error"=>"Ошибка авторизации"]);
     }
 
     $view->setVariables(["form"=>$form]);
@@ -74,6 +76,12 @@ public function e403Action()
 {
 	$this->getResponse()->setStatusCode(403);
 	return new ViewModel();
+}
+
+public function accessdeniedAction()
+{
+    $this->accessdenied="Доступ запрещен";
+	return $this->loginAction();
 }
 
 

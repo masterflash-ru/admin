@@ -22,7 +22,7 @@
                 <?= $this->formElement($form->get('password')) ?>
                 <?php
             if ($this->error){
-                echo '<p class="error">Ошибка авторизации</p>';
+                echo '<p class="error">'.$this->error.'</p>';
             }
     ?>
             </td>

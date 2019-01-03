@@ -148,6 +148,18 @@ return [
                 ],
 			],			
 
+			//доступ запрещен
+            'accessdenied' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/admin/accessdenied',
+                    'defaults' => [
+                        'controller' => Controller\LoginController::class,
+                        'action'     => 'accessdenied',
+                    ],
+                ],
+			],			
+
 			//специально для F41 поля
             'ckeditorf41' => [
                 'type' => Segment::class,
@@ -186,13 +198,44 @@ return [
            Controller\CkeditorController::class => Controller\CkeditorController::class,
 			
         ],
-        /*доступы для контроллеров, запуск* /
-        'permission' => [
-            Controller\IndexController::class=>[
-                "index" => [1,1,0710],
-            ],
-        ],*/
 	],
+
+    /*доступы для контроллеров, запуск*/
+    'permission' => [
+        'controllers'=>[/*доступы к контроллерам*/
+            Controller\IndexController::class=>[
+                /*вход в админку сайта*/
+                "index" => [1,1,0550],
+            ],
+            Controller\LineController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\TreeController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\ConstructorLineController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\ConstructorTreeController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\BackupRestoreController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\EntityController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\TovarController::class =>[
+                "index" => [1,1,0550],
+            ],
+            Controller\LoginController::class =>[
+                "login"=>[1,1,555],
+                "e403"=>[1,1,555],
+                "accessdenied"=>[1,1,555],
+            ],
+        ],
+    ],
+
 	//помощник вывода меню админки
     'view_helpers' => [
         'factories' => [
@@ -216,13 +259,6 @@ return [
         */
         'users_status' => [
             3=>"Нормальное состояние",
-        ],
-    
-        /*корневой владелец и его разрешения
-        * root,группа администраторов, 0744 (rwxr--r--)
-        */
-        "root_owner" =>[
-            1,1,0744
         ],
     ],
     'view_manager' => [
