@@ -200,41 +200,6 @@ return [
         ],
 	],
 
-    /*доступы для контроллеров, запуск*/
-    'permission' => [
-        'controllers'=>[/*доступы к контроллерам*/
-            Controller\IndexController::class=>[
-                /*вход в админку сайта*/
-                "index" => [1,1,0550],
-            ],
-            Controller\LineController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\TreeController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\ConstructorLineController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\ConstructorTreeController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\BackupRestoreController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\EntityController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\TovarController::class =>[
-                "index" => [1,1,0550],
-            ],
-            Controller\LoginController::class =>[
-                "login"=>[1,1,555],
-                "e403"=>[1,1,555],
-                "accessdenied"=>[1,1,555],
-            ],
-        ],
-    ],
 
 	//помощник вывода меню админки
     'view_helpers' => [
