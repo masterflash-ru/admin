@@ -56,9 +56,14 @@ public function save()
     $money_type=Simba::queryAllRecords("select * from tovar_price_type");
     Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$this->id);
     foreach ($money_type["sysname"] as $k=>$mt){
+        if ($values[$mt]){
+            $mmm=str_replace(",",".",(int)$values[$mt]);
+        } else {
+            $mmm=null;
+        }
             Simba::ReplaceRecord([
                 "tovar_catalog"=>(int)$this->id,
-                "price"=>str_replace(",",".",$values[$mt]),
+                "price"=>$mmm,
                 "tovar_price_type"=>$mt,
                 "currency"=>"RUB"
             ],"tovar_catalog_price");
