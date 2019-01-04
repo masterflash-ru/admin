@@ -39,14 +39,15 @@ public function save()
     //проход дерева до 0-го уровня, получим все ID
     $this->tree_ids[]=$tovar_category;
     $this->_un_tree($tovar_category);
+    Simba::$connection->BeginTrans();
     $parameters=Simba::queryOneRecord("select count(*) as c
             from tovar_category_parameters as p
                 where p.tovar_category in(". implode(",",$this->tree_ids) .")");
-
+    Simba::$connection->CommitTrans() ;
     if ($parameters["c"]>0){return true;}
    
    $values=$_POST[$this->col_name][$this->id];
-
+Simba::$connection->BeginTrans();
     Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$this->id);
     Simba::ReplaceRecord([
                         "tovar_catalog"=>(int)$this->id,
@@ -54,6 +55,8 @@ public function save()
                         "ostatok"=>$values["ostatok"]
                         ],"tovar_catalog_sklad");
     $money_type=Simba::queryAllRecords("select * from tovar_price_type");
+      Simba::$connection->CommitTrans() ;
+    Simba::$connection->BeginTrans();
     Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$this->id);
     foreach ($money_type["sysname"] as $k=>$mt){
         if ($values[$mt]){
@@ -69,6 +72,7 @@ public function save()
             ],"tovar_catalog_price");
 
         }
+      Simba::$connection->CommitTrans() ;
     
 }
     
