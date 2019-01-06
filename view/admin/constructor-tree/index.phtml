@@ -122,7 +122,12 @@ if (isset($_POST['save_all']))
 				'col_name'=>implode(",",$_POST['but']),
 				'validator'=>$_POST['cache_tags'],
 				'sort_item_flag'=>$_POST['cache_clear'],
-'properties'=>$_POST['functions_after_save_interface'],
+                'properties'=>$_POST['functions_save_interface'],
+                'functions_befo_out'=>$_POST['functions_load_interface'],
+                'functions_befo_del'=>$_POST['functions_del_interface'],
+                'functions_after'=>$_POST['functions_after_save_interface'],
+                /*ёто список псевдонимов, отличается от линейного интерфейса!*/
+                'pole_global_const'=>$_POST['col_name0'],
 				
 				)
 			,'design_tables');
@@ -187,13 +192,13 @@ if ($_POST['interface_razdel']==2)
 		if (!isset($_POST['pole_prop'])) $_POST['pole_prop']=NULL;
 		simba::replaceRecord (
 			array(
-			'id'=>$_POST['id2'],
+			'id'=>(int)$_POST['id2'],
 			'row_type'=>2,
 			'table_name'=>$_POST['interface_tabl_tek'],
 			'table_type'=>1,
 			'col_name'=>$_POST['cols'],
 			'pole_type'=>$_POST['pole_type2'],
-			'col_por'=>$_POST['col_por'],
+			'col_por'=>(int)$_POST['col_por'],
 			'pole_style'=>(is_array($_POST['pole_style']))? implode(',',$_POST['pole_style']):$_POST['pole_style'],
 			'pole_spisok_sql'=>$pole_spisok_sql,
 			'col_name'=>$_POST['cols'],
@@ -300,9 +305,9 @@ if (isset($_POST['interface_name']) && isset($_POST['cols']))$struct2=simba::que
 //$pole_dop_numb_sp1=simba::getSpValue ($a,$a,-1);
 
 
-if ($struct0['table_name']>'') 
-{$cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);	
-$cols_id['Field']=$cols['Field'];//идентификаторы это и есть имена полей и спевдонимов
+if ($struct0['table_name']>'') {
+    $cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);	
+    $cols_id['Field']=$cols['Field'];//идентификаторы это и есть имена полей и спевдонимов
 //работаем со спец списком организации дерева
 $c=explode (",",$struct0['pole_prop']); //получить список симен спец полей для организации дерева
 $cols_sp_id=simba::getSpValue ($cols['Field'],$cols_id['Field'],$c[0]);
@@ -321,7 +326,12 @@ $cols_sp_level=simba::getSpValue ($cols['Field'],$cols_id['Field'],$c[2]);
 if (isset($_POST['interface_name']) )
 	{$dis='';//активировать поля ввода
 	//добавить в массив столбцов дополнительные поля, не принадлежащие самой таблице
-	$cols_sp=simba::getSpValue ($cols['Field'],$cols_id['Field'],(isset($_POST['cols']))?$_POST['cols']:NULL);
+     if (trim($struct0['pole_global_const'])){
+         $fields_arr=explode(",",trim($struct0['pole_global_const']));
+         $cols_id['Field']=array_merge($cols_id['Field'],$fields_arr);
+     }
+     
+	$cols_sp=simba::getSpValue ($cols_id['Field'],$cols_id['Field'],(isset($_POST['cols']))?$_POST['cols']:NULL);
 	if (isset($_POST['cols'])) $dis1='';
 	}
 
@@ -568,13 +578,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
                 <td><input id="pole_name2" name="pole_name2" type="text"  value="<?=$struct2['pole_name']?>" <?=$dis1;?>>
                   <font color="red">&lt;-
                   <select name="pole_name_2" id="pole_name_2"  onChange="document.getElementById('pole_name2').value=this.value" <?=$dis1;?>>
-                    <?php $cols=simba::queryAllRecords ('show columns from '.$struct0['table_name']);
-$cols_['Field']=$cols['Field'];
-
-//добавить в массив столбцов дополнительные поля, не принадлежащие самой таблице
-echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
-
-?>
+                    <?=simba::getSpValue1 ($cols_id['Field'],$cols_id['Field'],'id');?>
                   </select>
                   <input name="id2" type="hidden" value="<?=$struct2['id'];?>">
                   </font></td>
@@ -711,26 +715,43 @@ echo simba::getSpValue1 ($cols['Field'],$cols_['Field'],'id');
             <td>общий заголовок:</td>
             <td><textarea name="caption0" cols="137" rows="2" wrap="VIRTUAL"  id="caption0" <?=$dis;?>><?php if (isset($design_tables_text_interfase['caption0'])) echo $design_tables_text_interfase['caption0'];?></textarea></td>
           </tr>
-          <tr>
-            <td>стиль заголовка</td>
-            <td><select name="caption_style0"  id="caption_style0" <?=$dis; ?>>
-                <?="";//simba::getSpValue ($style['name'],$style['id'],$struct0['caption_style']);
-				?>
-                                    </select></td>
-          </tr>
-        
+          
+ <tr>
+        <td>Список псевдонимов</td>
+        <td colspan="2"><input name="col_name0" type="text"   size="135" value="<?=stripslashes ($struct0['pole_global_const'])?>"></td>
+      </tr>
       <tr>
         <td>Очищать кеш:</td>
         <td colspan="2"><input name="cache_clear" type="hidden" value="0" />
         <input name="cache_clear" type="checkbox" id="cache_clear" value="1" <?php if ($struct0['sort_item_flag']>0) echo 'checked="checked"'; ?> /></td>
       </tr>
+
       <tr>
         <td>Теги кеша для поиска</td>
         <td colspan="2"><input name="cache_tags" type="text"  id="cache_tags" value="<?=stripslashes ($struct0['validator']); ?>" size="135"  /></td>
       </tr>
       <tr>
-        <td>Функция после записи данных</td>
-        <td colspan="2"><input type="text" name="functions_after_save_interface" value="<?=$struct0['properties']?>" /></td>
+
+        <td colspan="3">
+          
+          
+      <table width="100%"  border="0" cellspacing="0" cellpadding="0" >
+                <tr>
+                  <td>Обработчик записи интерфейса (функция)</td>
+                  <td><input type="text" value="<?=$struct0['properties'];?>" name="functions_save_interface"  /></td>
+                  <td >Функция получения данных (пусто-SQL)</td>
+                  <td ><input type="text" value="<?=$struct0['functions_befo_out'];?>" name="functions_load_interface" readonly/></td>
+                </tr>
+                <tr>
+                  <td>Обработчик удаления записей</td>
+                  <td><input type="text" value="<?=$struct0['functions_befo_del'];?>" name="functions_del_interface"/></td>
+                  <td>Функция которая вызывается ПОСЛЕ записи/обновления строки в базе</td>
+                  <td><input type="text" value="<?=$struct0['functions_after'];?>" name="functions_after_save_interface" readonly/></td>
+                </tr>
+              </table>     
+          
+          
+          </td>
       </tr>
         
         
