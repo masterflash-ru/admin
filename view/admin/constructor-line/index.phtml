@@ -148,7 +148,7 @@ if (isset($_POST['save_all']))
 			'value'=>$_POST['value'],
 			'interface_name'=>$_POST['interface_name'],
 			'functions_befo_out'=>$_POST['functions_befo_out'],
-			'col_por'=>$_POST['col_por']
+			'col_por'=>($_POST['col_por']==="") ? null : (int)$_POST['col_por']
 			
 			),'design_tables');
 		//удалить старое значение
