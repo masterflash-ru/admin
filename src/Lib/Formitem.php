@@ -556,7 +556,6 @@ document.getElementById(db_item48[win_name][\"io_item\"]+\"_text\").innerHTML=te
 
 function f56(url,w,h)
 {
-
 $( \"#f56_dialog\" ).dialog({
       resizable: true,
       height: h+65,
@@ -567,8 +566,16 @@ $( \"#f56_dialog\" ).dialog({
           }
 
 });
-
-
+}
+function f57()
+{
+$( \"#f57_dialog\" ).dialog({
+      resizable: true,
+      height: 250,
+      width: 250,
+      modal: true
+      
+});
 }
 
 
