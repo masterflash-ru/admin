@@ -554,30 +554,6 @@ document.getElementById(db_item48[win_name][\"io_item\"]).value=value.join(\",\"
 document.getElementById(db_item48[win_name][\"io_item\"]+\"_text\").innerHTML=text_.join(\",\");
 }
 
-function f56(url,w,h)
-{
-$( \"#f56_dialog\" ).dialog({
-      resizable: true,
-      height: h+65,
-      width: w+30,
-      modal: true,
-      open: function(ev, ui){
-             $('#iframe56').attr({'src':url,'width':w,'height':h});
-          }
-
-});
-}
-function f57()
-{
-$( \"#f57_dialog\" ).dialog({
-      resizable: true,
-      height: 250,
-      width: 250,
-      modal: true
-      
-});
-}
-
 
 function data___clock()
 {
