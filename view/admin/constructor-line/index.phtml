@@ -213,7 +213,7 @@ if (isset($_POST['save_all']))
 		if (!isset($_POST['pole_prop'])) $_POST['pole_prop']=NULL;
 		simba::replaceRecord (
 			array(
-				'id'=>$_POST['id'],
+				'id'=>(int)$_POST['id'],
 				'row_type'=>$_POST['row_type'],
 				'table_name'=>$_POST['interface_tabl_tek'],
 				'table_type'=>0,

@@ -52,29 +52,63 @@ $( "#f56_dialog" ).dialog({
 
 });
 }
-    
-function f57(button)
-{/*button: владелец,группа,код_доступа*/
-var v=button.val(),rez,r;
-v=v.split(',');
+
+
+function f57(button,hiden)
+{/*hiden: владелец,группа,код_доступа*/
+var rez,r=0;
+v=hiden.val().split(',');
 
 $( "#f57_dialog" ).dialog({
       resizable: true,
-      height: 250,
-      width: 250,
+      width: "auto",
       modal: true,
+      buttons: [
+            {
+              text: "Применить",
+            class:"permiss_ok",
+              click: function() {
+                  var r=0;
+              $(".perm_bits:checked").each(function(index,element){
+                  r+=parseInt($(this).val());
+              });
+
+                button.text($("#u option:selected").text() +":"+ $("#g option:selected").text() +" "+ $("#mode_f57").text()       );
+                hiden.val($("#u").val()+","+$("#g").val()+","+parseInt(r+parseInt(parseInt($("select[name=p1]").val()+$("select[name=p2]").val()+$("select[name=p3]").val(),8).toString(10))));
+                $( this ).dialog( "close" );
+              }
+            },
+            {
+              text: "Отменить",
+              class:"permiss_cancel",
+              click: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+
+      ],
       open: function(ev, ui){
-          _f57_p(v[2]);
+          ;
+          $("#mode_f57").text(_f57_p(v[2])+ " ("+pad(parseInt(v[2],10).toString(8),4)+")");  
           _f57_select(v[2]);
-          $("select[name^=p]").on("click",function(){
+          $("select[name^=p], .perm_bits").on("click",function(){
+              
+              r=0;
+              $(".perm_bits:checked").each(function(index,element){
+                  r+=parseInt($(this).val());
+              });
+              
               rez=$("select[name=p1]").val();
               rez+=$("select[name=p2]").val();
               rez+=$("select[name=p3]").val();
-              rez=parseInt(rez,8).toString(10);
-              _f57_p(rez);
+              rez=parseInt(parseInt(rez,8).toString(10));
+              rez+=r;
+              $("#mode_f57").text(_f57_p(rez)+ " ("+pad(parseInt(rez,10).toString(8),4)+")");  
+
           });
           }
 });
+    
 }
 
 
@@ -92,7 +126,8 @@ function _f57_p(pp)
     mode1 += ((pp & 0x0004) ? 'r' : '-');
     mode1 += ((pp & 0x0002) ? 'w' : '-');
     mode1 += ((pp & 0x0001) ? ((pp & 0x0200) ? 't' : 'x' ) : ((pp & 0x0200) ? 'T' : '-'));
-    $("#mode_f57").text(mode1+ " ("+pad(parseInt(pp,10).toString(8),4)+")");  
+    return mode1;
+    
 }
 
 function _f57_select(pp)
@@ -105,7 +140,11 @@ function _f57_select(pp)
     pp=pp>>>3;
     var p1=pp & 7;
     $('select[name=p1] option[value="'+p1+'"]').prop('selected', true);
-    console.log(p1)
+    
+    pp=pp>>>3;
+    $('#sticky').prop('checked', pp & 1);
+    $('#sgid').prop('checked', pp & 2);
+    $('#suid').prop('checked', pp & 4);
 }
 function pad(num, size) {
     var s = num+"";
