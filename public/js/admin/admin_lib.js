@@ -53,7 +53,6 @@ $( "#f56_dialog" ).dialog({
 });
 }
 
-
 function f57(button,hiden)
 {/*hiden: владелец,группа,код_доступа*/
 var rez,r=0;
@@ -74,7 +73,7 @@ $( "#f57_dialog" ).dialog({
               });
 
                 button.text($("#u option:selected").text() +":"+ $("#g option:selected").text() +" "+ $("#mode_f57").text()       );
-                hiden.val($("#u").val()+","+$("#g").val()+","+parseInt(r+parseInt(parseInt($("select[name=p1]").val()+$("select[name=p2]").val()+$("select[name=p3]").val(),8).toString(10))));
+                hiden.val($("#u").val()||0+","+$("#g").val()||0+","+parseInt(r+parseInt(parseInt($("select[name=p1]").val()+$("select[name=p2]").val()+$("select[name=p3]").val(),8).toString(10))));
                 $( this ).dialog( "close" );
               }
             },
