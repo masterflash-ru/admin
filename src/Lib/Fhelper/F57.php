@@ -15,12 +15,12 @@ class F57 extends Fhelperabstract
     protected static $flag_dialog=true;
     protected static $permissions_text=[
         0=>"Нет доступа",
-        1=>"Запуск",
-        2=>"Запись",
-        3=>"Запись и запуск",
         4=>"Чтение",
         5=>"Чтение и запуск",
         6=>"Чтение и запись",
+        1=>"Запуск",
+        2=>"Запись",
+        3=>"Запись и запуск",
         7=>"Полный",
     ];
 
@@ -90,6 +90,7 @@ public function render()
         $select = new Element\Select("u");
         $select->setAttributes(["id"=>"u"]);
         $select->setValueOptions($u);
+        $select->setEmptyOption("неизвестный");
         $u=$this->view->FormSelect($select);
 
         //читаем все группы
@@ -101,6 +102,7 @@ public function render()
         $select = new Element\Select("g");
         $select->setAttributes(["id"=>"g"]);
         $select->setValueOptions($g);
+        $select->setEmptyOption("неизвестная");
         $g=$this->view->FormSelect($select);
         
         

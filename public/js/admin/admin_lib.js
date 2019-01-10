@@ -88,9 +88,8 @@ $( "#f57_dialog" ).dialog({
 
       ],
       open: function(ev, ui){
-          ;
           $("#mode_f57").text(_f57_p(v[2])+ " ("+pad(parseInt(v[2],10).toString(8),4)+")");  
-          _f57_select(v[2]);
+          _f57_select(v);
           $("select[name^=p], .perm_bits").on("click",function(){
               
               r=0;
@@ -130,8 +129,14 @@ function _f57_p(pp)
     
 }
 
-function _f57_select(pp)
+function _f57_select(p)
 {
+    var pp=p[2];
+    $('#u option:selected').prop('selected', false);
+    $('#g option:selected').prop('selected', false);
+    $('#u option[value="'+[p[0]]+'"]').prop('selected', true);
+    $('#g option[value="'+[p[1]]+'"]').prop('selected', true);
+    
     var p3=pp & 7;
     $('select[name=p3] option[value="'+p3+'"]').prop('selected', true);
     pp=pp>>>3;
