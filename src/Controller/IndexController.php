@@ -29,7 +29,10 @@ public function __construct ($authManager, $authService,$sessionManager)
 */
 public function indexAction()
 {
-    //echo (int)$this->Acl()->isAllowed("r",[1,1,0777],[1,1,0777]);
+    if(!$this->Acl()->isAllowed("x",__METHOD__)  ){
+        //успешная авторизация, но доступ запрещен
+       // return $this->redirect()->toRoute('accessdenied');
+    }
     
 	$viewModel=new ViewModel();
   return $viewModel;

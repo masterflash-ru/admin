@@ -138,6 +138,20 @@ INSERT INTO `design_tables_text_interfase` VALUES (1,'ru_RU',1,'admin_menu','cap
 /*!40000 ALTER TABLE `design_tables_text_interfase` ENABLE KEYS */;
 UNLOCK TABLES;
 
+INSERT INTO `permissions` (`id`, `name`, `object`, `mode`, `owner_user`, `owner_group`) VALUES 
+  (1, 'Конструктор древов. структур', 'Admin\\Controller\\ConstructorTreeController/index', 456, 1, 1),
+  (2, 'Конструктор линейных структур', 'Admin\\Controller\\ConstructorLineController/index', 456, 1, 1),
+  (3, 'Успешная авторизация админки', 'Admin\\Controller\\IndexController/index', 456, 1, 1),
+  (9, 'админка 403', 'Admin\\Controller\\LoginController/e403', 457, 1, 1),
+  (4, 'Специальный для магазинов', 'Admin\\Controller\\TovarController/index', 456, 1, 1),
+  (5, 'Генератор сущностей', 'Admin\\Controller\\EntityController/index', 456, 1, 1),
+  (6, 'архивация базы', 'Admin\\Controller\\BackupRestoreController/index', 456, 1, 1),
+  (7, 'ввод-вывод древовид. структур', 'Admin\\Controller\\TreeController/index', 456, 1, 1),
+  (8, 'ввод-вывод линейных структур', 'Admin\\Controller\\LineController/index', 456, 1, 1),
+  (10, 'админка access denied', 'Admin\\Controller\\LoginController/accessdenied', 457, 1, 1),
+  (11, 'админка форма входа', 'Admin\\Controller\\LoginController/login', 457, 1, 1),
+  (12, 'админка меню', 'Admin/Menu', 480, 1, 1);
+  
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

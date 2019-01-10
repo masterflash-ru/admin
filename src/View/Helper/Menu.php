@@ -29,7 +29,7 @@ public function __construct ($connection,$sessionManager,$AuthenticationService)
      */
  public function render() 
     {
-		if (1!==$this->AuthenticationService->getIdentity()) {return "<h1>403</h1>";}
+        if ($this->getView()->acl("Admin/menu")->isAllowed("r")) {return "<h1>403</h1>";}
 		$tree=new tree();
 		$tree->menu_name='menu_l';
 		if (isset($_COOKIE['menu_l'])) $tree->status_old=$_COOKIE['menu_l']; else $tree->status_old='';

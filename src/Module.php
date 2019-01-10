@@ -1,7 +1,6 @@
 <?php
 /**
 * админка с говнокодом
-*использует zend-mvc-plugin-identity
  */
 
 namespace Admin;
@@ -39,48 +38,35 @@ public function onDispatch(MvcEvent $event)
     $controllerName = $event->getRouteMatch()->getParam('controller', null);
     if (false === strpos($controllerName, __NAMESPACE__)) { return; }
    
-	if ($controllerName!="Admin\Controller\LoginController") {
-        $controller = $event->getTarget();
-        $user=$controller->User();
-        /*имя метода контроллера*/
-        //$actionName = $event->getRouteMatch()->getParam('action', null);
-        //$actionName = str_replace('-', '', lcfirst(ucwords($actionName, '-')));
-       /*
-       *вход разрешен только root, ID=1 !
-		*/
-        $viewModel = $event->getViewModel();
-        if ($user->identity()!=1) {
-            $controller->redirect()->toRoute('admin');
-            $viewModel->setTemplate('layout/admin_layout_empty');
-            return;
-        }
-		
-		$viewModel->setTemplate('layout/admin_layout');		
-	}   
+    $controller = $event->getTarget();
+    $user=$controller->User()->getUserId();
+    /*имя метода контроллера*/
+    $actionName = $event->getRouteMatch()->getParam('action', null);
+    $actionName = str_replace('-', '', lcfirst(ucwords($actionName, '-')));
+    
 
-    
-    
-    
-    /*$controller = $event->getTarget();
-    $user=$controller->User();
     $viewModel = $event->getViewModel();
-    
-    //$acl=$controller->acl()->isAllowed("x");
-    if ($user>0){
+    /*проверяем доступ по имени контроллера и метода, без Action*/
+    $acl=$controller->acl()->isAllowed("x",[$controllerName,$actionName]);
+
+    if (!$acl){
         if ($user!=1){
             //авторизованы, но доступ запрещен
             $controller->redirect()->toRoute('accessdenied');
+            return;
         } else {
-            //не авторизованы, просто запрещено
-            $controller->redirect()->toRoute('admin403');
+            //получилось, что root -у доступа нет, выводим сообщение
+            echo "получилось, что root -у доступа нет к <b>{$controllerName}/{$actionName}</b><br>Проверьте таблицу доступа";
+            $viewModel->setTemplate('layout/admin_layout');
+            return;
         }
         $viewModel->setTemplate('layout/admin_layout_empty');
         return;
     }
     if ($controllerName!="Admin\Controller\LoginController") {
-        /*для всех контроллеров меняем макет вывода* /
+        /*для всех контроллеров меняем макет вывода*/
 		$viewModel->setTemplate('layout/admin_layout');
-	} */  
+	} 
 }
 
 /*
