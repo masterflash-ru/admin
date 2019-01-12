@@ -55,7 +55,8 @@ INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `locale`, `url`) VALUE
   (10, 'Пользователи и группы', 1, 1, 'ru_RU', ''),
   (11, 'Системные группы польз.', 2, 10, 'ru_RU', '/adm/line/users_group'),
   (12, 'Группы пользователей', 2, 10, 'ru_RU', '/adm/line/users_group_nonsystem'),
-  (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/line/users');
+  (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/line/users'),
+  (14, 'Доступы', 1, 1, 'ru_RU', '/adm/line/permissions');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,6 +108,23 @@ INSERT INTO `design_tables` VALUES (1,'admin_menu','admin_menu',1,'1,1,1,1,1,0',
 /*!40000 ALTER TABLE `design_tables` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+LOCK TABLES `design_tables` WRITE;
+/*!40000 ALTER TABLE `design_tables` DISABLE KEYS */;
+INSERT INTO `design_tables` (`interface_name`, `table_name`, `table_type`, `col_name`, `caption_style`, `row_type`, `col_por`, `pole_spisok_sql`, `pole_global_const`, `pole_prop`, `pole_type`, `pole_style`, `pole_name`, `default_sql`, `functions_befo`, `functions_after`, `functions_befo_out`, `functions_befo_del`, `properties`, `value`, `validator`, `sort_item_flag`, `col_function_array`) VALUES 
+  ('permissions', 'permissions', 0, 'name', '', 3, NULL, '', NULL, '', '2', NULL, 'name', NULL, '', '', '', '', 'a:1:{i:0;s:4:\"Text\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, 'object', '', 2, 4, '', NULL, 'size=60', '2', NULL, 'object', NULL, '', '', '', '', 'a:1:{i:0;s:4:\"Text\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, 'name', '', 2, 1, '', NULL, '', '2', NULL, 'name', NULL, '', '', '', '', 'a:1:{i:0;s:4:\"Text\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, 'permissions', 'a:3:{s:10:\"owner_user\";s:1:\"0\";s:11:\"owner_group\";s:1:\"0\";s:10:\"permission\";i:484;}', 0, 0, 'select * from permissions order by name', '', '1,1,0,0', 'permissions', '', 'id', 'delete from permissions where id=$id', '', '', '', '', '', 0x613A323A7B733A32343A22666F726D5F656C656D656E74735F6E65775F7265636F7264223B733A313A2230223B733A32343A22666F726D5F656C656D656E74735F6A6D705F7265636F7264223B733A313A2230223B7D, 'permissions', 1, NULL),
+  ('permissions', 'permissions', 0, 'object', '', 3, NULL, '', NULL, 'size=60', '2', NULL, 'object', NULL, '', '', '', '', 'a:1:{i:0;s:4:\"Text\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, 'permissions', '', 2, 5, '', NULL, '', '1', NULL, 'permissions', NULL, '', '', '', '', 'a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, 'permissions', '', 3, NULL, '', NULL, '', '57', NULL, 'permissions', NULL, '', '', '', '', 'N;', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, '1', '', 2, 18, '', NULL, '', '19', NULL, 'save', NULL, '', '', '', '', 'a:2:{i:0;s:1:\"1\";i:1;s:16:\"Добавить\";}', '', 'N;', NULL, 'N;'),
+  ('permissions', 'permissions', 0, '1', '', 3, NULL, '', NULL, ',', '17', NULL, 'save,del', NULL, '', '', '', '', 'a:4:{i:0;s:1:\"1\";i:1;s:1:\"0\";i:2;s:33:\"Сохранить,Удалить\";i:3;s:1:\"0\";}', '', 'N;', NULL, 'N;');
+/*!40000 ALTER TABLE `design_tables` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 --
 -- Table structure for table `design_tables_text_interfase`
 --
@@ -137,6 +155,23 @@ LOCK TABLES `design_tables_text_interfase` WRITE;
 INSERT INTO `design_tables_text_interfase` VALUES (1,'ru_RU',1,'admin_menu','caption_dop_',''),(2,'ru_RU',1,'admin_menu','caption_dop_1','Роль'),(3,'ru_RU',1,'admin_menu','caption0','Меню администраторов'),(4,'ru_RU',1,'admin_menu','caption_col_roles',''),(5,'ru_RU',1,'admin_menu','caption_col_language',''),(6,'ru_RU',1,'admin_menu','caption_col_modul','Модуль'),(7,'ru_RU',1,'admin_menu','coment0','Страница редактирования панели администрирования сайта. Вы можете менять дерево меню по вашему усмотрению. После создания пункта меню, необходимо выбрать модуль, который будет вызван, когда администратор щелкнет по данному пункту меню. Если Выбранный модуль предоставляет автоматические параметры (список), то необходимо выбрать из предложенного списка нужный вариант. Этот выбранный пункт передается в константе param_a. Список вариантов автомараметров определяется инструкцией \"автовыборка параметров из модуля SQL иструкция\" в модуле управления модулями системы.'),(8,'ru_RU',1,'admin_menu','caption_dop_0','Локаль:'),(9,'ru_RU',1,'admin_menu','caption_col_url','URL');
 /*!40000 ALTER TABLE `design_tables_text_interfase` ENABLE KEYS */;
 UNLOCK TABLES;
+
+LOCK TABLES `design_tables_text_interfase` WRITE;
+/*!40000 ALTER TABLE `design_tables_text_interfase` DISABLE KEYS */;
+INSERT INTO `design_tables_text_interfase` (`language`, `table_type`, `interface_name`, `item_name`, `text`) VALUES 
+  ('ru_RU', 1, 'permissions', 'coment0', 'Доступ представлен в виде дерева, root - корневой уровень доступа, владелец и группа принадлежит супер пользователю root<br>\r\nУровень доступа описывается аналогично UNIX, и является восьмеричным числом, в виде строки можно представить как rwxr--r-- '),
+  ('ru_RU', 1, 'permissions', 'caption0', '<h2>Описание доступов к объектам системы</h2>'),
+  ('ru_RU', 1, 'permissions', 'caption_col_name', 'Описание: '),
+  ('ru_RU', 1, 'permissions', 'caption_col_object', 'OBJ: '),
+  ('ru_RU', 0, 'permissions', 'caption_col_name', 'Имя'),
+  ('ru_RU', 0, 'permissions', 'caption_col_object', 'Объект'),
+  ('ru_RU', 0, 'permissions', 'caption_col_permissions', 'доступ'),
+  ('ru_RU', 0, 'permissions', 'caption_col_1', 'Операция'),
+  ('ru_RU', 0, 'permissions', 'coment0', 'Формат данных:<br>\r\nВладелец:Группа код_доступа в восьмеричной системе аналогично UNIX'),
+  ('ru_RU', 0, 'permissions', 'caption0', 'Таблица доступов');
+/*!40000 ALTER TABLE `design_tables_text_interfase` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 INSERT INTO `permissions` (`id`, `name`, `object`, `mode`, `owner_user`, `owner_group`) VALUES 
   (1, 'Конструктор древов. структур', 'Admin\\Controller\\ConstructorTreeController/index', 456, 1, 1),
