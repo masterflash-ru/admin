@@ -1,0 +1,17 @@
+<div id="constr_dialog" title="Ошибка" style="color: red"><h2>Доступ запрещен</h2></div>
+<script language="JavaScript" type="text/JavaScript">
+$( "#constr_dialog" ).dialog({
+    resizable: true,
+    width: "auto",
+    modal: true,
+    autoOpen:true,
+    buttons: [
+        {
+            text: "Ok",
+            click: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    ]
+});
+</script>

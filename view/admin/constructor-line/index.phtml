@@ -19,40 +19,48 @@ use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
 use Zend\Form\Element;
 
-//\Zend\Debug\Debug::dump($this->config);
+/*доступ к Admin\Controller\ConstructorLineController/index - это контроллер конструктора*/
+$acl=$this->acl("Admin\Controller\ConstructorLineController/index");
 
 $GLOBALS["form_item"]=new form_item($this,$this->config);
 
+$dialog_massage="";
+$dialog_title="";
 
 
 $save_enable='disabled="disabled"';
 //удаление всей структуры в конструкторе
-if (isset($_POST['tab_constr']))
-	{simba::query("delete from design_tables_text_interfase where table_type=0 and interface_name='".$_POST['interface_name']."' ");
-	simba::query('delete from design_tables where table_type=0 and interface_name="'.$_POST['del_interface'].'"');
-	}
+if ($acl->isAllowed("d")){
+    if (isset($_POST['tab_constr'])){
+        simba::query("delete from design_tables_text_interfase where table_type=0 and interface_name='".$_POST['interface_name']."' ");
+        simba::query('delete from design_tables where table_type=0 and interface_name="'.$_POST['del_interface'].'"');
+    }
+} else{
+    $dialog_massage="Доступ запрещен";
+    $dialog_title="Ошибка";
+}
 
 
 //создание нового интерфейса
-if (isset($_POST['interface_create']))
-	{simba::replaceRecord (array(
-		'row_type'=>0,
-		'table_name'=>$_POST['tab_list'],
+if (isset($_POST['interface_create'])){
+    simba::replaceRecord (array(
+        'row_type'=>0,
+        'table_name'=>$_POST['tab_list'],
 		'table_type'=>0,
 		'interface_name'=>$_POST['new_interface']),
 		'design_tables');
-		$_POST['interface_name']=$_POST['new_interface'];//сделать созданный интерфейс текущим
-	}
+    $_POST['interface_name']=$_POST['new_interface'];//сделать созданный интерфейс текущим
+}
 
 //удаление выьранного дополн. поля
-if (isset($_POST['pole_dop_numb_del_b']) && isset($_POST['id']) &&  $_POST['id']>0) 
-		{		//удалить старое значение
-		simba::query("delete from design_tables_text_interfase where 
+if (isset($_POST['pole_dop_numb_del_b']) && isset($_POST['id']) &&  $_POST['id']>0) {
+    //удалить старое значение
+    simba::query("delete from design_tables_text_interfase where 
 					(item_name='coment0' or item_name='caption0' or item_name='caption_dop_".$_POST['pole_dop_numb']."') 
 					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
 
-		simba::query('delete from design_tables where table_type=0 and  id="'.$_POST['id'].'"');
-		}
+	simba::query('delete from design_tables where table_type=0 and  id="'.$_POST['id'].'"');
+}
 
 
 //уничтожение одной структыры, что выбрана
@@ -61,17 +69,17 @@ if (isset($_POST['del_struct'])){ //надо доработать!!!!!!!!!!!====
 				 					}
 if (!isset($_POST['row_type']))$_POST['row_type']=2;
 
-if (isset($_POST['pole_dop_create'])) simba::replaceRecord (array('table_name'=>$_POST['interface_tabl_tek'],
+if (isset($_POST['pole_dop_create'])) {
+    simba::replaceRecord (array('table_name'=>$_POST['interface_tabl_tek'],
 														'interface_name'=>$_POST['interface_name'],
 														'table_type'=>0,'row_type'=>1),
 													'design_tables');
+}
 
 
-if (isset($_POST['save_all']))
-{//запись
-	if ($_POST['interface_razdel']==0)
-		{//запись общих настроек
-		if ($_POST['form_input_type']==2) {
+if (isset($_POST['save_all'])){//запись
+	if ($_POST['interface_razdel']==0)	{//запись общих настроек
+        if ($_POST['form_input_type']==2) {
             $form_spis_=implode(',',$_POST['form_spis']);
         } else {
             $form_spis_=$_POST['form_spis'][0];
@@ -127,10 +135,9 @@ if (isset($_POST['save_all']))
 		}
 
 
-	if ($_POST['interface_razdel']==1)
-		{//запись дополнительных полей
-		$pole_spisok_sql=$_POST['pole_spisok_sql'];
-		if ($_POST['tab_select']) $pole_spisok_sql='select id,name from '.$_POST['tab_select'];
+	if ($_POST['interface_razdel']==1)	{//запись дополнительных полей
+        $pole_spisok_sql=$_POST['pole_spisok_sql'];
+		if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
 		simba::replaceRecord (
 			array(
 			'id'=>$_POST['id'],
@@ -155,50 +162,50 @@ if (isset($_POST['save_all']))
 		simba::query("delete from design_tables_text_interfase where item_name='caption_dop_".$_POST['pole_dop_numb']."'
 					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
 		//запишем текст интерфейса
-		if ($_POST['caption'])simba::replaceRecord (array('item_name'=>'caption_dop_'.$_POST['pole_dop_numb'],
+		if ($_POST['caption']) {
+            simba::replaceRecord (array('item_name'=>'caption_dop_'.$_POST['pole_dop_numb'],
 									'table_type'=>0,
 									'interface_name'=>$_POST['interface_name'],
 									'language'=>"ru_RU",
 									'text'=>$_POST['caption']),
 							'design_tables_text_interfase');		
+        }
 
 		}
 
-	if (isset($_POST['cols']))
- 		{//if ($_POST['row_type']==2) $tab_message[$_POST['cols']]=$_POST['caption2'];//сохранить текст описание в файл
-		if ($_POST['row_type']==2)
-		{
-		//удалить старое значение
-		simba::query("delete from design_tables_text_interfase where item_name='caption_col_".$_POST['cols']."'
+	if (isset($_POST['cols'])){
+		if ($_POST['row_type']==2){
+            //удалить старое значение
+            simba::query("delete from design_tables_text_interfase where item_name='caption_col_".$_POST['cols']."'
 					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
-		
-		
-		if ($_POST['caption'])simba::replaceRecord (array('item_name'=>'caption_col_'.$_POST['cols'],
+            if ($_POST['caption']){
+                simba::replaceRecord (array('item_name'=>'caption_col_'.$_POST['cols'],
 										'interface_name'=>$_POST['interface_name'],
 										'language'=>"ru_RU",
 										'text'=>$_POST['caption']),
 								'design_tables_text_interfase');
-		
-		
+            }
 		}
 		//удалить старое значение
 		simba::query("delete from design_tables_text_interfase where 
 				 item_name='values_message_".$_POST['cols']."' and interface_name='".$_POST['interface_tabl_tek']."' and table_type=0");
 		//запишем текст интерфейса
 		
-			if ($_POST['values_message'])simba::replaceRecord (array('item_name'=>'values_message_'.$_POST['cols'].$_POST['row_type'],
+			if ($_POST['values_message']){
+                simba::replaceRecord (array('item_name'=>'values_message_'.$_POST['cols'].$_POST['row_type'],
 										'interface_name'=>$_POST['interface_name'],
 										'language'=>"ru_RU",
 										'table_type'=>0,
 										'text'=>$_POST['values_message']),
 								'design_tables_text_interfase');
+            }
 	
 	
-		if (!isset($_POST['pole_style'])) $_POST['pole_style']=NULL;
-		if (is_array($_POST['pole_style'])) $p__s=implode(',',$_POST['pole_style']); else $p__s=$_POST['pole_style'];
+		if (!isset($_POST['pole_style'])) {$_POST['pole_style']=NULL;}
+		if (is_array($_POST['pole_style'])) {$p__s=implode(',',$_POST['pole_style']);} else {$p__s=$_POST['pole_style'];}
 		//$row_type=2 это область первой и остальных строки и заголовков таблицы
 		$pole_spisok_sql=$_POST['pole_spisok_sql'];
-		if ($_POST['tab_select']) $pole_spisok_sql='select id,name from '.$_POST['tab_select'];
+		if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
 		//удалим обратные слеши, если они вдруг есть 
 		/*if (isset($_POST['properties']))
 			{
@@ -208,9 +215,9 @@ if (isset($_POST['save_all']))
 			
 			}*/
 		simba::$flag=false;
-		if (!isset($_POST['pole_global_const'])) $_POST['pole_global_const']=NULL;
-		if (!isset($_POST['_selected_validator'])) $_POST['_selected_validator']=NULL;
-		if (!isset($_POST['pole_prop'])) $_POST['pole_prop']=NULL;
+		if (!isset($_POST['pole_global_const'])) {$_POST['pole_global_const']=NULL;}
+		if (!isset($_POST['_selected_validator'])) {$_POST['_selected_validator']=NULL;}
+		if (!isset($_POST['pole_prop'])) {$_POST['pole_prop']=NULL;}
 		simba::replaceRecord (
 			array(
 				'id'=>(int)$_POST['id'],
@@ -323,13 +330,6 @@ $pole_consts_styles=$GLOBALS["form_item"]->get_pole_consts_styles();
 $tab_constr=simba::queryAllRecords('SELECT DISTINCT (table_name) FROM design_tables where table_type=0');
 
 
-
-
-function get_style_list($tek)
-//получить список стилей HTML функций
-{
-return "";
-}
 
 function create_pole_item_list($tek)
 {//генерирует сложную структуру выпадающего списка касаемо полей ввода
@@ -874,9 +874,25 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 ?><!-- конец Дополнительного поля -->
 <input name="save_all" type="submit"  id="save_all" <?=$save_enable;  ?> style="background-color:#00CC66; color:#000000; font-weight:bold" value="Записать все">	  </td>
 </form>
+<div id="constr_dialog" title="<?=$dialog_title;?>" style="color: red"><h2><?=$dialog_massage?></h2></div>
 <script language="JavaScript" type="text/JavaScript">
+$( "#constr_dialog" ).dialog({
+    resizable: true,
+    width: "auto",
+    modal: true,
+    autoOpen:'<?=$dialog_massage?>'>'',
+    buttons: [
+        {
+            text: "Ok",
+            click: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    ]
+});
+
 var pole_consts_styles=new Array();
-var style_sp="<?=get_style_list(0); ?>";
+var style_sp="";
 var struct2=new Array();//текущие описания поля (все)
 var validator=Array();//касааемо валидатора
 var selected_validator=null;

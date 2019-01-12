@@ -1,19 +1,12 @@
 <?php
 /**
-
-
-для получения главного сервис-менеджера
-$this->getEvent()->getApplication()->getServiceManager()
-
-//получить конфиг приложения
-$this->getEvent()->getApplication()->GetConfig()
+контроллер управления конструктором деревьев
  */
 
 namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Mvc\MvcEvent;
 use Admin\Lib\Simba;
 
 
@@ -35,9 +28,14 @@ public function __construct ($connection,$sessionManager,$config)
 /*вывод левой части фрейма с меню*/
 public function indexAction()
 {
+    $view=new ViewModel(["config"=>$this->config]);
+    if (!$this->acl([get_class($this),"index"])->isAllowed("r")){
+        /*чтение разрешено?*/
+        $view->setTemplate("admin/index/accessdenied");
+    }
+
 	Simba::$connection=$this->connection;
-  return new ViewModel(["config"=>$this->config]);
-	
+  return $view;
 }
 
 
