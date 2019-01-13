@@ -30,14 +30,14 @@ $dialog_title="";
 
 $save_enable='disabled="disabled"';
 //удаление всей структуры в конструкторе
-if ($acl->isAllowed("d")){
-    if (isset($_POST['tab_constr'])){
+if (isset($_POST['tab_constr'])){
+    if ($acl->isAllowed("d")){
         simba::query("delete from design_tables_text_interfase where table_type=0 and interface_name='".$_POST['interface_name']."' ");
         simba::query('delete from design_tables where table_type=0 and interface_name="'.$_POST['del_interface'].'"');
-    }
-} else{
-    $dialog_massage="Доступ запрещен";
+    } else {
+    $dialog_massage="Ошибка удаления. Доступ запрещен";
     $dialog_title="Ошибка";
+    }
 }
 
 
@@ -54,200 +54,224 @@ if (isset($_POST['interface_create'])){
 
 //удаление выьранного дополн. поля
 if (isset($_POST['pole_dop_numb_del_b']) && isset($_POST['id']) &&  $_POST['id']>0) {
+    if ($acl->isAllowed("d")){
     //удалить старое значение
     simba::query("delete from design_tables_text_interfase where 
 					(item_name='coment0' or item_name='caption0' or item_name='caption_dop_".$_POST['pole_dop_numb']."') 
 					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
 
 	simba::query('delete from design_tables where table_type=0 and  id="'.$_POST['id'].'"');
+    } else {
+    $dialog_massage="Ошибка удаления. Доступ запрещен";
+    $dialog_title="Ошибка";
+    }
+
 }
 
 
 //уничтожение одной структыры, что выбрана
 if (isset($_POST['del_struct'])){ //надо доработать!!!!!!!!!!!==============
-				simba::query ('delete from design_tables where table_type=0 and  interface_name="'.$_POST['interface_name'].'" and col_name="'.$_POST['cols'].'" and row_type="'.$_POST['row_type'].'"');
-				 					}
+        if ($acl->isAllowed("d")){
+            simba::query ('delete from design_tables where table_type=0 and  interface_name="'.$_POST['interface_name'].'" and col_name="'.$_POST['cols'].'" and row_type="'.$_POST['row_type'].'"');
+    } else {
+    $dialog_massage="Ошибка удаления. Доступ запрещен";
+    $dialog_title="Ошибка";
+    }
+}
+
 if (!isset($_POST['row_type']))$_POST['row_type']=2;
 
 if (isset($_POST['pole_dop_create'])) {
-    simba::replaceRecord (array('table_name'=>$_POST['interface_tabl_tek'],
+    if ($acl->isAllowed("w")){
+        simba::replaceRecord (array('table_name'=>$_POST['interface_tabl_tek'],
 														'interface_name'=>$_POST['interface_name'],
 														'table_type'=>0,'row_type'=>1),
 													'design_tables');
+    } else {
+    $dialog_massage="Ошибка создания нового поля. Доступ запрещен";
+    $dialog_title="Ошибка";
+    }
+
 }
 
 
 if (isset($_POST['save_all'])){//запись
-	if ($_POST['interface_razdel']==0)	{//запись общих настроек
-        if ($_POST['form_input_type']==2) {
-            $form_spis_=implode(',',$_POST['form_spis']);
-        } else {
-            $form_spis_=$_POST['form_spis'][0];
-        }
-        
-        if (empty($_POST["permission"])){
-            $permission=484;
-        } else {
-            $permission=$_POST["permission"];
-            $permission=array_sum($_POST["permission"]);
-        }
-		simba::replaceRecord (array('id'=>$_POST['id'],
-					'row_type'=>0,
-					'table_name'=>$_POST['interface_tabl_tek'],
-					'pole_global_const'=>$_POST['pole_global_const0'],
-					'caption_style'=>serialize(["owner_user"=>$_POST["owner_user"],"owner_group"=>$_POST["owner_group"],"permission"=>$permission]),//доступ
-					'pole_style'=>"",//""$_POST['imp_exp'],
-					'col_name'=>$_POST['col_name0'],
-					'pole_name'=>$_POST['col___id'],
-					'default_sql'=>$_POST['del_record'],
-					'pole_prop'=>implode(',',$_POST['enable_multi_action']),
-					'col_por'=>$_POST['form_input_type'],
-					'pole_type'=>$form_spis_,
-					'interface_name'=>$_POST['interface_name'],
-					'table_type'=>0,
-					'value'=>serialize(array('form_elements_new_record'=>$_POST['form_elements_new_record'],'form_elements_jmp_record'=>$_POST['form_elements_jmp_record'])),
-					'properties'=>$_POST['functions_save_interface'],
-					'functions_befo_out'=>$_POST['functions_load_interface'],
-					'functions_befo_del'=>$_POST['functions_del_interface'],
-                     'functions_after'=>$_POST['functions_after_save_interface'],               
-					'validator'=>$_POST['cache_tags'],
-					'sort_item_flag'=>$_POST['cache_clear'],
-					'pole_spisok_sql'=>$_POST['pole_spisok_sql0']
-					),
-				'design_tables');
-				
-		//удалить старое значение
-		simba::query("delete from design_tables_text_interfase where  (item_name='coment0' or item_name='caption0') 
-					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
-		//запишем текст интерфейса
-		if ($_POST['coment0']) simba::replaceRecord (array('item_name'=>'coment0',
-									'interface_name'=>$_POST['interface_name'],
-									'table_type'=>0,
-									'language'=>"ru_RU",
-									'text'=>$_POST['coment0']),
-							'design_tables_text_interfase');
-		if ($_POST['caption0']) simba::replaceRecord (array('item_name'=>'caption0',
-									'interface_name'=>$_POST['interface_name'],
-									'table_type'=>0,
-									'language'=>"ru_RU",
-									'text'=>$_POST['caption0']),
-							'design_tables_text_interfase');
-		}
+    if ($acl->isAllowed("w")){
+        if ($_POST['interface_razdel']==0)	{//запись общих настроек
+            if ($_POST['form_input_type']==2) {
+                $form_spis_=implode(',',$_POST['form_spis']);
+            } else {
+                $form_spis_=$_POST['form_spis'][0];
+            }
 
+            if (empty($_POST["permission"])){
+                $permission=484;
+            } else {
+                $permission=$_POST["permission"];
+                $permission=array_sum($_POST["permission"]);
+            }
+            simba::replaceRecord (array('id'=>$_POST['id'],
+                        'row_type'=>0,
+                        'table_name'=>$_POST['interface_tabl_tek'],
+                        'pole_global_const'=>$_POST['pole_global_const0'],
+                        'caption_style'=>serialize(["owner_user"=>$_POST["owner_user"],"owner_group"=>$_POST["owner_group"],"permission"=>$permission]),//доступ
+                        'pole_style'=>"",//""$_POST['imp_exp'],
+                        'col_name'=>$_POST['col_name0'],
+                        'pole_name'=>$_POST['col___id'],
+                        'default_sql'=>$_POST['del_record'],
+                        'pole_prop'=>implode(',',$_POST['enable_multi_action']),
+                        'col_por'=>$_POST['form_input_type'],
+                        'pole_type'=>$form_spis_,
+                        'interface_name'=>$_POST['interface_name'],
+                        'table_type'=>0,
+                        'value'=>serialize(array('form_elements_new_record'=>$_POST['form_elements_new_record'],'form_elements_jmp_record'=>$_POST['form_elements_jmp_record'])),
+                        'properties'=>$_POST['functions_save_interface'],
+                        'functions_befo_out'=>$_POST['functions_load_interface'],
+                        'functions_befo_del'=>$_POST['functions_del_interface'],
+                         'functions_after'=>$_POST['functions_after_save_interface'],               
+                        'validator'=>$_POST['cache_tags'],
+                        'sort_item_flag'=>$_POST['cache_clear'],
+                        'pole_spisok_sql'=>$_POST['pole_spisok_sql0']
+                        ),
+                    'design_tables');
 
-	if ($_POST['interface_razdel']==1)	{//запись дополнительных полей
-        $pole_spisok_sql=$_POST['pole_spisok_sql'];
-		if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
-		simba::replaceRecord (
-			array(
-			'id'=>$_POST['id'],
-			'row_type'=>1,
-			'table_type'=>0,
-			'table_name'=>$_POST['interface_tabl_tek'],
-			'pole_type'=>$_POST['pole_type'],
-			'caption_style'=>"",//$_POST['caption_style'],
-			'pole_style'=>"",//(is_array($_POST['pole_style'])) ? implode(',',$_POST['pole_style']):$_POST['pole_style'],
-			'pole_prop'=>(is_array($_POST['pole_prop'])) ? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
-			'default_sql'=>$_POST['default_sql'],
-			//properties=>(is_array($_POST['properties1']))? implode (',',str_replace(',',' ',$_POST['properties1'])):'',
-			'properties'=>serialize((isset($_POST['properties']))?$_POST['properties']:NULL),
-			'pole_spisok_sql'=>$pole_spisok_sql,
-			'value'=>$_POST['value'],
-			'interface_name'=>$_POST['interface_name'],
-			'functions_befo_out'=>$_POST['functions_befo_out'],
-			'col_por'=>($_POST['col_por']==="") ? null : (int)$_POST['col_por']
-			
-			),'design_tables');
-		//удалить старое значение
-		simba::query("delete from design_tables_text_interfase where item_name='caption_dop_".$_POST['pole_dop_numb']."'
-					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
-		//запишем текст интерфейса
-		if ($_POST['caption']) {
-            simba::replaceRecord (array('item_name'=>'caption_dop_'.$_POST['pole_dop_numb'],
-									'table_type'=>0,
-									'interface_name'=>$_POST['interface_name'],
-									'language'=>"ru_RU",
-									'text'=>$_POST['caption']),
-							'design_tables_text_interfase');		
-        }
-
-		}
-
-	if (isset($_POST['cols'])){
-		if ($_POST['row_type']==2){
             //удалить старое значение
-            simba::query("delete from design_tables_text_interfase where item_name='caption_col_".$_POST['cols']."'
-					and table_type=0 and interface_name='".$_POST['interface_name']."' ");
-            if ($_POST['caption']){
-                simba::replaceRecord (array('item_name'=>'caption_col_'.$_POST['cols'],
-										'interface_name'=>$_POST['interface_name'],
-										'language'=>"ru_RU",
-										'text'=>$_POST['caption']),
-								'design_tables_text_interfase');
+            simba::query("delete from design_tables_text_interfase where  (item_name='coment0' or item_name='caption0') 
+                        and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+            //запишем текст интерфейса
+            if ($_POST['coment0']) simba::replaceRecord (array('item_name'=>'coment0',
+                                        'interface_name'=>$_POST['interface_name'],
+                                        'table_type'=>0,
+                                        'language'=>"ru_RU",
+                                        'text'=>$_POST['coment0']),
+                                'design_tables_text_interfase');
+            if ($_POST['caption0']) simba::replaceRecord (array('item_name'=>'caption0',
+                                        'interface_name'=>$_POST['interface_name'],
+                                        'table_type'=>0,
+                                        'language'=>"ru_RU",
+                                        'text'=>$_POST['caption0']),
+                                'design_tables_text_interfase');
             }
-		}
-		//удалить старое значение
-		simba::query("delete from design_tables_text_interfase where 
-				 item_name='values_message_".$_POST['cols']."' and interface_name='".$_POST['interface_tabl_tek']."' and table_type=0");
-		//запишем текст интерфейса
-		
-			if ($_POST['values_message']){
-                simba::replaceRecord (array('item_name'=>'values_message_'.$_POST['cols'].$_POST['row_type'],
-										'interface_name'=>$_POST['interface_name'],
-										'language'=>"ru_RU",
-										'table_type'=>0,
-										'text'=>$_POST['values_message']),
-								'design_tables_text_interfase');
+
+
+        if ($_POST['interface_razdel']==1)	{//запись дополнительных полей
+            $pole_spisok_sql=$_POST['pole_spisok_sql'];
+            if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
+            simba::replaceRecord (
+                array(
+                'id'=>$_POST['id'],
+                'row_type'=>1,
+                'table_type'=>0,
+                'table_name'=>$_POST['interface_tabl_tek'],
+                'pole_type'=>$_POST['pole_type'],
+                'caption_style'=>"",//$_POST['caption_style'],
+                'pole_style'=>"",//(is_array($_POST['pole_style'])) ? implode(',',$_POST['pole_style']):$_POST['pole_style'],
+                'pole_prop'=>(is_array($_POST['pole_prop'])) ? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
+                'default_sql'=>$_POST['default_sql'],
+                //properties=>(is_array($_POST['properties1']))? implode (',',str_replace(',',' ',$_POST['properties1'])):'',
+                'properties'=>serialize((isset($_POST['properties']))?$_POST['properties']:NULL),
+                'pole_spisok_sql'=>$pole_spisok_sql,
+                'value'=>$_POST['value'],
+                'interface_name'=>$_POST['interface_name'],
+                'functions_befo_out'=>$_POST['functions_befo_out'],
+                'col_por'=>($_POST['col_por']==="") ? null : (int)$_POST['col_por']
+
+                ),'design_tables');
+            //удалить старое значение
+            simba::query("delete from design_tables_text_interfase where item_name='caption_dop_".$_POST['pole_dop_numb']."'
+                        and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+            //запишем текст интерфейса
+            if ($_POST['caption']) {
+                simba::replaceRecord (array('item_name'=>'caption_dop_'.$_POST['pole_dop_numb'],
+                                        'table_type'=>0,
+                                        'interface_name'=>$_POST['interface_name'],
+                                        'language'=>"ru_RU",
+                                        'text'=>$_POST['caption']),
+                                'design_tables_text_interfase');		
             }
-	
-	
-		if (!isset($_POST['pole_style'])) {$_POST['pole_style']=NULL;}
-		if (is_array($_POST['pole_style'])) {$p__s=implode(',',$_POST['pole_style']);} else {$p__s=$_POST['pole_style'];}
-		//$row_type=2 это область первой и остальных строки и заголовков таблицы
-		$pole_spisok_sql=$_POST['pole_spisok_sql'];
-		if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
-		//удалим обратные слеши, если они вдруг есть 
-		/*if (isset($_POST['properties']))
-			{
-			if (is_array($_POST['properties'])) foreach ($_POST['properties'] as $k=>$v) $_POST['properties'][$k]=simba::stripslash($v);
-				else $_POST['properties']=simba::stripslash($_POST['properties']);
-			
-			
-			}*/
-		simba::$flag=false;
-		if (!isset($_POST['pole_global_const'])) {$_POST['pole_global_const']=NULL;}
-		if (!isset($_POST['_selected_validator'])) {$_POST['_selected_validator']=NULL;}
-		if (!isset($_POST['pole_prop'])) {$_POST['pole_prop']=NULL;}
-		simba::replaceRecord (
-			array(
-				'id'=>(int)$_POST['id'],
-				'row_type'=>$_POST['row_type'],
-				'table_name'=>$_POST['interface_tabl_tek'],
-				'table_type'=>0,
-				'col_name'=>$_POST['cols'],
-				'functions_befo_out'=>$_POST['functions_befo_out'],
-				'pole_type'=>$_POST['pole_type'],
-				'col_por'=>(isset($_POST['col_por']))?$_POST['col_por']:NULL,
-				'functions_befo'=>$_POST['functions_befo'],
-				'functions_after'=>$_POST['functions_after'],
-				'functions_befo_del'=>$_POST['functions_befo_del'],
-				'pole_style'=>$p__s,
-				'pole_spisok_sql'=>$pole_spisok_sql,
-				'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
-				'pole_name'=>$_POST['pole_name'],
-				//caption_style
-				'validator'=>serialize($_POST['_selected_validator']),
-				'pole_prop'=>(is_array($_POST['pole_prop']))? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
-				'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
-				//properties=>(is_array($_POST['properties']))? implode (',',str_replace(',',' ',$_POST['properties'])):'',
-				'properties'=> serialize((isset($_POST['properties'])?$_POST['properties']:NULL)),
-				'value'=>(isset($_POST['value']))?$_POST['value']:NULL,
-				'sort_item_flag'=>(isset($_POST['sort_item_flag']))?$_POST['sort_item_flag']:NULL,
-				'interface_name'=>(isset($_POST['interface_name']))?$_POST['interface_name']:NULL,
-				'col_function_array'=>serialize((isset($_POST['col_function_array']))? $_POST['col_function_array']:NULL )
-				),'design_tables');//print_r( strlen( serialize( $_POST['properties'])));
-				
-		} 
+
+            }
+
+        if (isset($_POST['cols'])){
+            if ($_POST['row_type']==2){
+                //удалить старое значение
+                simba::query("delete from design_tables_text_interfase where item_name='caption_col_".$_POST['cols']."'
+                        and table_type=0 and interface_name='".$_POST['interface_name']."' ");
+                if ($_POST['caption']){
+                    simba::replaceRecord (array('item_name'=>'caption_col_'.$_POST['cols'],
+                                            'interface_name'=>$_POST['interface_name'],
+                                            'language'=>"ru_RU",
+                                            'text'=>$_POST['caption']),
+                                    'design_tables_text_interfase');
+                }
+            }
+            //удалить старое значение
+            simba::query("delete from design_tables_text_interfase where 
+                     item_name='values_message_".$_POST['cols']."' and interface_name='".$_POST['interface_tabl_tek']."' and table_type=0");
+            //запишем текст интерфейса
+
+                if ($_POST['values_message']){
+                    simba::replaceRecord (array('item_name'=>'values_message_'.$_POST['cols'].$_POST['row_type'],
+                                            'interface_name'=>$_POST['interface_name'],
+                                            'language'=>"ru_RU",
+                                            'table_type'=>0,
+                                            'text'=>$_POST['values_message']),
+                                    'design_tables_text_interfase');
+                }
+
+
+            if (!isset($_POST['pole_style'])) {$_POST['pole_style']=NULL;}
+            if (is_array($_POST['pole_style'])) {$p__s=implode(',',$_POST['pole_style']);} else {$p__s=$_POST['pole_style'];}
+            //$row_type=2 это область первой и остальных строки и заголовков таблицы
+            $pole_spisok_sql=$_POST['pole_spisok_sql'];
+            if ($_POST['tab_select']) {$pole_spisok_sql='select id,name from '.$_POST['tab_select'];}
+            //удалим обратные слеши, если они вдруг есть 
+            /*if (isset($_POST['properties']))
+                {
+                if (is_array($_POST['properties'])) foreach ($_POST['properties'] as $k=>$v) $_POST['properties'][$k]=simba::stripslash($v);
+                    else $_POST['properties']=simba::stripslash($_POST['properties']);
+
+
+                }*/
+            simba::$flag=false;
+            if (!isset($_POST['pole_global_const'])) {$_POST['pole_global_const']=NULL;}
+            if (!isset($_POST['_selected_validator'])) {$_POST['_selected_validator']=NULL;}
+            if (!isset($_POST['pole_prop'])) {$_POST['pole_prop']=NULL;}
+            simba::replaceRecord (
+                array(
+                    'id'=>(int)$_POST['id'],
+                    'row_type'=>$_POST['row_type'],
+                    'table_name'=>$_POST['interface_tabl_tek'],
+                    'table_type'=>0,
+                    'col_name'=>$_POST['cols'],
+                    'functions_befo_out'=>$_POST['functions_befo_out'],
+                    'pole_type'=>$_POST['pole_type'],
+                    'col_por'=>(isset($_POST['col_por']))?$_POST['col_por']:NULL,
+                    'functions_befo'=>$_POST['functions_befo'],
+                    'functions_after'=>$_POST['functions_after'],
+                    'functions_befo_del'=>$_POST['functions_befo_del'],
+                    'pole_style'=>$p__s,
+                    'pole_spisok_sql'=>$pole_spisok_sql,
+                    'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
+                    'pole_name'=>$_POST['pole_name'],
+                    //caption_style
+                    'validator'=>serialize($_POST['_selected_validator']),
+                    'pole_prop'=>(is_array($_POST['pole_prop']))? implode(',',$_POST['pole_prop']):$_POST['pole_prop'],
+                    'pole_global_const'=>(is_array($_POST['pole_global_const'])) ? implode (',',$_POST['pole_global_const']) :$_POST['pole_global_const'],
+                    //properties=>(is_array($_POST['properties']))? implode (',',str_replace(',',' ',$_POST['properties'])):'',
+                    'properties'=> serialize((isset($_POST['properties'])?$_POST['properties']:NULL)),
+                    'value'=>(isset($_POST['value']))?$_POST['value']:NULL,
+                    'sort_item_flag'=>(isset($_POST['sort_item_flag']))?$_POST['sort_item_flag']:NULL,
+                    'interface_name'=>(isset($_POST['interface_name']))?$_POST['interface_name']:NULL,
+                    'col_function_array'=>serialize((isset($_POST['col_function_array']))? $_POST['col_function_array']:NULL )
+                    ),'design_tables');//print_r( strlen( serialize( $_POST['properties'])));
+
+            } 
+    } else {
+    $dialog_massage="Ошибка записи. Доступ запрещен";
+    $dialog_title="Ошибка";
+    }
+
 }
 
 //ролучить список доступных линейных интерфейсов

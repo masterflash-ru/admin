@@ -83,7 +83,7 @@ public function render()
         $p3=$this->view->FormSelect($select);
 
         //читаем всех юзеров и блокированных тоже
-        $uu=simba::QueryAllRecords("select id,name from users");
+        $uu=simba::QueryAllRecords("select id,concat(ifnull(name,name),' (',login,')') as name from users");
         for($i=0; $i<simba::numRows();$i++){
             $u[$uu["id"][$i]]=$uu["name"][$i];
         }
