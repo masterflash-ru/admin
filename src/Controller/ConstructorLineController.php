@@ -31,6 +31,7 @@ public function indexAction()
     $view=new ViewModel(["config"=>$this->config]);
     if (!$this->acl([get_class($this),"index"])->isAllowed("r")){
         /*чтение разрешено?*/
+        /*разрешение на запуск проверяется в файле module.php, там это делается оптом*/
         $view->setTemplate("admin/index/accessdenied");
     }
 	Simba::$connection=$this->connection;

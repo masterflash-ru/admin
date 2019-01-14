@@ -24,6 +24,7 @@ use Admin\Lib\Tree;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 
+
 class ioTree
 {
 
@@ -95,9 +96,8 @@ public $cache;
 public $config;
 public $EventManager;
 public $container;
-protected $permission;  //маска доступа
-protected $owner_user;     //ID юзера владельца
-protected $owner_group;     //ID группы владельца
+protected $permissions;     //массив доступа ACL
+protected $aclService;      //сервис проверки ACL
 
     
 
@@ -171,6 +171,11 @@ $this->global_error_code[]=$error_code;
 
 function save_field($id,$level=0,$subid=0)
 {
+if (!$this->aclService->checkAcl("w",$this->permission)){
+    $this->view->dialog_message="Ошибка записи. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
+}
 
 //проверим код формы и убедимся что это не подделка
 if($_SESSION['io_tree_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
@@ -335,6 +340,11 @@ if (!$flag_error)
 
 function delete_field($id)
 {
+if (!$this->aclService->checkAcl("d",$this->permission)){
+    $this->view->dialog_message="Ошибка записи. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
+}
 
 //проверим код формы и убедимся что это не подделка
 if($_SESSION['io_tree_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
@@ -428,24 +438,18 @@ $this->interface_name=$interface_name; //имя интерфейса
 //по идентификатору полуячить имя таблицы с которой работаем
 $this->struct0=simba::queryOneRecord ('select * from design_tables where table_type=1 and row_type=0 and interface_name="'.$this->interface_name.'"');
 
-$p=@unserialize($this->struct0['caption_style']);
-if (isset($p["owner_user"])){
-    $this->owner_user=(int)$p["owner_user"];
-} else {
-    $this->owner_user=1;
-}
-if (isset($p["owner_group"])){
-    $this->owner_group=(int)$p["owner_group"];
-} else {
-    $this->owner_group=1;
-}
-
-if (isset($p["permission"])){
-    $this->permission=(int)$p["permission"];
-} else {
-    $this->permission=0777;
+/*получим сервис ACL*/
+$this->aclService=$this->view->acl()->GetAclService();
+$permissions=@unserialize($this->struct0['caption_style']);
+$this->permission=[$permissions['owner_user'],$permissions['owner_group'],$permissions['permission']  ];
+/*читать разрешено?*/
+if (!$this->aclService->checkAcl("r",$this->permission)){
+    $this->view->dialog_message="Ошибка чтения. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
 }
 
+ 
 
 $this->tab_name=$this->struct0['table_name'];//$tree_name=$this->struct0['tree_name'];
 if (!$this->tab_name) {throw new Exception("Не указано имя таблицы");return false;}

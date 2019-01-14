@@ -93,9 +93,8 @@ public $cache;
 public $config;
 public $container;
 public $EventManager;
-protected $permission;  //маска доступа
-protected $owner_user;     //ID юзера владельца
-protected $owner_group;     //ID группы владельца
+protected $permissions;     //массив доступа ACL
+protected $aclService;      //сервис проверки ACL
 
 
 function __construct($container,$view)
@@ -154,6 +153,11 @@ $this->global_error_code[]=$error_code;
 
 function save_field($id)
 {
+if (!$this->aclService->checkAcl("w",$this->permission)){
+    $this->view->dialog_message="Ошибка записи. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
+}
 
 //проверим код формы и убедимся что это не подделка
 if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
@@ -371,6 +375,11 @@ if(isset($_POST['cod_form']) && isset($_SESSION['io_line_interface'][$this->inte
 
 function delete_field($id)
 {
+if (!$this->aclService->checkAcl("d",$this->permission)){
+    $this->view->dialog_message="Ошибка записи. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
+}
 
 //проверим код формы и убедимся что это не подделка
 if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
@@ -456,11 +465,6 @@ if ($this->struct0['functions_befo_del'])
 
 }
 
-public function _create_interface($interface_name,$flag_out_form=true,View $view=NULL)
-{
-$this->_create_interface($interface_name,$flag_out_form,$view) ;//стандартный обработчик
-}
-
 
 
 public function create_interface($interface_name,$flag_out_form=true,View $view=NULL)
@@ -542,29 +546,24 @@ if (isset($this->struct2['pole_type']))
 //пролучить общие настройки
 $this->struct0=simba::queryOneRecord('select * from design_tables where table_type=0 and interface_name="'.$this->interface_name.'" and row_type=0');
 
+/*получим сервис ACL*/
+$this->aclService=$this->view->acl()->GetAclService();
+$permissions=@unserialize($this->struct0['caption_style']);
+$this->permission=[$permissions['owner_user'],$permissions['owner_group'],$permissions['permission']  ];
+/*читать разрешено?*/
+if (!$this->aclService->checkAcl("r",$this->permission)){
+    $this->view->dialog_message="Ошибка чтения. Доступ запрещен";
+    $this->view->dialog_title="Ошибка";
+    return;
+}
+    
+
+    
 //если у нас вывод в виде формы, тогда смотрим нужно ли выводить кнопки создать запись и переходы по записям (это хранится в колонке value)
 $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];
 $this->line_table_obj->buttons_jmp_flag=$a['form_elements_jmp_record'];
 
-$p=@unserialize($this->struct0['caption_style']);
-if (isset($p["owner_user"])){
-    $this->owner_user=(int)$p["owner_user"];
-} else {
-    $this->owner_user=1;
-}
-if (isset($p["owner_group"])){
-    $this->owner_group=(int)$p["owner_group"];
-} else {
-    $this->owner_group=1;
-}
-
-if (isset($p["permission"])){
-    $this->permission=(int)$p["permission"];
-} else {
-    $this->permission=0777;
-}
-   
     
 //запись
 //массовые операции global_action_id_array- список активных идентификаторов таблицы, т.е. те, которые выведены на экран
@@ -690,7 +689,7 @@ if ($this->struct0['functions_befo_out'])
 				
 				$arr=simba::queryAllRecords($sql);
 			}
-			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";\Zend\Debug\Debug::dump($sql);}
+			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";\Zend\Debug\Debug::dump($sql); exit;}
 			$count=simba::numRows();
 		}
 

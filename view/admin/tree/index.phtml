@@ -3,13 +3,35 @@
 
 use Admin\Lib\Iotree;
 
+$this->dialog_message="";
+$this->dialog_title="";
 
 $io_tree_interface=new Iotree($this->container,$this);
-$ss0000=microtime(true);
+
+
 $io_tree_interface->create_interface($this->table);
 $io_tree_interface->print_interface();
 
 
-if (isset($io_tree_interface->design_tables_text_interfase['coment0'])) echo $io_tree_interface->design_tables_text_interfase['coment0'];
+if (isset($io_tree_interface->design_tables_text_interfase['coment0']) && empty($this->dialog_message) ) {
+    echo $io_tree_interface->design_tables_text_interfase['coment0'];
+}
 
-
+?>
+<div id="constr_dialog" title="<?=$this->dialog_title;?>" style="color: red"><h2><?=$this->dialog_message?></h2></div>
+<script language="javascript" type="text/javascript">
+$( "#constr_dialog" ).dialog({
+    resizable: true,
+    width: "auto",
+    modal: true,
+    autoOpen:'<?=$this->dialog_message?>'>'',
+    buttons: [
+        {
+            text: "Ok",
+            click: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    ]
+});
+</script>

@@ -43,13 +43,18 @@ if (isset($_POST['tab_constr'])){
 
 //создание нового интерфейса
 if (isset($_POST['interface_create'])){
-    simba::replaceRecord (array(
-        'row_type'=>0,
-        'table_name'=>$_POST['tab_list'],
-		'table_type'=>0,
-		'interface_name'=>$_POST['new_interface']),
-		'design_tables');
-    $_POST['interface_name']=$_POST['new_interface'];//сделать созданный интерфейс текущим
+    if ($acl->isAllowed("w")){
+        simba::replaceRecord (array(
+            'row_type'=>0,
+            'table_name'=>$_POST['tab_list'],
+            'table_type'=>0,
+            'interface_name'=>$_POST['new_interface']),
+                              'design_tables');
+        $_POST['interface_name']=$_POST['new_interface'];//сделать созданный интерфейс текущим
+    } else {
+    $dialog_massage="Ошибка Создания. Доступ запрещен";
+    $dialog_title="Ошибка";
+    }
 }
 
 //удаление выьранного дополн. поля
@@ -562,7 +567,7 @@ if (value==2)
          //\Zend\Debug\Debug::dump($permission_arr);
          if (empty($permission_arr['owner_user'])) {$permission_arr['owner_user']=0;}
          if(empty($permission_arr['owner_group'])){$permission_arr['owner_group']=0;}
-         if (empty($permission_arr["permission"])){$permission_arr["permission"]=0744;}
+         if (empty($permission_arr["permission"])){$permission_arr["permission"]=0740;}
          $g=simba::queryAllRecords("select u.id,concat(login,' (', if(name,name,''),', ',if(full_name,full_name,'')   ,')' ) as name 
                 from users as u, users_ext as ue
                     where u.id=ue.id
@@ -596,18 +601,19 @@ if (value==2)
                   <tr>
                       <td colspan="2"><?php
 $multiCheckbox = new Element\MultiCheckbox('permission');
- $bits=[2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
-    1024 => 'бит SGID (При создании записи ID группы наследуются от родительской)',
-    512=> 'бит Sticky (Запрещает удалять не владельцу)',
+ $bits=[
+     //2048 => 'бит SUID (При создании записи ID юзера наследуются от родительской)',
+    //1024 => 'бит SGID (При создании записи ID группы наследуются от родительской)',
+    //512=> 'бит Sticky (Запрещает удалять не владельцу)',
     256 =>'(r) чтение для владельца',
     128=>'(w) запись для владельца' ,
-    64 =>'(x) запуск/поиск для владельца',
+    //64 =>'(x) запуск для владельца',
     32=>'(r) чтение для группы',
     16 =>'(w) запись для группы',
-    8=>'(x) запуск/поиск для группы',
+   // 8=>'(x) запуск для группы',
     4=>'(r) чтение для других',
     2=>'(w) запись для других',
-    1=>'(x) запуск/поиск для других'
+    //1=>'(x) запуск для других'
 ];
 $multiCheckbox->setValueOptions($bits);
 $rez=[];
@@ -663,10 +669,8 @@ if ($_POST['cols']>'') $save_enable_cols=''; else  $save_enable_cols='disabled="
 	        <br>
 <fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
 	      Порядок вывода:
-	        <select name="col_por" id="col_por"  <?=$save_enable_cols; if ($_POST['row_type']==3) echo 'disabled="disabled"';   ?>>
-              <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
-            </select>
-            Порядок вывода<br>
+	        <input name="col_por" id="col_por" size="4" value="<?=$struct2['col_por']?>"   <?=$save_enable_cols; if ($_POST['row_type']==3) echo 'disabled="disabled"';   ?>>
+           
 	        Заголовок:
             <textarea name="caption"  cols="60" rows="1" wrap="VIRTUAL"  id="caption" <?=$save_enable_cols;?>><?php if (isset($design_tables_text_interfase['caption_col_'.$_POST['cols']]) ) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']]; 
 			   ?></textarea>
@@ -823,9 +827,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
 			 ?></textarea>
                     <br />
                     Порядок вывода
-      <select name="col_por" id="col_por"  >
-                      <?=simba::getSpValue (array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40),$struct2['col_por']);?>
-                    </select>
+      <input type="text" size="4" name="col_por" id="col_por" value="<?=$struct2['col_por']?>"  >
   </fieldset>
 	<fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
 Тип:<select id="pole_type" name="pole_type"  onChange="ch_item(this.value,1);">
@@ -920,25 +922,16 @@ var style_sp="";
 var struct2=new Array();//текущие описания поля (все)
 var validator=Array();//касааемо валидатора
 var selected_validator=null;
-<?php //массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
+<?php 
+    //массив данных по всем полям (стили, кол-во элементов, сво-в и т.д.)
 echo "pole_consts_styles=unserialize('".str_replace("'","\'",serialize($pole_consts_styles))."');\n";
 echo "validator=unserialize('".addslashes(serialize(['validator_list'=>[],'validator_parametrs'=>[]]  ))."');";//получить все что есть валидатору
 
 
-if (isset($struct2)) echo "\n struct2=unserialize('".addslashes(serialize($struct2))."');\n";
- else echo "\n struct2=Array();\n";
+if (isset($struct2)) {echo "\n struct2=unserialize('".addslashes(serialize($struct2))."');\n";}
+ else {echo "\n struct2=Array();\n";}
 
 //получить список глобальных настроек
-/*
-$c=$ckey=[];
-if ($struct0['caption_style'])
-	{
-		$c=$this->config[$struct0['caption_style']];
-		$ckey=array_values($c);$c=array_keys($c);
-	}
-		
-echo "var const_sp=\"".simba::getSpValue ($c,$ckey,'')."\";\n";
-*/
 if (!empty($_POST['interface_razdel']))   echo 'ch_item('.$struct2['pole_type'].')';
  ?>
 
