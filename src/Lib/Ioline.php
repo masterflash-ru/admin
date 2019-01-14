@@ -1024,12 +1024,8 @@ if ($this->struct1['pole_type'][$jjj]>0)
 				}
 
 
-	@$this->line_table_obj->caption($this->design_tables_text_interfase['caption_dop_'.$jjj],
-									"",
-									$jjj);
+	@$this->line_table_obj->caption($this->design_tables_text_interfase['caption_dop_'.$jjj],"",$jjj);
 
-	//$style=simba::get_style_class_ fromtable(explode (',',$this->struct1['pole_style'][$jjj]),explode (',',$this->struct1['pole_prop'][$jjj]));//массив стилей полей (если двойное тогда 2 элемента
-	
 
 	$this->line_table_obj->row_dop_type(
 								$this->struct1['pole_type'][$jjj],
