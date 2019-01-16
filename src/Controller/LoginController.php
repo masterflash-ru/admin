@@ -24,7 +24,7 @@ class LoginController extends AbstractActionController
 
 public function __construct ($authManager)
 	{
-		$this->authManager=$authManager;
+		$this->authManager=$authManager; /*экземпляр Mf\Users\Service\AuthManager*/
 	}
 
 

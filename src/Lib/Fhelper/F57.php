@@ -25,12 +25,26 @@ class F57 extends Fhelperabstract
     ];
 
 
-public function __construct($item_id)
+public function __construct($item_id=57)
 {
 	parent::__construct($item_id);
 
 }
-	
+
+/*технологический вызов, он сработает когда мы добавляем строку, и назначили уже доступ, но ID еще не известен
+* после записи строки вызывается это
+* $id - ID новой строки таблицы
+* $tab_rec - массив из формы админки, там ID=0!
+*/
+public function __invoke($obj, $tab_rec, $id)
+{
+    $id=(int)$id;
+        Simba::Query("update permissions set 
+                     owner_user=".(int)$_SESSION["_F57_"][0].",
+                     owner_group=".(int)$_SESSION["_F57_"][1].",
+                     mode=".(int)$_SESSION["_F57_"][2]." where id={$id}");
+    unset ($_SESSION["_F57_"]);
+}
 	
 	
 public function render()
@@ -165,18 +179,26 @@ public function render()
 $this->id - ID записи основной таблицы (товара)
 */
 public function save()
-{
+{ 
     $values=explode(",",$_POST[$this->col_name][$this->id]);
-    /*$values=>[
-    владелец,группа,код_доступа
-    ]*/
+    if ($this->id>0){
+    
+        /*$values=>[
+        владелец,группа,код_доступа
+        ]*/
    
-    Simba::ReplaceRecord([
-        "id"=>(int)$this->id,
-        "owner_user"=>$values[0],
-        "owner_group"=>$values[1],
-        "mode"=>$values[2],
-    ],"permissions");
+        Simba::ReplaceRecord([
+            "id"=>(int)$this->id,
+            "owner_user"=>$values[0],
+            "owner_group"=>$values[1],
+            "mode"=>$values[2],
+        ],"permissions");
+    } else {
+        /* сработает при добавлении новой записи
+        *инициировать вызов функции после записи строки*/
+        $_SESSION["FUNCTION_SAVE_AFTER_ADD_LINES"]=get_class($this);
+        $_SESSION["_F57_"]=$values;
+    }
 
     
 }

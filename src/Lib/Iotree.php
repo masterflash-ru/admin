@@ -137,34 +137,6 @@ $this->result_sql=[];
 }//конец конструктора
 
 
-public function get_interface_status()
-{//получить массив статус-формы
-return array(
-			'error_form_item'=>$this->error_form_item, //ошибки из объекта form_item
-			'error_code'=>$this->error_code, //коды ошибок
-			'error_message'=>$this->error_message, //текстовое сообщение об ошибке, берется из конструктора!!!!!! все склеивается через <br>
-			'column_name'=>array_unique($this->value_for_error['column_name']), //имена колонок которые были обработаны
-			'row_item'=>array_unique($this->value_for_error['row_item']), // ID строк которые были обработаны
-			'global_error_code'=>$this->global_error_code, //общие ошибки интерфейса
-			'global_error_message'=>$this->global_error_message //общие сообщения об ошибках
-			);
-}
-
-
-
-
-
-private function set_error($error_code=0,$message='')
-{//для внутренних целей, уснанавливает код ошибки и сообщение
-/*
-генерирует текстовое сообщени об ошибке, из языкового файла
-$mess_cod код сообщения
-$message - локализованое сообщение
-*/
-
-$this->global_error_message[]=$message;
-$this->global_error_code[]=$error_code;
-}
 
 
 
@@ -508,14 +480,13 @@ if (isset($_POST[$this->button_optimize_table_name]))
 	simba::query("optimize table $this->tab_name");
 	}
 
-if (is_array($d)) 
-	{
-		if ($this->function_del_field_name) call_user_func($this->function_del_field_name,$d[0],$this);//нестандартный обработчик записи
-			else  {
-				try{$this->delete_field($d[0]);}//стандартный обработчик
-				catch (Exception $e) {$this->set_error($e->getCode(),$e->getMessage());};
-				}
-	}
+if (is_array($d)) {
+    if ($this->function_del_field_name) {
+        call_user_func($this->function_del_field_name,$d[0],$this);//нестандартный обработчик записи
+    } else {
+        $this->delete_field($d[0]);
+    }
+}
 
 
 

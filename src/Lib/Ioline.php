@@ -123,239 +123,242 @@ function __construct($container,$view)
 
 
 
-public function get_interface_status()
-{//получить массив статус-формы
-return array(
-			'error_form_item'=>$this->error_form_item, //ошибки из объекта form_item
-			'error_code'=>$this->error_code, //коды ошибок
-			'error_message'=>$this->error_message, //текстовое сообщение об ошибке, берется из конструктора!!!!!! все склеивается через <br>
-			'column_name'=>array_unique($this->value_for_error['column_name']), //имена колонок которые были обработаны
-			'row_item'=>array_unique($this->value_for_error['row_item']), // ID строк которые были обработаны
-			'global_error_code'=>$this->global_error_code, //общие ошибки интерфейса
-			'global_error_message'=>$this->global_error_message //общие сообщения об ошибках
-			);
-}
-
-
-private function set_error($error_code=0,$message='')
-{//для внутренних целей, уснанавливает код ошибки и сообщение
-/*
-генерирует текстовое сообщени об ошибке, из языкового файла
-$mess_cod код сообщения
-$message - локализованое сообщение
-*/
-
-$this->global_error_message[]=$message;
-$this->global_error_code[]=$error_code;
-}
-
-
 
 function save_field($id)
 {
-if (!$this->aclService->checkAcl("w",$this->permission)){
-    $this->view->dialog_message="Ошибка записи. Доступ запрещен";
-    $this->view->dialog_title="Ошибка";
-    return;
-}
-
-//проверим код формы и убедимся что это не подделка
-if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
-	{throw new Exception("Не верная подпись формы");//неверная подпись формы
-	return false;
-	}
-
-//получить имена переменных
-if ($id) $this->struct2=simba::queryAllRecords ('select validator,properties,functions_befo,functions_after,pole_name,col_name,pole_type,pole_global_const,caption_style from design_tables where table_type=0 and row_type=3 and interface_name="'.$this->interface_name.'" and pole_name !="" and col_name REGEXP "^[a-zA-Z]"');
-	else $this->struct2=simba::queryAllRecords ('select validator,properties,functions_befo,functions_after,pole_name,col_name,pole_type,pole_global_const,caption_style from design_tables where table_type=0 and row_type=2 and interface_name="'.$this->interface_name.'" and pole_name !="" and col_name REGEXP "^[a-zA-Z]"');
-//сортируем по порядку столбцов
-$count=simba::numRows();
-$flag_error=false;//флаг ошибки, если истина - ошибка, т.е. вся строка брак
-
-//добавлено удаление кеша по тегам
-if ($this->struct0['validator'] && $this->struct0['sort_item_flag'])
-	{
-				$tags=explode(",",$this->struct0['validator']);
-				$this->cache->removeItems($tags);//ключи
-				$this->cache->clearByTags($tags,true);//теги
+    if (!$this->aclService->checkAcl("w",$this->permission)){
+        $this->view->dialog_message="Ошибка записи. Доступ запрещен";
+        $this->view->dialog_title="Ошибка";
+        return;
     }
 
+    //проверим код формы и убедимся что это не подделка
+    if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
+        {throw new Exception("Не верная подпись формы");//неверная подпись формы
+        return false;
+        }
+
+    //получить имена переменных
+    if ($id) {
+        $this->struct2=simba::queryAllRecords ('select 
+                validator,
+                properties,
+                functions_befo,
+                functions_after,
+                pole_name,
+                col_name,
+                pole_type,
+                pole_global_const,
+                caption_style 
+                    from design_tables 
+                        where 
+                            table_type=0 and 
+                            row_type=3 and 
+                            interface_name="'.$this->interface_name.'" and 
+                            pole_name !="" and 
+                            col_name REGEXP "^[a-zA-Z]"');
+    } else {
+        $this->struct2=simba::queryAllRecords ('select 
+                validator,
+                properties,
+                functions_befo,
+                functions_after,
+                pole_name,
+                col_name,
+                pole_type,
+                pole_global_const,
+                caption_style 
+                    from design_tables 
+                        where table_type=0 and 
+                        row_type=2 and 
+                        interface_name="'.$this->interface_name.'" and 
+                        pole_name !="" and 
+                        col_name REGEXP "^[a-zA-Z]"');
+    }
+    //сортируем по порядку столбцов
+    $count=simba::numRows();
+    $flag_error=false;//флаг ошибки, если истина - ошибка, т.е. вся строка брак
+
+    //добавлено удаление кеша по тегам
+    if ($this->struct0['validator'] && $this->struct0['sort_item_flag']){
+        $tags=explode(",",$this->struct0['validator']);
+        $this->cache->removeItems($tags);//ключи
+        $this->cache->clearByTags($tags,true);//теги
+    }
+    $i=0;
+
+    while ($i<$count) {
+        $c_=explode (",",$this->struct2['pole_global_const'][$i]);
+            $validator=unserialize ($this->struct2['validator'][$i]);
+            for ($p=0;$p<count($c_);$p++) {$const[$p]=simba::get_const($c_[$p]);}
+            if (isset($_POST[$this->struct2['pole_name'][$i]][$id])) $infa=$_POST[$this->struct2['pole_name'][$i]][$id];
+                else $infa=NULL;
+
+            //проверим, еуказана ли функциЯ которая вызовется до записи поля
+                if ($this->struct2['functions_befo'][$i]>'') 
+                        {
+                            $fn=$this->struct2['functions_befo'][$i];
+                            $fn=new $fn;
+                            $infa=$fn(
+                                        $this,
+                                        $infa,
+                                        $this->struct2,
+                                        $i,
+                                        $this->pole_dop,
+                                        $this->tab_name,
+                                        $this->pole__id,
+                                        $const,
+                                        $id,
+                                        1
+                                    );
 
 
-//echo "<pre>";print_r($this->struct0);
-$i=0;
+                        }
 
-while ($i<$count) //for ($i=0;;$i++)
-	{$c_=explode (",",$this->struct2['pole_global_const'][$i]);
-		$validator=unserialize ($this->struct2['validator'][$i]);// print_r($validator);
-		for ($p=0;$p<count($c_);$p++) {$const[$p]=simba::get_const($c_[$p]);}
-		if (isset($_POST[$this->struct2['pole_name'][$i]][$id])) $infa=$_POST[$this->struct2['pole_name'][$i]][$id];
-			else $infa=NULL;
-     
-		//проверим, еуказана ли функциЯ которая вызовется до записи поля
-			if ($this->struct2['functions_befo'][$i]>'') 
-					{
-						$fn=$this->struct2['functions_befo'][$i];
-						$fn=new $fn;
-						$infa=$fn(
-									$this,
-									$infa,
-									$this->struct2,
-									$i,
-									$this->pole_dop,
-									$this->tab_name,
-									$this->pole__id,
-									$const,
-									$id,
-									1
-								);
-						
-						
-					}
-
-		//установим переменные, для использования в XML-описателе, там есть код PHP для обработки данных из конкретного поля
-		$col_name=$this->struct2['pole_name'][$i];// имя колонки
-		$row_item=$id;//номер-идентификатор строки по которой производится операция
+            //установим переменные, для использования в XML-описателе, там есть код PHP для обработки данных из конкретного поля
+            $col_name=$this->struct2['pole_name'][$i];// имя колонки
+            $row_item=$id;//номер-идентификатор строки по которой производится операция
 
 
-$infa=$this->form_item->save_form_item($row_item,
-											$this->struct2['pole_type'][$i],
-											$this->tab_name,
-											$this->struct2['pole_name'][$i],
-											$const,
-											$infa,
-											unserialize($this->struct2['properties'][$i])
-											);
-		$this->error_form_item[$col_name][$row_item]=$this->form_item->get_status($row_item);//получить по имени элмента формы
-		$this->value_for_error['column_name'][]=$col_name;//сохраним имена колонок которые были обработана
-		$this->value_for_error['row_item'][]=$row_item;//аналогично для обпределения какие строки обработаны
-		
-		// проверки поля вначале внутренними силами
-		if ($this->error_form_item[$col_name][$row_item]['code']>0) $flag_error=true;//код был больше 0, значит ошибка
+        $infa=$this->form_item->save_form_item($row_item,
+                                                $this->struct2['pole_type'][$i],
+                                                $this->tab_name,
+                                                $this->struct2['pole_name'][$i],
+                                                $const,
+                                                $infa,
+                                                unserialize($this->struct2['properties'][$i])
+                                                );
+            $this->error_form_item[$col_name][$row_item]=$this->form_item->get_status($row_item);//получить по имени элмента формы
+            $this->value_for_error['column_name'][]=$col_name;//сохраним имена колонок которые были обработана
+            $this->value_for_error['row_item'][]=$row_item;//аналогично для обпределения какие строки обработаны
 
-		//для специальных полей другая обработка!
-		if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c) || $this->struct2['pole_name'][$i]=='get_interface_input')	{
-            //обработка дополнительного поля
-			if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c)) {
-				if (!isset($c[1]) || $c[1]=='') {
-                    throw new Exception("Ошибка в доп. поле");return false;
-                }
-				if (isset($this->pole_dop[$c[1]]) && $this->pole_dop[$c[1]]!="") {
-                    if ($this->pole_dop[$c[1]]=="null" || $this->pole_dop[$c[1]]=="NULL") {
-                        $tab_rec[$this->struct2['col_name'][$i]]=null;
-                    } else {
-                        $tab_rec[$this->struct2['col_name'][$i]]=$this->pole_dop[$c[1]];
+            // проверки поля вначале внутренними силами
+            if ($this->error_form_item[$col_name][$row_item]['code']>0) $flag_error=true;//код был больше 0, значит ошибка
+
+            //для специальных полей другая обработка!
+            if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c) || $this->struct2['pole_name'][$i]=='get_interface_input')	{
+                //обработка дополнительного поля
+                if (preg_match('/pole_dop([0-9]?)/i',$this->struct2['pole_name'][$i],$c)) {
+                    if (!isset($c[1]) || $c[1]=='') {
+                        throw new Exception("Ошибка в доп. поле");return false;
                     }
-                } else {
-                    //если pole_dop пустое значение, тогда восстановить старое значение из таблицы, если оно там ввобще есть
-                    $n=simba::queryOneRecord('select '.$this->struct2['col_name'][$i].' from '.$this->tab_name.' where '.$this->pole__id.'="'.$id.'"');
-                    $tab_rec[$this->struct2['col_name'][$i]]=$n[$this->struct2['col_name'][$i]];
+                    if (isset($this->pole_dop[$c[1]]) && $this->pole_dop[$c[1]]!="") {
+                        if ($this->pole_dop[$c[1]]=="null" || $this->pole_dop[$c[1]]=="NULL") {
+                            $tab_rec[$this->struct2['col_name'][$i]]=null;
+                        } else {
+                            $tab_rec[$this->struct2['col_name'][$i]]=$this->pole_dop[$c[1]];
+                        }
+                    } else {
+                        //если pole_dop пустое значение, тогда восстановить старое значение из таблицы, если оно там ввобще есть
+                        $n=simba::queryOneRecord('select '.$this->struct2['col_name'][$i].' from '.$this->tab_name.' where '.$this->pole__id.'="'.$id.'"');
+                        $tab_rec[$this->struct2['col_name'][$i]]=$n[$this->struct2['col_name'][$i]];
+                    }
                 }
-            }
-			//обработка поля внешных данных get_interface_input
-			if ($this->struct2['pole_name'][$i]=='get_interface_input') {
-                //если первичный ключ берется из get_interface_input то его нужно обработать
-                $tab_rec[$this->struct2['col_name'][$i]]=$this->get_interface_input;
-                if ($this->struct2['col_name'][$i]==$this->pole__id) $id=$this->get_interface_input;
-            }
-        } else {
-            //проверим наличие функции обработки, если она указана, применим ее
-			if ($this->struct2['functions_after'][$i]>'') 
-					{//получить имя функции из таблицы
-						$fn=$this->struct2['functions_after'][$i];
-						$fn=new $fn;
-						$infa=$fn(
-								$this,
-								$infa,
-								$this->struct2,
-								$i,
-								$this->pole_dop,
-								$this->tab_name,
-								$this->pole__id,
-								$const,
-								$id,
-								2
-							); 
+                //обработка поля внешных данных get_interface_input
+                if ($this->struct2['pole_name'][$i]=='get_interface_input') {
+                    //если первичный ключ берется из get_interface_input то его нужно обработать
+                    $tab_rec[$this->struct2['col_name'][$i]]=$this->get_interface_input;
+                    if ($this->struct2['col_name'][$i]==$this->pole__id) $id=$this->get_interface_input;
+                }
+            } else {
+                //проверим наличие функции обработки, если она указана, применим ее
+                if ($this->struct2['functions_after'][$i]>'') 
+                        {//получить имя функции из таблицы
+                            $fn=$this->struct2['functions_after'][$i];
+                            $fn=new $fn;
+                            $infa=$fn(
+                                    $this,
+                                    $infa,
+                                    $this->struct2,
+                                    $i,
+                                    $this->pole_dop,
+                                    $this->tab_name,
+                                    $this->pole__id,
+                                    $const,
+                                    $id,
+                                    2
+                                ); 
 
-					}
-				//проверим на псевдоним, если это так, игнорируем добавление в запрос записи данных!
-				//if (!in_array(,$alt_name)) 
-				//if ($this->struct2['pole_name'][$i]!='get_interface_input') 
-				$tab_rec[$this->struct2['col_name'][$i]]=$infa;
-				}
-	//проверим $flag_error, если истина, тогда отменить все операции по данной строке, т.е. что-то типа откатить транзакцию, с удалением файлов! если они закачивались
-	$i++;//след поле (колонка)
-	}//конец while
-if (!$flag_error) 
+                        }
+                    //проверим на псевдоним, если это так, игнорируем добавление в запрос записи данных!
+                    //if (!in_array(,$alt_name)) 
+                    //if ($this->struct2['pole_name'][$i]!='get_interface_input') 
+                    $tab_rec[$this->struct2['col_name'][$i]]=$infa;
+                    }
+        //проверим $flag_error, если истина, тогда отменить все операции по данной строке, т.е. что-то типа откатить транзакцию, с удалением файлов! если они закачивались
+        $i++;//след поле (колонка)
+        }//конец while
+    if (!$flag_error) 
 	{if (empty($tab_rec[$this->pole__id])) {$tab_rec[$this->pole__id]=$id;}
 	//проверим если ли обработчик записи, если да, вызываем эту функцию и передаем туда все
-	if ($this->struct0['properties']>'') 
-		{
-			$fn=$this->struct0['properties'];
-						$fn=new $fn;
-						$fn(
-							$this, //данный объект со всеми его устновками
-							$tab_rec, // массив структура пригодная для записи в базу данных
-							NULL,
-							NULL,
-							NULL,
-							NULL,
-							NULL,
-							NULL,
-							NULL,
-							-2
-							);
-		}
-		else //нет обработчика, записываем по умолчанию 
-			{//если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
-			$alt_name=explode(',',$this->struct0['col_name']);//получить список псевдонимов, если они есть
-            $tab_rec1=$tab_rec;
-			foreach ($alt_name as $v) {
-                unset($tab_rec[$v]);
+        if ($this->struct0['properties']>'') 
+            {
+                $fn=$this->struct0['properties'];
+                            $fn=new $fn;
+                            $fn(
+                                $this, //данный объект со всеми его устновками
+                                $tab_rec, // массив структура пригодная для записи в базу данных
+                                NULL,
+                                NULL,
+                                NULL,
+                                NULL,
+                                NULL,
+                                NULL,
+                                NULL,
+                                -2
+                                );
             }
-			//simba::replaceRecord ($tab_rec,$this->tab_name);//print_r($tab_rec);
-					// переделано на RS
-			$rs=new RecordSet();
-			$rs->CursorType = adOpenKeyset;
-			$rs->open("select * from ".$this->tab_name,$this->connection); //считаем данные
-			if ($id)
-				{
-					//обновление данных
-					$rs->Find($this->pole__id."='$id'",0,adSearchForward);
-					foreach ($tab_rec as $field=>$value){
-						if ($value==="null" || $value==="NULL") {$value=null;}
-						$rs->Fields->Item[$field]->Value=$value;
-					}
-						
-					$rs->Update();
-				}
-			else
-				{
-					//добавление новой записи
-					$rs->AddNew();
-					foreach ($tab_rec as $field=>$value){
-						if ($value==="null" || $value==="NULL") {$value=null;}
-						$rs->Fields->Item[$field]->Value=$value;
-					}
-						
-					$rs->Update();
-					
-				}
-			//вызываем функцию после обновления записей, нужно для связных таблиц с внешними ключами
-			if ($this->struct0['functions_after']>'') 
-					{//получить имя функции из таблицы
-						$fn=$this->struct0['functions_after'];
-						$fn=new $fn;
-						$infa=$fn(
-								$this,
-								$tab_rec1,
-								$id
-							); 
+            else //нет обработчика, записываем по умолчанию 
+                {//если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
+                $alt_name=explode(',',$this->struct0['col_name']);//получить список псевдонимов, если они есть
+                $tab_rec1=$tab_rec;
+                foreach ($alt_name as $v) {
+                    unset($tab_rec[$v]);
+                }
+                //simba::replaceRecord ($tab_rec,$this->tab_name);//print_r($tab_rec);
+                        // переделано на RS
+                $rs=new RecordSet();
+                $rs->CursorType = adOpenKeyset;
+                $rs->open("select * from ".$this->tab_name,$this->connection); //считаем данные
+                if ($id)
+                    {
+                        //обновление данных
+                        $rs->Find($this->pole__id."='$id'",0,adSearchForward);
+                        foreach ($tab_rec as $field=>$value){
+                            if ($value==="null" || $value==="NULL") {$value=null;}
+                            $rs->Fields->Item[$field]->Value=$value;
+                        }
 
-					}
+                        $rs->Update();
+                    }
+                else
+                    {
+                        //добавление новой записи
+                        $rs->AddNew();
+                        foreach ($tab_rec as $field=>$value){
+                            if ($value==="null" || $value==="NULL") {$value=null;}
+                            $rs->Fields->Item[$field]->Value=$value;
+                        }
 
-			}
-	}
+                        $rs->Update();
+                    $id =$rs->Fields->Item[$this->pole__id]->Value;
+                    }
+                //вызываем функцию после обновления записей, нужно для связных таблиц с внешними ключами
+                if ($this->struct0['functions_after']>'') {//получить имя функции из таблицы
+                    $fn=$this->struct0['functions_after'];
+                    $fn=new $fn;
+                    $infa=$fn($this, $tab_rec1, $id); 
+                }
+                /*добавлен костыль для вызова функции после записи строки, что бы не городить новые функции*/
+                if (!empty($_SESSION["FUNCTION_SAVE_AFTER_ADD_LINES"])) {
+                    $fn=$_SESSION["FUNCTION_SAVE_AFTER_ADD_LINES"];
+                    $fn=new $fn;
+                    $infa=$fn($this, $tab_rec1, $id);
+                    unset($_SESSION["FUNCTION_SAVE_AFTER_ADD_LINES"]);
+                }
+
+            }
+        }
 }
 
 function save_all()
@@ -472,7 +475,7 @@ public function create_interface($interface_name,$flag_out_form=true,View $view=
 	$this->line_table_obj->view=$view;
 //$flag_out_form - если ложь, тэг формы не выводить
 //смотрим внешние  переметры в этот интерфейс
-if (isset($_GET['get_interface_input'])) $this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));
+if (isset($_GET['get_interface_input'])) {$this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));}
 /*
 можно использовать в запросах SQL, в виде $get_interface_input (пока это единичный вариант!!!!!!!!!!!!!!!!!!!)
 */
@@ -599,19 +602,21 @@ if (isset($_POST[$this->button_optimize_table_name]))
 
 
 //удаление
-if (is_array($d)) 
-		{
-		if ($this->function_del_field_name) call_user_func($this->function_del_field_name,$d[0],$this);//нестандартный обработчик записи
-			else  {
-				$this->delete_field($d[0]);}//стандартный обработчик
-		}
+if (is_array($d)) {
+    if ($this->function_del_field_name) {
+        call_user_func($this->function_del_field_name,$d[0],$this);//нестандартный обработчик записи
+    } else {//стандартный обработчик
+        $this->delete_field($d[0]);
+    }
+}
 
-if (is_array($s))
-	{//сохранение/добваление
-	if ($this->function_save_field_name) call_user_func($this->function_save_field_name,$s[0],$this);//нестандартный обработчик записи
-		else  {
-				$this->save_field($s[0]);}//стандартный обработчик
-	}
+if (is_array($s)) {//сохранение/добваление
+    if ($this->function_save_field_name) {
+        call_user_func($this->function_save_field_name,$s[0],$this);//нестандартный обработчик записи
+    } else {//стандартный обработчик
+        $this->save_field($s[0]);
+    }
+}
 
 
 //общий заголовок (если языкового файла нет, тогда берем из базы как есть)
