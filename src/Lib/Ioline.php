@@ -1009,7 +1009,6 @@ if ($this->struct1['pole_type'][$jjj]>0)
 
 			eval("\$this->pole_dop$jjj = \"$a\";");
         } else {$a=NULL;}
-
 		if ($this->struct1['functions_befo_out'][$jjj]>'') 
 				{//получить имя функции из таблицы
 
@@ -1040,7 +1039,8 @@ if ($this->struct1['pole_type'][$jjj]>0)
 								@$this->dop_sql['id'],
 								$const_dop_pole,
 								(isset($this->dop_sql['group']['name'])) ? $this->dop_sql['group']['name']:'',
-								$jjj,$this->struct1['value'][$jjj],
+								$jjj,
+                                $this->struct1['value'][$jjj],
 								unserialize($this->struct1['properties'][$jjj]));
 	$this->line_table_obj->row_dop_value($this->pole_dop[$jjj],$jjj);
 	}
