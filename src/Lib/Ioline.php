@@ -288,61 +288,53 @@ function save_field($id)
         //проверим $flag_error, если истина, тогда отменить все операции по данной строке, т.е. что-то типа откатить транзакцию, с удалением файлов! если они закачивались
         $i++;//след поле (колонка)
         }//конец while
-    if (!$flag_error) 
-	{if (empty($tab_rec[$this->pole__id])) {$tab_rec[$this->pole__id]=$id;}
-	//проверим если ли обработчик записи, если да, вызываем эту функцию и передаем туда все
-        if ($this->struct0['properties']>'') 
-            {
-                $fn=$this->struct0['properties'];
-                            $fn=new $fn;
-                            $fn(
-                                $this, //данный объект со всеми его устновками
-                                $tab_rec, // массив структура пригодная для записи в базу данных
-                                NULL,
-                                NULL,
-                                NULL,
-                                NULL,
-                                NULL,
-                                NULL,
-                                NULL,
-                                -2
-                                );
+    if (!$flag_error) {
+        if (empty($tab_rec[$this->pole__id])) {$tab_rec[$this->pole__id]=$id;}
+        //проверим если ли обработчик записи, если да, вызываем эту функцию и передаем туда все
+        if ($this->struct0['properties']>'') {
+            $fn=$this->struct0['properties'];
+            $fn=new $fn;
+            $fn(
+                $this, //данный объект со всеми его устновками
+                $tab_rec, // массив структура пригодная для записи в базу данных
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                -2
+            );
+        } else {//нет обработчика, записываем по умолчанию 
+            //если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
+            $alt_name=explode(',',$this->struct0['col_name']);//получить список псевдонимов, если они есть
+            $tab_rec1=$tab_rec;
+            foreach ($alt_name as $v) {
+                unset($tab_rec[$v]);
             }
-            else //нет обработчика, записываем по умолчанию 
-                {//если были спевдонимы, их нужно удалить из массива пере записью, на всякий случай
-                $alt_name=explode(',',$this->struct0['col_name']);//получить список псевдонимов, если они есть
-                $tab_rec1=$tab_rec;
-                foreach ($alt_name as $v) {
-                    unset($tab_rec[$v]);
+            // переделано на RS
+            $rs=new RecordSet();
+            $rs->CursorType = adOpenKeyset;
+            $rs->open("select * from ".$this->tab_name,$this->connection); //считаем данные
+            if ($id) {
+                //обновление данных
+                $rs->Find($this->pole__id."='$id'",0,adSearchForward);
+                foreach ($tab_rec as $field=>$value){
+                    if ($value==="null" || $value==="NULL" || is_null($value)) {$value=null;}
+                    $rs->Fields->Item[$field]->Value=$value;
                 }
-                //simba::replaceRecord ($tab_rec,$this->tab_name);//print_r($tab_rec);
-                        // переделано на RS
-                $rs=new RecordSet();
-                $rs->CursorType = adOpenKeyset;
-                $rs->open("select * from ".$this->tab_name,$this->connection); //считаем данные
-                if ($id)
-                    {
-                        //обновление данных
-                        $rs->Find($this->pole__id."='$id'",0,adSearchForward);
-                        foreach ($tab_rec as $field=>$value){
-                            if ($value==="null" || $value==="NULL") {$value=null;}
-                            $rs->Fields->Item[$field]->Value=$value;
-                        }
-
-                        $rs->Update();
-                    }
-                else
-                    {
-                        //добавление новой записи
-                        $rs->AddNew();
-                        foreach ($tab_rec as $field=>$value){
-                            if ($value==="null" || $value==="NULL") {$value=null;}
-                            $rs->Fields->Item[$field]->Value=$value;
-                        }
-
-                        $rs->Update();
-                    $id =$rs->Fields->Item[$this->pole__id]->Value;
-                    }
+                $rs->Update();
+            } else {
+                //добавление новой записи
+                $rs->AddNew();
+                foreach ($tab_rec as $field=>$value){
+                    if ($value==="null" || $value==="NULL" || is_null($value)) {$value=null;}
+                    $rs->Fields->Item[$field]->Value=$value;
+                }
+                $rs->Update();
+                $id =$rs->Fields->Item[$this->pole__id]->Value;
+            }
                 //вызываем функцию после обновления записей, нужно для связных таблиц с внешними ключами
                 if ($this->struct0['functions_after']>'') {//получить имя функции из таблицы
                     $fn=$this->struct0['functions_after'];

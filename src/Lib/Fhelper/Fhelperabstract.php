@@ -66,7 +66,20 @@ public function Render()
 /*обработчик записи, возвращает обработанное*/
 public function save()
 {
-	return $this->infa;
+    if (empty($this->infa) && isset($this->properties['empty_out'])){
+        switch ($this->properties['empty_out']){
+            case 1:{
+                //возвращаем 0
+                $this->infa=0;
+                break;
+            }
+            case 2:{
+                $this->infa=null;
+                break;
+            }
+        }
+    }
+    return $this->infa;
 }
 
 /*обработчик удаления, заглушка*/
