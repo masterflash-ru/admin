@@ -22,7 +22,7 @@ class F56 extends Fhelperabstract
 								"interface_name"=>0,
 								"link_type"=>1,
                                 "window_width"=>1,
-                                     "window_height"=>1
+                                "window_height"=>1
 								];
 	
 	protected $itemcount=1;
