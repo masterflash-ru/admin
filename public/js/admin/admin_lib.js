@@ -37,9 +37,106 @@ $('.dtpicker' ).datetimepicker({
 	timeInput: true,
 	timeFormat: "hh:mm:ss",
 });
- 
+
 });
 
+
+
+var win_name,win_names_array=[];
+
+if (typeof(dataitem)!='object') {var dataitem=[];}
+if (typeof(timeitem)!='object') {var timeitem=[];}
+if (typeof(fulldataitem)!='object') {var fulldataitem=[];}
+function snd(obj,item_obj)
+{//подтверждение удаления
+	if (window.confirm('Подтвердите операцию')) 
+		{
+			d=document.createElement("input");
+			d.setAttribute('value',item_obj.value);
+			d.setAttribute('name',obj);
+			d.setAttribute('id',obj);
+			d.setAttribute('type','hidden');
+			item_obj.form.appendChild(d);
+			item_obj.form.submit();
+		 } 
+		 	else return false;
+}
+
+function pole_id47(str,hidden_name)
+{//для поля 47 (алфавит)
+document.getElementById(hidden_name).value=str;//то что передается на сервер
+document.getElementById(hidden_name).form.submit();//подписать форму, т.е. отправть на сервер
+}
+function nl_create_now_date(maska)
+{//генерация текущей даты по маске как в пхп, например 
+d=new Date();
+var out='';
+for (i=0;i<maska.length;i++)
+	{s=maska.substr(i,1)
+	if (s=='%')
+		{i++;s=maska.substr(i,1)
+		switch (s)
+			{case 'H':{s=d.getHours();break;}
+			case 'M':{s=d.getMinutes();break;}
+			case 'S':{s=d.getSeconds();break;}
+			case 'd':{s=d.getDate();break;}
+			case 'D':{s=d.getDate();break;}
+			case 'I':{s=d.getHours();if (s>12) s=s-12;break;}
+			case 'm':{s=d.getMonth();s++;break;}
+			case 'w':{s=d.getDay();break;}
+			case 'Y':{s=d.getFullYear();break;}
+			case 'y':{s=d.getFullYear();s=s.toString();s=s.substr(2,2);break;}
+			case 'T':{s=d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();break;}
+			}
+		}
+	out+=s
+	}
+return out
+}
+//*************************************************для поля 48
+function htmlspecialchars_decode(text)
+{//обратное преобразование специальных символов
+   var chars = Array("&amp;", "&lt;", "&gt;", "&quot;", "'");
+   var replacements = Array("&", "<", ">", '"', "'");
+   for (var i=0; i<chars.length; i++)
+   {
+       var re = new RegExp(chars[i], "gi");
+       if(re.test(text))
+       {
+           text = text.replace(re, replacements[i]);
+       }
+   }
+  return text;
+}
+
+function db_record_item48(array_key,array_value,selected_flag)
+{//массив данных для поля 48
+
+	this.array_key = array_key
+	this.array_value =htmlspecialchars_decode(array_value)
+	this.selected_flag=selected_flag
+	return this
+}
+//установка поля 48 в начальное состояние
+//цикл по всем полям типа 48
+if (typeof(db_item48)=="object")
+for (win_name in db_item48) 
+	{
+		ff=db_item48[win_name]["function"];//заполнить данными
+	ff();
+	value_=[];
+	text_=[];
+	for (i=0;i<db_item48[win_name].length;i++)
+		{
+		if (db_item48[win_name][i].selected_flag>0) 
+				{value_[value_.length]=db_item48[win_name][i].array_key;
+				text_[text_.length]=db_item48[win_name][i].array_value;
+				}
+		
+		}
+	document.getElementById(db_item48[win_name]["io_item"]).value=value_.join(",");
+	document.getElementById(db_item48[win_name]["io_item"]+"_text").innerHTML=text_.join(",");
+	}
 
 
 function f56(url,w,h)
@@ -157,5 +254,328 @@ function pad(num, size) {
     var s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
+}
+
+
+function create_window(win_name)
+{
+columns=db_item48[win_name]["columns"]//кол-во колонок в окне
+if (columns==0 || columns=='') columns=2;//по умоляанию 2
+col=0;row=0;//текущее состояние
+out='<html><body><form><table width="100%" border=0 style="font-size:12px; font-family:Verdana, Arial, Helvetica, sans-serif">';
+i=0;
+row_no_end=true;
+while (row_no_end)
+	{//цикл по строкам
+	out+='<tr>';
+	for (c=0;c<columns;c++)
+		{//цикл по колонкам
+		if (db_item48[win_name].length>i) 
+				{selected='';
+				if (db_item48[win_name][i].selected_flag>0) selected='checked';
+				out+='<td>' + '<label><input name="checkbox['+i+']" type="checkbox" value="'+db_item48[win_name][i].array_key+'"' + selected +' /><span id="text__'+i+'">'+db_item48[win_name][i].array_value+'</span></label></td>'
+				}
+			else {row_no_end=false;out+='<td>&nbsp;</td>';}
+		i++;
+		}
+	out+='</tr>'
+	}
+
+out+='</table><div align="center"><input name="save48" type="button" value="'+db_item48[win_name]["button_caption"]+'" onClick="save()" /></div></form>';
+out+='<scr'+'ipt type="text/javascript">'
+out+='function save()\\n'
+out+='{text_=[];value=[];kk=0;'
+out+='for (i=0;i<document.forms[0].elements.length-1;i++)\\n'
+out+='{'
+out+='if (document.forms[0].elements[i].checked) {value[kk]=document.forms[0].elements[i].value;text_[kk]=document.getElementById("text__"+i).innerHTML;kk++;}'
+out+='}'
+
+out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'").value=value.join(",");\\n'
+out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'_text").innerHTML=text_.join(",");\\n';
+out+='window.close()}\\n'
+out+='window.moveTo(300,300);'
+out+='</sc'+'ript>'
+
+out+='</body></html>';
+ww=db_item48[win_name]["window"][0];//ширина окна
+hh=db_item48[win_name]["window"][1];//высота экрана
+if (ww==0 || ww=='') ww=400;
+if (hh==0 || hh=='') hh=400;
+p='width='+ww+',height='+hh+'toolbar=no,menubar=no,scrollbars=yes';
+win_names_array[win_name]=window.open('','',p);
+//генерирум там скрипт и все остальное
+win_names_array[win_name].document.write(out)
+}
+
+
+function create_window55(win_name)
+{
+columns=db_item48[win_name]["columns"]//кол-во колонок в окне
+if (columns==0 || columns=='') columns=2;//по умоляанию 2
+col=0;row=0;//текущее состояние
+out='<table width="100%" border="0" class="win55">';
+i=0;
+row_no_end=true;
+while (row_no_end)
+	{//цикл по строкам
+	out+='<tr>';
+	for (c=0;c<columns;c++)
+		{//цикл по колонкам
+		if (db_item48[win_name].length>i) 
+				{selected='';
+				if (db_item48[win_name][i].selected_flag>0) selected='checked';
+				out+='<td><label>';
+                out+='<input name="checkbox['+i+']" type="checkbox" value="'+db_item48[win_name][i].array_key+'"' + selected +' />';
+                out+='<span id="text__'+i+'">'+db_item48[win_name][i].array_value+'</span>';
+                out+='</label></td>';
+				}
+			else {row_no_end=false;out+='<td>&nbsp;</td>';}
+		i++;
+		}
+	out+='</tr>'
+	}
+
+out+='</table><div align="center"><input name="save55[]" type="button" value="'+db_item48[win_name]["button_caption"]+'" onClick="save55(\''+win_name+'\')" /></div>';
+ww=db_item48[win_name]["window"][0];//ширина окна
+hh=db_item48[win_name]["window"][1];//высота экрана
+if (ww==0 || ww=='') ww=400;
+if (hh==0 || hh=='') hh="auto";
+$( "#f55_dialog" ).html(out);
+$( "#f55_dialog" ).dialog({
+      resizable: true,
+      height: hh,
+      width: ww,
+      modal: true,
+
+});
+}
+
+function save55(win_name)
+{
+var value=[],text_=[];
+$( "#f55_dialog" ).dialog("close");
+$( "#f55_dialog input:checked" ).each(
+    function (index){value[index]=$(this).val();text_[index]=$(this).next().text();}
+);
+document.getElementById(db_item48[win_name]["io_item"]).value=value.join(",");
+document.getElementById(db_item48[win_name]["io_item"]+"_text").innerHTML=text_.join(",");
+}
+
+/*F100*/
+function f100_ini()
+{
+    $('.f100_del').on('click',function(){
+    var id=$(this).attr('data-id');alert(id);
+    $('#'+id).remove();
+    $(this).remove();
+    });
+}
+var f100=100;
+$('.f100_add').on('click',function(){
+    var id=$(this).attr('data-id');
+    var inp='<br><input name="'+id+'" id="f100_'+f100+'" type="text"><button type="button" class="f100_del" data-id="f100_'+f100+'">-</button>';
+    $('.f100-container').append(inp);
+    f100_ini();
+    f100++;
+});
+f100_ini();
+
+setInterval(function(){
+if ( $('iframe').is('#ff101')) {
+document.getElementById('ff101').height = document.getElementById('ff101').contentWindow.document.body.scrollHeight+10;}
+}
+,2000);
+
+function data___clock()
+{
+ for (i=0;i<fulldataitem.length;i++) {
+     if (document.getElementById(fulldataitem[i])) {
+         document.getElementById(fulldataitem[i]).value=full_data_now;
+         document.getElementById(fulldataitem[i]).innerHTML=full_data_now;
+     }
+ }
+ for (i=0;i<dataitem.length;i++) {
+     if (document.getElementById(dataitem[i])) {
+         document.getElementById(dataitem[i]).value=data_now;
+         document.getElementById(dataitem[i]).innerHTML=data_now;
+     }
+ }
+ for (i=0;i<timeitem.length;i++) {
+     if (document.getElementById(timeitem[i])) {
+         document.getElementById(timeitem[i]).value=time_now;
+         document.getElementById(timeitem[i]).innerHTML=time_now;
+     }
+ }
+setTimeout('data___clock()',2000)
+}
+data___clock();
+
+/*для tabadmins*/
+function select_check(obj)
+{
+var flag=false;
+document.getElementById('delete_selected_').disabled=true;
+ for (i = 0; i < obj.form.elements.length; i++)
+     {
+         var item = obj.form.elements[i];
+	     if (typeof(item.name)!='undefined')
+		 if (item.name.search(/^_select_item\[/)>-1)  
+		 {
+		     if (item.checked)  flag=true;
+		 };
+	 }
+if (document.getElementById('delete_selected_')!=null) 	
+	{if (flag) document.getElementById('delete_selected_').disabled=false;
+	}
+}
+function select_all(obj)
+{
+ for (i = 0; i < obj.form.elements.length; i++)
+     {
+         var item = obj.form.elements[i];
+		 if (typeof(item.name)!='undefined')
+	     if (item.name.search(/^_select_item\[/)>-1)  
+		 {
+		     item.checked = obj.checked;
+		 };
+	 }
+if (document.getElementById('delete_selected_')!=null) 
+	{if (obj.checked) document.getElementById('delete_selected_').disabled=false; else document.getElementById('delete_selected_').disabled=true;
+	}
+}
+
+/*визуализация дерева*/
+var mycookie=[],db = [],target= [],indentPixels= [],collapsedWidget= [],expandedWidget=[],endpointWidget=[],
+fillerimg=[],widgetWidth=[],widgetHeight=[],collapsedImg=[], endpointImg=[],expandedImg=[];
+
+
+function dbRecord(mother,display,URL,indent,statusMsg,title){
+	this.mother = mother   
+	this.display =htmlspecialchars_decode(display)
+	this.URL = URL
+	this.indent = indent   
+	this.statusMsg = statusMsg
+	this.title=title
+	return this
+}
+function setCurrState(setting,tree_name) {
+mycookie[tree_name] = document.cookie = tree_name+"=" + escape(setting)+ '; path=/';
+}
+function getCurrState(tree_name) {
+var label = tree_name+"="
+        var labelLen = label.length
+        var cLen = mycookie[tree_name].length
+        var i = 0
+        while (i < cLen) {
+                var j = i + labelLen
+                if (mycookie[tree_name].substring(i,j) == label) {
+                        var cEnd = mycookie[tree_name].indexOf(";",j)
+                        if (cEnd ==     -1) {
+                                cEnd = mycookie[tree_name].length
+                        }
+                        return unescape(mycookie[tree_name].substring(j,cEnd))
+                }
+                i++
+        }
+        return ""
+}
+
+function toggle(n,tree_name) {
+	var newString = ""
+	var currState = getCurrState(tree_name)
+	var expanded = currState.charAt(n) 
+	newString += currState.substring(0,n)
+	newString += expanded ^ 1 
+	newString += currState.substring(n+1,currState.length)
+	setCurrState(newString,tree_name) 
+}
+
+function getGIF(n, currState,tree_name) {
+	var mom = db[tree_name][n].mother  
+	var expanded = currState.charAt(n) 
+	if (!mom) {
+		return endpointWidget[tree_name]
+	} else {
+		if (expanded == 1) {
+			return expandedWidget[tree_name]
+		}
+	}
+	return collapsedWidget[tree_name]
+}
+
+function getGIFStatus(n, currState,tree_name)
+ {
+	var mom = db[tree_name][n].mother  
+	var expanded = currState.charAt(n) 
+	if (!mom) {	return "No further items"} 
+		else {
+			if (expanded == 1) 
+				{return "Click to collapse nested items"	}
+			}
+		return "Click to expand nested item"
+}
+function out(tree_name)
+{
+var newOutline = ""
+var prevIndentDisplayed = 0
+var showMyDaughter = 0
+var currState = getCurrState(tree_name)
+for (var i = 0; i < db[tree_name].length; i++) {
+	var theGIF = getGIF(i, currState,tree_name)		
+	var theGIFStatus = getGIFStatus(i, currState,tree_name)  	
+	var currIndent = db[tree_name][i].indent	
+	var expanded = currState.charAt(i) 
+	if (currIndent == 0 || currIndent <= prevIndentDisplayed || (showMyDaughter == 1 && (currIndent - prevIndentDisplayed == 1))) {
+		newOutline += "<IMG vspace=\"8\" SRC=\""+fillerimg[tree_name]+"\" HEIGHT = 1 WIDTH =" + (indentPixels[tree_name] * currIndent) + ">"
+		newOutline += "<A HREF=\"javascript:out('"+tree_name+"')\" " + 	"onMouseOver=\"window.status=\'" + theGIFStatus +	"\';return true;\"  onClick=\"toggle(" + i + ",'"+tree_name+"');return " + 	(theGIF != endpointWidget[tree_name]) + "\">"
+		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=" + widgetHeight[tree_name] + " WIDTH=" + widgetWidth[tree_name] + " BORDER=0></A>"		
+		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) 
+		{
+			newOutline += " " + db[tree_name][i].display + "<BR>"	// no link	
+		} else {
+			newOutline += "<A HREF="+db[tree_name][i].URL+" title=\""+db[tree_name][i].title +"\" onMouseOver=\"window.status=\'" +	db[tree_name][i].statusMsg + "\';return true;\" target=\""+target[tree_name]+"\">" + db[tree_name][i].display + "</A><BR>"
+		}
+		prevIndentDisplayed = currIndent
+		showMyDaughter = expanded
+		if (db[tree_name].length > 10000) {document.getElementById(tree_name+'_out').innerHTML=newOutline;newOutline = ""}
+	}
+}
+document.getElementById(tree_name+'_out').innerHTML=newOutline
+}
+
+
+function out_intab(tree_name)
+{
+var newOutline = '';
+var prevIndentDisplayed = 0
+var showMyDaughter = 0
+var currState = getCurrState(tree_name) 
+for (var i = 0; i < db[tree_name].length; i++) 
+{newOutline +='<table  cellpadding="0" cellspacing="0" border="0"><tr>';
+	var theGIF = getGIF(i, currState,tree_name)		
+	var theGIFStatus = getGIFStatus(i, currState,tree_name)  	
+	var currIndent = db[tree_name][i].indent	
+	var expanded = currState.charAt(i) 
+	if (currIndent == 0 || currIndent <= prevIndentDisplayed || (showMyDaughter == 1 && (currIndent - prevIndentDisplayed == 1)))
+	 {
+		newOutline += "<td><IMG SRC=\""+fillerimg[tree_name]+"\" HEIGHT = 1 WIDTH =" + (indentPixels[tree_name] * currIndent) + "></td>"
+		newOutline += "<td><A HREF=\"javascript:out_intab('"+tree_name+"')\" " + 	"onMouseOver=\"window.status=\'" + theGIFStatus +	"\';return true;\"  onClick=\"toggle(" + i + ",'"+tree_name+"');return " + 	(theGIF != endpointWidget[tree_name]) + "\">"
+		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=" + widgetHeight[tree_name] + " WIDTH=" + widgetWidth[tree_name] + " BORDER=0></A></td>"		
+		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) 
+			{
+				newOutline += "<td>" + db[tree_name][i].display + "</td></tr>"	// no link	
+			} 
+			else
+			 {
+				newOutline += "<td><A HREF="+db[tree_name][i].URL+" title=\""+db[tree_name][i].title +"\" onMouseOver=\"window.status=\'" +	db[tree_name][i].statusMsg + "\';return true;\" target=\""+target[tree_name]+"\">" + db[tree_name][i].display + "</A></td></tr>"
+			}
+		prevIndentDisplayed = currIndent
+		showMyDaughter = expanded
+		if (db[tree_name].length > 10000) {document.getElementById(tree_name+'_out').innerHTML=newOutline;newOutline = ""}
+	}
+newOutline +='</table>';
+}
+
+document.getElementById(tree_name+'_out').innerHTML=newOutline
 }
 

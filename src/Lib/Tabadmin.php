@@ -508,7 +508,7 @@ if ($this->flag_out_form) $out.="</form>";
  if (!$this->flag_out_js) return $out;//сопроводительные крипты не прикреплять
 //включить функцию подтверждения
  $out.=$this->form_item->get_js_special();
- $out.="\n<script language=\"JavaScript\" type=\"text/JavaScript\">
+ /*$out.="\n<script language=\"JavaScript\" type=\"text/JavaScript\">
  //проверим соответсвие списка в поле global_action_id_array и чекбоксов, на всякий случай, вывести ошибку, если она есть
 /*
 if (document.getElementById('global_action_id_array')) 
@@ -524,40 +524,8 @@ if (ar.length!=c_b && c_b>0) {alert ('Внутренняя ошибка!\\nСп�
 document.getElementById('global_action_id_array').value=''
 }
 }
-*/
-function select_check(obj)
-{
-var flag=false;
-document.getElementById('delete_selected_').disabled=true;
- for (i = 0; i < obj.form.elements.length; i++)
-     {
-         var item = obj.form.elements[i];
-	     if (typeof(item.name)!='undefined')
-		 if (item.name.search(/^_select_item\[/)>-1)  
-		 {
-		     if (item.checked)  flag=true;
-		 };
-	 }
-if (document.getElementById('delete_selected_')!=null) 	
-	{if (flag) document.getElementById('delete_selected_').disabled=false;
-	}
-}
-function select_all(obj)
-{
- for (i = 0; i < obj.form.elements.length; i++)
-     {
-         var item = obj.form.elements[i];
-		 if (typeof(item.name)!='undefined')
-	     if (item.name.search(/^_select_item\[/)>-1)  
-		 {
-		     item.checked = obj.checked;
-		 };
-	 }
-if (document.getElementById('delete_selected_')!=null) 
-	{if (obj.checked) document.getElementById('delete_selected_').disabled=false; else document.getElementById('delete_selected_').disabled=true;
-	}
-}
-</script>";
+* /
+</script>";*/
 return $out;
 }
 
