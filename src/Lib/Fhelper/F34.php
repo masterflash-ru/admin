@@ -4,10 +4,9 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Admin\Lib\Olddatetime;
 use Zend\Form\Element;
 
-class F34 extends Fhelperabstract 
+class F34 extends Fdateabstract
 {
 	protected $hname="Календарь в окне";
 	protected $category=5;
@@ -25,8 +24,6 @@ class F34 extends Fhelperabstract
 								"empty_out"=>1
 								];
 
-	protected $Olddatetime;
-	
 	protected $itemcount=2;
 	protected $properties_listid=[
 								'style'=>"",
@@ -60,28 +57,14 @@ class F34 extends Fhelperabstract
 	
 public function __construct($item_id)
 {
-		parent::__construct($item_id);
-		$this->Olddatetime=new Olddatetime();
+    parent::__construct($item_id);
 }
 	
 	
 	
 public function render()
 {
-	switch ($this->properties['out_date_time_format'])
-			{
-				case 1:{if ($this->value=='' || $this->value==0)
-							{
-								if ($this->properties['empty_in']==1) $this->value='0000-00-00';//установим нулевую дату
-								if ($this->properties['empty_in']==2) $this->value=date('Y-m-d');//установим нулевую дату
-							}
-						break;
-						}
-				case 2:{$this->value=$this->Olddatetime->intdate_to_localformat($this->value,0,$this->properties['empty_in']);	break;}//из целого
-				case 0:{//обработка формата ISO YYYY-MM-DD
-						$this->value=$this->Olddatetime->dbformat_to_localdate($this->value,0,$this->properties['empty_in']);break;}
-			}
-
+    $this->_format();
 	preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
 	if (count($ar_name))
 		{
@@ -99,22 +82,6 @@ public function render()
 }
 
 
-public function save()
-{
-	switch ($this->properties['in_date_time_format'])
-		{
-			case 1:{if ($this->infa=='' || $this->infa=0)
-							{if ($this->properties['empty_out']==1) $this->infa='0000-00-00';//установим нулевую дату
-							if ($this->properties['empty_out']==2) $this->infa=date('Y-m-d');//установим нулевую дату
-							}
-						break;}
-			case 2:{$this->infa=$this->Olddatetime->date_to_integer ($this->infa,$this->properties['empty_out']); break;}//из целого
-			case 0:{$this->infa=$this->Olddatetime->localdate_to_dbformat($this->infa,0,$this->properties['empty_out']);}//обработка формата ISO YYYY-MM-DD
-		}
-
-return $this->infa;
-	
-}
 
 
 

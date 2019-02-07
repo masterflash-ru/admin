@@ -5,10 +5,9 @@
 
 namespace Admin\Lib\Fhelper;
 
-use Admin\Lib\Olddatetime;
 use Zend\Form\Element;
 
-class F26 extends Fhelperabstract 
+class F26 extends Fdateabstract 
 {
 	protected $hname="Генерация даты последней модификации";
 	protected $category=5;
@@ -42,8 +41,7 @@ class F26 extends Fhelperabstract
 	
 public function __construct($item_id)
 {
-		parent::__construct($item_id);
-		$this->Olddatetime=new Olddatetime();
+    parent::__construct($item_id);
 }
 	
 	
@@ -60,9 +58,9 @@ public function render()
 							}
 						break;
 						}*/
-				case 2:{$this->value=$this->Olddatetime->intdate_to_localformat($this->value,2, 2);	break;}//из целого
+				case 2:{$this->value=$this->intdate_to_localformat($this->value,2, 2);	break;}//из целого
 				case 0:{//обработка формата ISO YYYY-MM-DD
-						$this->value=$this->Olddatetime->dbformat_to_localdate($this->value,2, 2);break;}
+						$this->value=$this->dbformat_to_localdate($this->value,2, 2);break;}
 			}
 
 	preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
@@ -96,17 +94,21 @@ public function render()
 
 public function save()
 {
-	switch ($this->properties['in_date_time_format'])
-		{
-			case 1:{
-                if ($this->infa=='' || $this->infa=0){
-							 $this->infa=date('Y-m-d H:i:s');//установим нулевую дату
-                }
-                break;
+	switch ($this->properties['in_date_time_format']){
+        case 1:{
+            if (empty($this->infa)){
+                $this->infa=date('Y-m-d H:i:s');//установим нулевую дату
             }
-			case 2:{$this->infa=$this->Olddatetime->date_to_integer ($this->infa, 2); break;}//из целого
-			case 0:{$this->infa=$this->Olddatetime->localdate_to_dbformat($this->infa,2, 2);}//обработка формата ISO YYYY-MM-DD
-		}
+            break;
+        }
+		case 2:{
+            $this->infa=$this->date_to_integer ($this->infa, 2);
+            break;
+        }//из целого
+		case 0:{
+            $this->infa=$this->localdate_to_dbformat($this->infa,2, 2);
+        }//обработка формата ISO YYYY-MM-DD
+    }
 return $this->infa;
 	
 }

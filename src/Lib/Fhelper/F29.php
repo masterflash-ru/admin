@@ -4,79 +4,26 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Admin\Lib\Olddatetime;
+
 use Zend\Form\Element;
 
-class F29 extends Fhelperabstract 
+class F29 extends Fdateabstract
 {
 	protected $hname="ввод времени (строка ввода + кнопка)";
-	protected $category=5;
-	protected $properties_keys=["out_date_time_format","in_date_time_format","empty_in","empty_out"];
-	protected $properties_text=["out_date_time_format"=>"Формат даты-времени на входе:",
-								"in_date_time_format"=>"Формат даты-времени на выходе:",
-								"empty_in"=>"Если на входе 0 или пусто, тогда",
-								"empty_out"=>"Если на выходе 0 или пусто, тогда"
-								];
-
-	protected $Olddatetime;
-	protected $properties_item_type=["out_date_time_format"=>1,
-								"in_date_time_format"=>1,
-								"empty_in"=>1,
-								"empty_out"=>1
-								];
-protected $itemcount=2;
-	protected $properties_listid=[
-					            'out_date_time_format' => [0,1,2],
-								'in_date_time_format' => [0,1,2],
-								'empty_in' => [0,1,2],
-								'empty_out' => [0,1,2],
-								];
-	protected $properties_listtext=[
-								'out_date_time_format' =>["default (YYYY-MM-DD HH-MM-SS, ISO 9075)",
-													"Настройки локали",
-													"Целое число (UNIXTIME)"],
-								
-								'in_date_time_format' => [
-													"default (YYYY-MM-DD HH-MM-SS, ISO 9075)",
-													"Настройки локали",
-													"Целое число (UNIXTIME)"],
-								
-								'empty_in' => [
-													"Оставить как есть",
-													"Установить нулевую дату",
-													"Установить текущую дату"],
-								
-								'empty_out' => [
-													"Оставить как есть",
-													"Установить нулевую дату",
-													"Установить текущую дату"],
-						];
 
 	
 public function __construct($item_id)
 {
-		parent::__construct($item_id);
-		$this->Olddatetime=new Olddatetime();
+    parent::__construct($item_id);
 }
 	
 	
 	
 public function render()
 {
-	switch ($this->properties['out_date_time_format'])
-			{
-				case 1:{if ($this->value=='' || $this->value==0)
-							{
-								if ($this->properties['empty_in']==1) $this->value='0000-00-00 00:00:00';//установим нулевую дату
-								if ($this->properties['empty_in']==2) $this->value=date('Y-m-d H:i:s');//установим нулевую дату
-							}
-						break;
-						}
-				case 2:{$this->value=$this->Olddatetime->intdate_to_localformat($this->value,1,$this->properties['empty_in']);	break;}//из целого
-				case 0:{//обработка формата ISO YYYY-MM-DD
-						$this->value=$this->Olddatetime->dbformat_to_localdate($this->value,1,$this->properties['empty_in']);break;}
-			}
-
+    $this->_format();
+    $this->value=explode(" ",$this->value);
+    $this->value=$this->value[1];
 	preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
 	if (count($ar_name))
 		{
@@ -107,21 +54,6 @@ public function render()
 }
 
 
-public function save()
-{
-	switch ($this->properties['in_date_time_format'])
-		{
-			case 1:{if ($this->infa=='' || $this->infa=0)
-							{if ($this->properties['empty_out']==1) $this->infa='0000-00-00 00:00:00';//установим нулевую дату
-							if ($this->properties['empty_out']==2) $this->infa=date('Y-m-d H:i:s');//установим нулевую дату
-							}
-						break;}
-			case 2:{$this->infa=$this->Olddatetime->date_to_integer ($this->infa,$this->properties['empty_out']); break;}//из целого
-			case 0:{$this->infa=$this->Olddatetime->localdate_to_dbformat($this->infa,1,$this->properties['empty_out']);}//обработка формата ISO YYYY-MM-DD
-		}
-return $this->infa;
-	
-}
 
 
 
