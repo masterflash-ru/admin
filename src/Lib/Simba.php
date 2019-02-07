@@ -86,6 +86,11 @@ return true;
 
 public static function queryAllRecords($queryString)
 {
+    if (is_object(self::$rs)){
+        self::$rs->Close();
+        self::$rs=null;
+    }
+
 	$RecordsAffected=0;
 	self::$rs=new RecordSet();
 	self::$rs->CursorType = adOpenKeyset;
@@ -109,7 +114,11 @@ public static function queryAllRecords($queryString)
 
 public static function queryOneRecord($queryString)
 {
-	
+    if (is_object(self::$rs)){
+        self::$rs->Close();
+        self::$rs=null;
+    }
+
 	$RecordsAffected=0;
 	self::$rs=new RecordSet();
 	self::$rs->CursorType = adOpenKeyset;
