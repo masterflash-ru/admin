@@ -54,12 +54,14 @@ if(is_array($name))
 						'real_name'=>''
 							);
 			}
-	$list_=each($name);//получим имя и ключ
-	$FILE_ITEM_NAME=$_FILES[$list_['value']]['name'][$list_['key']];
-	$FILE_ITEM_TYPE=$_FILES[$list_['value']]['type'][$list_['key']];
-	$FILE_ITEM_SIZE=$_FILES[$list_['value']]['size'][$list_['key']];
-	$FILE_ITEM_ERROR=$_FILES[$list_['value']]['error'][$list_['key']];
-	$FILE_ITEM_TMP_NAME=$_FILES[$list_['value']]['tmp_name'][$list_['key']];
+    $val=reset($name);
+    $key=key($name);
+    
+	$FILE_ITEM_NAME=$_FILES[$val]['name'][$key];
+	$FILE_ITEM_TYPE=$_FILES[$val]['type'][$key];
+	$FILE_ITEM_SIZE=$_FILES[$val]['size'][$key];
+	$FILE_ITEM_ERROR=$_FILES[$val]['error'][$key];
+	$FILE_ITEM_TMP_NAME=$_FILES[$val]['tmp_name'][$key];
 	}
 	else
 	{//массива нет, просто имя

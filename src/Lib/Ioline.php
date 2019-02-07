@@ -1046,4 +1046,3 @@ protected function isSerialized($str) {
 }
 
 }
-?>

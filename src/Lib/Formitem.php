@@ -343,17 +343,10 @@ $out="";
 
 define ('__get_js_special__',1);
 $out="\n<script language=\"JavaScript\" type=\"text/JavaScript\">";
-
-
 $out.="
-
-
-
-
 var full_data_now=nl_create_now_date('".$this->date_time_locale_format['date_time_format']."')
 var data_now=nl_create_now_date('".$this->date_time_locale_format['date_format']."');
 var time_now=nl_create_now_date('".$this->date_time_locale_format['time_format']."')
-
 ";
 $out.="</script>";
 return $out;
@@ -361,4 +354,3 @@ return $out;
 
 
 }
-?>

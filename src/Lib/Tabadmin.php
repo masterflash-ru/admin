@@ -731,4 +731,4 @@ private function _encoding ($str,$tocode,$fromcode)
     }
 
 }
-?>
+

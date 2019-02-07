@@ -278,7 +278,7 @@ if (!$flag_error)
 				//обновление данных
 				$rs->Find($this->spec_poles[0]."=".(int)$id,0,adSearchForward);
 					foreach ($tab_rec as $field=>$value){
-						if ($value==="null" || $value==="NULL") {$value=null;}
+						if ($value==="null" || $value==="NULL" || is_null($value)) {$value=null;}
 						$rs->Fields->Item[$field]->Value=$value;
 					}
 				$rs->Update();
@@ -291,7 +291,7 @@ if (!$flag_error)
 				$rs->Fields->Item[$this->spec_poles[2]]->Value=$level;
 				$rs->Fields->Item[$this->spec_poles[1]]->Value=$subid;
 					foreach ($tab_rec as $field=>$value){
-						if ($value==="null" || $value==="NULL") {$value=null;}
+						if ($value==="null" || $value==="NULL"  || is_null($value)) {$value=null;}
 						$rs->Fields->Item[$field]->Value=$value;
 					}
 				$rs->Update();
@@ -532,7 +532,7 @@ if (isset($_POST['global_action_id_array_b']))
 	}
 
 //это для создания корневого элемента
-$s="";//simba::get_style_class_ fromtable($this->struct0['caption_style']);
+$s="";
 //генерируем уникальный код формы, подпись, что бы исключить подделки
 $_SESSION['io_tree_interface'][$this->interface_name]=md5(microtime());//уникальный код формы
 $this->cod_form=$_SESSION['io_tree_interface'][$this->interface_name];
@@ -747,7 +747,6 @@ public function create_tree($subid,$lev)
         $tree=[];
     }
     
-//\Zend\Debug\Debug::dump($tree);
      $iterator = new RecursiveIteratorIterator(
             new RecursiveArrayIterator($tree),
             RecursiveIteratorIterator::SELF_FIRST
@@ -851,4 +850,3 @@ public function create_tree($subid,$lev)
 
 
 }
-?>

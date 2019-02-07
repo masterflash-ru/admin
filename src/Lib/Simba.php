@@ -221,6 +221,3 @@ return preg_replace ("/\n|\r/",'',$spout);
 
 }//конец класса simba
 
-
-
-?>
