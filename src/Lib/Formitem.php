@@ -591,8 +591,6 @@ setTimeout('data___clock()',3000)
 }
 data___clock();
 
-\$( function() {\$('.dtpicker' ).datetimepicker();});
-
 /*F100*/
 function f100_ini()
 {

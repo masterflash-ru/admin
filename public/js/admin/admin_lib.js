@@ -33,8 +33,11 @@ $.timepicker.regional['ru'] = {
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
 
-    
-    
+$('.dtpicker' ).datetimepicker({
+	timeInput: true,
+	timeFormat: "hh:mm:ss",
+});
+ 
 });
 
 
