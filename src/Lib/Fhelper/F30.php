@@ -7,9 +7,9 @@ namespace Admin\Lib\Fhelper;
 
 use Admin\Lib\Simba;
 use Zend\Form\Element;
-use Images\Filter\ImgResize;
-use Images\Filter\Watermark;
-use Images\Filter\ImgOptimize;
+use Mf\Imglib\Filter\ImgResize;
+use Mf\Imglib\Filter\Watermark;
+use Mf\Imglib\Filter\ImgOptimize;
 
 class F30 extends Fupload 
 {
@@ -237,7 +237,7 @@ public function save()
 															'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 															'width' => $new_wh[0],	
 															'height' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-															'method' => ImgResize::METHOD_SCALE_FIT_W
+															'method' => IMG_METHOD_SCALE_FIT_W
 														)
 												);
 
@@ -253,7 +253,7 @@ public function save()
 														'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 														'height' => $new_wh[0],	
 														'width' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-														'method' => ImgResize::METHOD_SCALE_FIT_H
+														'method' => IMG_METHOD_SCALE_FIT_H
 													)
 												);
 
@@ -264,15 +264,13 @@ public function save()
 						{
 						$new_wh=explode('x',$this->properties['img_new_size']);//получить новые размеры
 						  
-						 // $wh_method=Filter_ImgResize::METHOD_SCALE_FIT_W;
-						 // if (!empty($this->properties['wh_kostil']) )$wh_method=Filter_ImgResize::METHOD_SCALE_FIT_H;
 						$f=new ImgResize(
 													array
 															(
 																'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
 																'height' => $new_wh[1],	
 																'width' => $new_wh[0] ,
-																'method' =>ImgResize:: METHOD_SCALE_WH_CROP
+																'method' =>IMG_METHOD_SCALE_WH_CROP
 															)
 												);
 
