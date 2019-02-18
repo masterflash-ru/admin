@@ -28,12 +28,12 @@ class F49 extends Fhelperabstract
 	protected $itemcount=1;
 		protected $properties_listid=[
 								'window_close_type'=>[0,1],
-					            'link_type'=>["link","button"]
+					            'link_type'=>["link","button","menu"]
 								];
 
 	protected $properties_listtext=[
 							'window_close_type' =>["Нет","Да"],
-							'link_type' => ["Обычная","Кнопка"]
+							'link_type' => ["Обычная","Кнопка","Выпадающее меню"]
                 ];
 
 public function __construct($item_id)
@@ -52,9 +52,8 @@ public function render()
 	$interface_name=explode(",",$this->properties['interface_name']);
 	$default_text=explode(",",$this->default_text);
 	$default_value=explode(",",$this->default_value);
-	for ($i=0;$i<count($interface_type);$i++)
-		{
-		if ($interface_type[$i]==0) $_url="line/";
+	for ($i=0;$i<count($interface_type);$i++){
+        if ($interface_type[$i]==0) $_url="line/";
 		if ($interface_type[$i]==1) $_url="tree/";
 		if ($interface_type[$i]==3) $_url="";
 		$jmp[$i]='onclick=\'window.open("/adm/'. $_url. $interface_name[$i].
@@ -62,21 +61,34 @@ public function render()
 		'?get_interface_input='.base64_encode(serialize($this->value)).
 		'&window_close_type='.$this->properties['window_close_type'].
 		'","","'.str_replace(' ',',',$this->properties['window_properties']).'");return false;\'';
+        
+        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).
+		'&window_close_type='.$this->properties['window_close_type'];
 
-		if ($this->properties['link_type']=='link' || $this->properties['link_type']=='')
-			{
-				$jmp_html[]='<a '.$this->atr[0].' href=# '.$jmp[$i].'>'.$default_text[$i].'</a>';
-			}
-		if ($this->properties['link_type']=='button')
-			{
-				$jmp_html[]= '<input name="__" '.$this->atr[0].' type="button" value="'.$default_value[$i].'" '.$jmp[$i].' />';
-			}
-		}
+        switch ($this->properties['link_type']){
+            case 'button':{
+                $jmp_html[]= '<input name="__" '.$this->atr[0].' type="button" class="ui-button ui-widget ui-corner-all" value="'.$default_value[$i].'" '.$jmp[$i].' />';
+                break;
+            }
+            case "menu":{
+                $jmp_html[]= '<option value="'.$this->view->escapeHtmlAttr ($m).'" />'.$default_value[$i].'</option>';
+                break;
+            }
+            default:{
+                $jmp_html[]='<a '.$this->atr[0].' href=# '.$jmp[$i].'>'.$default_text[$i].'</a>';
+            }
+        }
+    }
 	
 	$input = new Element\Hidden($this->name[0]);
 	$input->setValue($this->value);
-
-	return implode("",$jmp_html).$this->view->FormElement($input);
+    if ($this->properties['link_type']=="menu"){
+        return "<select class=\"controlgroup49\"><option value=''>Выберите действие</option>".implode("",$jmp_html).
+                "</select>".
+            $this->view->FormElement($input);
+    } else {
+        return implode("",$jmp_html).$this->view->FormElement($input);
+    }
 }
 
 

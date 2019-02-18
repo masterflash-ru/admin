@@ -432,10 +432,10 @@ switch ($this->form_input_type)
 if (count($this->global_action)>0)
 	{//проверим кнопки какие выводить, какие нет
 	$out.='<tr><td bgcolor="#CCCCCC"><input name="_select_item_all_" type="checkbox" value="" OnClick="select_all(this)"></td><td colspan="'.count($this->col_name).'" bgcolor="#CCCCCC">';
-	if (isset($this->global_action[0]) && $this->global_action[0]>0)$out.='<input name="'.$this->button_all_operation_names[0].'" id="delete_selected_" type="button" onClick="snd(this.name,this)"  value="Удалить выбранное" style="font-size:10px; background-color:#FF0000;color:#FFFFFF;font-weight:bolder;">&nbsp;&nbsp;&nbsp; ';
-	if (isset($this->global_action[1]) && $this->global_action[1]>0)$out.='<input name="'.$this->button_all_operation_names[1].'" type="submit" value="Сохранить все" style="font-size:10px; background-color:#00ff00;font-weight:bolder;"> ';
-	if (isset($this->global_action[2]) && $this->global_action[2]>0)$out.='<input name="'.$this->button_all_operation_names[2].'" type="submit" value="Оптимизировать таблицу" style="font-size:10px;color:#ffffff; background-color:#0000ff;font-weight:bolder;"> ';
-	if (isset($this->global_action[3]) && $this->global_action[3]>0)$out.='<input name="'.$this->button_all_operation_names[3].'" type="submit" value="Очистить кэш" style="font-size:10px;color:#ffffff; background-color:#ff00ff;font-weight:bolder;"> ';
+	if (isset($this->global_action[0]) && $this->global_action[0]>0)$out.='<input name="'.$this->button_all_operation_names[0].'" id="delete_selected_" type="button" onClick="snd(this.name,this)"  value="Удалить выбранное" class="ui-button ui-widget ui-corner-all" style="background-color:red;color:white;font-weight:bolder;">&nbsp;&nbsp;&nbsp; ';
+	if (isset($this->global_action[1]) && $this->global_action[1]>0)$out.='<input name="'.$this->button_all_operation_names[1].'" type="submit" value="Сохранить все" class="ui-button ui-widget ui-corner-all" style="background-color:#00ff00;font-weight:bolder;"> ';
+	if (isset($this->global_action[2]) && $this->global_action[2]>0)$out.='<input name="'.$this->button_all_operation_names[2].'" type="submit" value="Оптимизировать таблицу" class="ui-button ui-widget ui-corner-all" style="color:white; background-color:#0000ff;font-weight:bolder;"> ';
+	if (isset($this->global_action[3]) && $this->global_action[3]>0)$out.='<input name="'.$this->button_all_operation_names[3].'" type="submit" value="Очистить кэш" class="ui-button ui-widget ui-corner-all" style="color:white; background-color:#ff00ff;font-weight:bolder;"> ';
 	$out.='</td></tr>';
 	}
 	

@@ -38,9 +38,17 @@ $('.dtpicker' ).datetimepicker({
 	timeFormat: "hh:mm:ss",
 });
 
+    f49();
 });
 
 
+function f49(){
+    $( ".controlgroup49" ).selectmenu({
+        change:function( event, ui ) {
+            window.open(ui.item.value);
+        }
+    });
+}
 
 var win_name,win_names_array=[];
 
@@ -540,7 +548,8 @@ for (var i = 0; i < db[tree_name].length; i++) {
 		if (db[tree_name].length > 10000) {document.getElementById(tree_name+'_out').innerHTML=newOutline;newOutline = ""}
 	}
 }
-document.getElementById(tree_name+'_out').innerHTML=newOutline
+document.getElementById(tree_name+'_out').innerHTML=newOutline;
+    f49();
 }
 
 

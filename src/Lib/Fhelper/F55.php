@@ -59,10 +59,12 @@ public function render()
 	$button->setValue($this->value);
 	$button->setLabel("Выбрать");
 	$button->setAttributes($barr);
+    $button->setAttribute("class","ui-button ui-widget ui-corner-all");
 
 	$input = new Element\Hidden($this->name[0]);
 	$input->setValue($this->value);
 	$input->setAttribute("id",$name_id);
+    
 
 	return $out."<span id=\"{$name_id}_text\"></span><br/>".$this->view->FormElement($input).
 		$this->view->FormElement($button);

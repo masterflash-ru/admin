@@ -670,9 +670,9 @@ $this->print_html.= $this->line_table_obj->tab_fetch();
 $this->print_html.=$this->tree_obj->get_tree();
  $this->print_html.="<br>";
 
-if (isset($this->but[3]) && $this->but[3]) $this->print_html.= '<br><br><input name="createroot" style="font-size:xx-small;" type="submit" value="Создать корневой элемент">';
-if (isset($this->but[4]) && $this->but[4]) $this->print_html.=  '&nbsp;&nbsp;<input name="global_action_id_array_b" style="font-size:xx-small;background-color:#00ff00;font-weight:bolder;" type="submit" value="Сохранить все">';
-if (isset($this->but[5]) && $this->but[5]) $this->print_html.= '&nbsp;&nbsp;<input name="_optimize_table_" style="font-size:xx-small;color:#ffffff; background-color:#0000ff;font-weight:bolder;" type="submit" value="Оптимизировать таблицу">';
+if (isset($this->but[3]) && $this->but[3]) $this->print_html.= '<br><br><input name="createroot" class="ui-button ui-widget ui-corner-all" type="submit" value="Создать корневой элемент">';
+if (isset($this->but[4]) && $this->but[4]) $this->print_html.=  '&nbsp;&nbsp;<input name="global_action_id_array_b" class="ui-button ui-widget ui-corner-all" style="background-color:green;font-weight:bolder; color:white" type="submit" value="Сохранить все">';
+if (isset($this->but[5]) && $this->but[5]) $this->print_html.= '&nbsp;&nbsp;<input name="_optimize_table_" class="ui-button ui-widget ui-corner-all" style="color:white; background-color:#0000ff;font-weight:bolder; color:white" type="submit" value="Оптимизировать таблицу">';
 if ($this->flag_out_form) $this->print_html.=  '</form><br>';
 $this->print_html.= $this->interface_txt['coment0'];
 
@@ -829,9 +829,9 @@ public function create_tree($subid,$lev)
 			}
 			$data2="";
 			//кнопки в текущей строке, если они выбраны
-			if ($this->but[0]) $b0="<input type=\"submit\" name=\"save[".$id  ."]\" value=\"запись\">"; else $b0='';
-			if ($this->but[1]) $b1="<input type=\"submit\" name=\"create[".$id."]\" value=\"нов.подуров.\">"; else $b1='';
-			if ($this->but[2]) $b2="<input type=\"submit\" name=\"del[".$id."]\" value=\"удал\" class=\"del\">"; else $b2='';
+			if ($this->but[0]) $b0="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"save[".$id  ."]\" value=\"запись\">"; else $b0='';
+			if ($this->but[1]) $b1="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"create[".$id."]\" value=\"нов.подуров.\">"; else $b1='';
+			if ($this->but[2]) $b2="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"del[".$id."]\" value=\"удал\" class=\"del\">"; else $b2='';
 	
 			if ($this->struct0['col_por'] && $this->struct0['col_por']<$lev1) $data2.=$b0.$b2;	else 	$data2.=$b0.$b1.$b2;
 			

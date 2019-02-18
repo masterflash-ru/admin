@@ -45,50 +45,42 @@ public function render()
 {
 	$html='';
 	//надпись
-	$barr=[];
+	$barr=["class"=>"ui-button ui-widget ui-corner-all"];
 	//preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
 	$caption=explode(',',$this->properties['button_caption']);
-	if ($this->properties['button_delete_flag1']==0 ) 
-		{
-			$barr["onClick"]="snd(\"{$this->name[0]}\",this)"; 
-			$input = new Element\Button($this->name[0]);
-			$input->setLabel($caption[1]);
-			$input->setAttributes($barr);
-			$html.=$this->view->FormButton($input);
-			//$html.= $this->view->formButton($this->name[0],$caption[0],$barr);
-		}
-	else
-		{
-			$input = new Element\Submit($this->name[0]);
-			$input->setValue($caption[0]);
-			$html.= $this->view->FormElement($input);
-
-			//$html.= $this->view->formSubmit($this->name[0],$caption[0]);
-		}
+	if ($this->properties['button_delete_flag1']==0 ) {
+        $barr["onClick"]="snd(\"{$this->name[0]}\",this)"; 
+        $input = new Element\Button($this->name[0]);
+        $input->setLabel($caption[1]);
+        $input->setAttributes($barr);
+        $html.=$this->view->FormButton($input);
+        //$html.= $this->view->formButton($this->name[0],$caption[0],$barr);
+    } else {
+        $input = new Element\Submit($this->name[0]);
+        $input->setValue($caption[0]);
+        $input->setAttributes($barr);
+        $html.= $this->view->FormElement($input);
+        //$html.= $this->view->formSubmit($this->name[0],$caption[0]);
+    }
 	
 	if (!empty($this->properties['button_out_type'])) {$html.="<br/>";}
 	
 	//надпись
-	$barr=[];
+	$barr=["class"=>"ui-button ui-widget ui-corner-all"];
 	//preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
-	if ($this->properties['button_delete_flag2']==0) 
-		{
-			$barr["onClick"]="snd(\"{$this->name[1]}\",this)"; 
-			//$html.= $this->view->formButton($this->name[1],$caption[1],$barr);
-			$input1 = new Element\Button($this->name[1]);
-			$input1->setLabel($caption[1]);
-			$input1->setAttributes($barr);
-			$html.=$this->view->FormElement($input1);
-
-		}
-	else
-		{
-			$input1 = new Element\Submit($this->name[1]);
-			$input1->setValue($caption[1]);
-			$html.= $this->view->FormElement($input1);
-
-			//$html.= $this->view->formSubmit($this->name[1],$caption[1]);
-		}
+	if ($this->properties['button_delete_flag2']==0) {
+        $barr["onClick"]="snd(\"{$this->name[1]}\",this)"; 
+        //$html.= $this->view->formButton($this->name[1],$caption[1],$barr);
+        $input1 = new Element\Button($this->name[1]);
+        $input1->setLabel($caption[1]);
+        $input1->setAttributes($barr);
+        $html.=$this->view->FormElement($input1);
+    } else {
+        $input1 = new Element\Submit($this->name[1]);
+        $input1->setValue($caption[1]);
+        $html.= $this->view->FormElement($input1);
+        //$html.= $this->view->formSubmit($this->name[1],$caption[1]);
+    }
 return $html;
 
 }

@@ -37,26 +37,22 @@ public function __construct($item_id)
 public function render()
 {
 	//надпись
-	$barr=[];
+	$barr=["class"=>"ui-button ui-widget ui-corner-all"];
 	//preg_match ("/([^\[]+)+\[?\[([0-9]+)\]/",$this->name[0],$ar_name);
 	$caption=$this->properties['button_caption'];
-	if ($this->properties['button_delete_flag']==0) 
-		{
-			$barr["onClick"]="snd(\"{$this->name[0]}\",this)";
-			$input = new Element\Button($this->name[0]);
-			$input->setValue($caption);
- 			$input->setAttributes($barr);
-			return $this->view->formButton($this->name[0],$caption,$barr);
-		}
-	else
-		{
-			$input = new Element\Submit($this->name[0]);
-			$input->setValue($caption);
-			$input->setAttributes($this->zatr);
-			return $this->view->FormElement($input);
-
-			//return $this->view->formSubmit($this->name[0],$caption);
-		}
+	if ($this->properties['button_delete_flag']==0) {
+        $barr["onClick"]="snd(\"{$this->name[0]}\",this)";
+        $input = new Element\Button($this->name[0]);
+        $input->setValue($caption);
+        $input->setAttributes($barr);
+        return $this->view->formButton($this->name[0],$caption,$barr);
+    } else {
+        $input = new Element\Submit($this->name[0]);
+        $input->setValue($caption);
+        $input->setAttributes($barr);
+        $input->setAttributes($this->zatr);
+        return $this->view->FormElement($input);
+    }
 }
 
 
