@@ -165,6 +165,7 @@ if (isset($_POST['save_all'])){
 
 
                 }//конец записи общих параметров
+        }
 
             if ($_POST['interface_razdel']==1)	{//запись дополнительных полей
 
@@ -208,7 +209,7 @@ if (isset($_POST['save_all'])){
                 }
 
         //запись содержимого отбельных элементов
-            if ($_POST['interface_razdel']==2)	{//print_r($_POST);
+            if ($_POST['interface_razdel']==2)	{
                 if (!isset($_POST['pole_global_const'])) $_POST['pole_global_const']=NULL;
                 if (!isset($_POST['_selected_validator'])) $_POST['_selected_validator']=NULL;
                 if (!isset($_POST['properties'])) $_POST['properties']=NULL;
@@ -273,7 +274,7 @@ if (isset($_POST['save_all'])){
 
 
                 } 
-        }
+
     } else {
     $dialog_massage="Ошибка записи. Доступ запрещен";
     $dialog_title="Ошибка";
@@ -563,12 +564,7 @@ for ($i=0;$i<$struct2['count_pole_dop_numb'];$i++) $a[$i]=$i;
         <input type="text" size="5" name="col_por" id="col_por" value="<?=$struct2['col_por']?>">
                 Заголовок
                 <textarea name="caption2"  cols="60" rows="1" wrap="VIRTUAL"   id="caption2"><?php if (isset($_POST['cols']) && isset($design_tables_text_interfase['caption_col_'.$_POST['cols']])) echo $design_tables_text_interfase['caption_col_'.$_POST['cols']];?></textarea>
-                <br>
-                Стиль заголовка
-                <select id="caption_style2" name="caption_style2"  <?=$dis1;?>>
-                  <?="";// simba::getSpValue ($style['name'],$style['id'],$struct2['caption_style']);
-				  ?>
-                </select>
+                <input type="hidden" id="caption_style2" name="caption_style2">
         </fieldset>
 <fieldset ><legend style="color:red; font-weight:bold">Поле ввода</legend>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" >
