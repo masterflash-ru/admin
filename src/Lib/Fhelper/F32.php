@@ -38,14 +38,17 @@ public function __construct($item_id)
 	
 public function render()
 {
+    if (!isset($this->config['storage'])){
+        return "Необходимо установить пакеты masterflash-ru/storage<br> и masterflash-ru/imglib<br>
+и настроить секцию storage конфига приложения";
+    }
 	//извлечем из имени ID строки таблицы, КОСТЫЛИ
 	preg_match("/[0-9a-z]+\[([0-9]+)\][0-9-a-z\-_\[\]]?/ui",$this->name[0],$_id);
 	$id=(int)$_id[1];
 	
-	if (empty($this->properties['admin_img_name'])) 
-	{
-		$this->properties['admin_img_name']="admin_img";
-	}
+	if (empty($this->properties['admin_img_name'])) {
+        $this->properties['admin_img_name']="admin_img";
+    }
 	
 	$img_array=1;
     
@@ -92,6 +95,10 @@ public function render()
 
 public function save()
 {
+    if (!isset($this->config['storage'])){
+        return ;
+    }
+
 	//настройки из конфига приложения
 	$image_storage=$this->config['storage'];
 
