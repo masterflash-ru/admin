@@ -44,8 +44,12 @@ $('.dtpicker' ).datetimepicker({
 
 function f49(){
     $( ".controlgroup49" ).selectmenu({
-        change:function( event, ui ) {
-            window.open(ui.item.value);
+        select:function( event, ui ) {
+            event.preventDefault();
+            if (ui.item.value){
+                window.open(ui.item.value);
+                $( ".controlgroup49 option[value='']" ).prop("selected",true);
+            }
         }
     });
 }
