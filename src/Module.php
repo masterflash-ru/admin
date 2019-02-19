@@ -37,7 +37,7 @@ public function onDispatch(MvcEvent $event)
     //для данного модуля изменить макет
     $controllerName = $event->getRouteMatch()->getParam('controller', null);
     if (false === strpos($controllerName, __NAMESPACE__)) { return; }
-   
+
     $controller = $event->getTarget();
     $user=$controller->User()->getUserId();
     /*имя метода контроллера*/

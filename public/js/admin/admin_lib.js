@@ -39,16 +39,31 @@ $('.dtpicker' ).datetimepicker({
 });
 
     f49();
+    gf56();
 });
 
 
-function f49(){
+function f49()
+{
     $( ".controlgroup49" ).selectmenu({
         select:function( event, ui ) {
             event.preventDefault();
             if (ui.item.value){
                 window.open(ui.item.value);
                 $( ".controlgroup49 option[value='']" ).prop("selected",true);
+            }
+        }
+    });
+}
+function gf56()
+{
+    $( ".controlgroup56" ).selectmenu({
+        select:function( event, ui ) {
+            event.preventDefault();
+            if (ui.item.value){
+                var v=ui.item.value.split("@");
+                f56(v[0],v[1],v[2]);
+                $( ".controlgroup56 option[value='']" ).prop("selected",true);
             }
         }
     });
@@ -153,6 +168,8 @@ for (win_name in db_item48)
 
 function f56(url,w,h)
 {
+    h=parseInt(h);
+    w=parseInt(w);
 $( "#f56_dialog" ).dialog({
       resizable: true,
       height: h+65,

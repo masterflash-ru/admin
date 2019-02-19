@@ -28,12 +28,12 @@ class F56 extends Fhelperabstract
 	protected $itemcount=1;
 		protected $properties_listid=[
 
-					            'link_type'=>["link","button"]
+					            'link_type'=>["link","button","menu"]
 								];
 
 	protected $properties_listtext=[
 
-							'link_type' => ["Обычная","Кнопка"]
+							'link_type' => ["Обычная","Кнопка","Выпадающее меню"]
                 ];
     protected static $flag_dialog=true;
 
@@ -67,24 +67,41 @@ public function render()
 		if ($interface_type[$i]==1) $_url="tree/";
 		if ($interface_type[$i]==3) $_url="";
 		$jmp[$i]='onclick=\'f56("/adm/'. $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'",'.$width.','.$height.');return false;\'';
+        
+        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value))."@".$width."@".$height;
 
-		if ($this->properties['link_type']=='link' || $this->properties['link_type']=='')
-			{
-				$jmp_html[]='<a '.$this->atr[0].' href=# '.$jmp[$i].'>'.$default_text[$i].'</a>';
-			}
-		if ($this->properties['link_type']=='button')
-			{
-				$jmp_html[]= '<input name="__" '.$this->atr[0].' type="button" value="'.$default_value[$i].'" '.$jmp[$i].' />';
-			}
+
+        switch ($this->properties['link_type']){
+            case 'button':{
+                $jmp_html[]= '<input name="__" '.$this->atr[0].' type="button" class="ui-button ui-widget ui-corner-all" value="'.$default_value[$i].'" '.$jmp[$i].' />';
+                break;
+            }
+            case "menu":{
+                $jmp_html[]= '<option value="'.$this->view->escapeHtmlAttr ($m).'" />'.$default_value[$i].'</option>';
+                break;
+            }
+            default:{
+                $jmp_html[]='<a '.$this->atr[0].' href=# '.$jmp[$i].'>'.$default_text[$i].'</a>';
+            }
+        }
 		}
 	
 	$input = new Element\Hidden($this->name[0]);
 	$input->setValue($this->value);
     
 
-    if (F56::$flag_dialog){$out='<div id="f56_dialog" style="display:none"><iframe frameborder="0" id="iframe56" src=""></iframe></div>';F56::$flag_dialog=false;}
-        else {$out="";}
-	return implode("",$jmp_html).$this->view->FormElement($input).$out;
+    if (F56::$flag_dialog){
+        $out='<div id="f56_dialog" style="display:none"><iframe frameborder="0" id="iframe56" src=""></iframe></div>';
+        F56::$flag_dialog=false;
+    }else {$out="";}
+    
+    if ($this->properties['link_type']=="menu"){
+        return "<select class=\"controlgroup56\"><option value=''>Выберите действие</option>".implode("",$jmp_html).
+                "</select>".$out.
+            $this->view->FormElement($input);
+    } else {
+        return implode("",$jmp_html).$this->view->FormElement($input).$out;
+    }
 }
 
 
