@@ -558,7 +558,7 @@ if (!$this->aclService->checkAcl("r",$this->permission)){
 $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];
 $this->line_table_obj->buttons_jmp_flag=$a['form_elements_jmp_record'];
-
+$this->line_table_obj->create_new_zap_flag=$a['create_new_zap_flag'];
     
 //запись
 //массовые операции global_action_id_array- список активных идентификаторов таблицы, т.е. те, которые выведены на экран

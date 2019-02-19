@@ -471,7 +471,11 @@ if (count($this->global_action)>0)
 	$this->out_record=$jmp_zap;
 	$out.='<tr ><td>';
 	//проверим надобность вывода кнопки "создать новую запись"
-	if ($this->button_create_new_item_flag>0) $out.='<input name="create_new_zap" type="submit" value="Создать новую запись" style="font-family:Verdana ;font-size:10px;width: 128px;">'; else $out.='&nbsp;';
+	if ($this->button_create_new_item_flag>0) {
+        $out.='<input name="create_new_zap" type="submit" value="Создать новую запись" class="ui-button ui-widget ui-corner-all">';
+    } else {
+        $out.='&nbsp;';
+    }
 	$out.='</td>';
 	//проверим необходимость вывода кнопок переходов между записями
 	if ($this->buttons_jmp_flag>0)
@@ -486,12 +490,25 @@ if (count($this->global_action)>0)
 	} else $out.='<td>&nbsp;</td></tr>';
 	
 	
-	if ($this->code_start) $out.='<tr><td colspan="2">'.$this->code_start.'</td></tr>';//дополнительно вывести код html если он указан
-	if (isset($this->row_type_item['dop']))$out.=$this->create_html_tab('dop');//вначале доп поле
+	if ($this->code_start) {
+        $out.='<tr><td colspan="2">'.$this->code_start.'</td></tr>';//дополнительно вывести код html если он указан
+    }
+	if (isset($this->row_type_item['dop'])) {
+        $out.=$this->create_html_tab('dop');//вначале доп поле
+    }
 	
-	if (isset($_POST['create_new_zap']) || $this->create_new_zap_flag) {if (count($this->row_type_item['start'])) $out.=$this->create_html_form('start');}//первая строка таблицы
-		else {if (isset($this->row_type_item['all'])) $out.=$this->create_html_form('all',$jmp_zap);}//середина
-	if (isset($this->row_type_item['end'])) $out.=$this->create_html_form('end');//конец
+	if (isset($_POST['create_new_zap']) || $this->create_new_zap_flag) {
+        if (count($this->row_type_item['start'])) {
+            $out.=$this->create_html_form('start');
+        }//первая строка таблицы
+    } else {
+        if (isset($this->row_type_item['all'])) {
+            $out.=$this->create_html_form('all',$jmp_zap);
+        }//середина
+    }
+	if (isset($this->row_type_item['end'])) {
+        $out.=$this->create_html_form('end');//конец
+    }
 	if ($this->row_page_flag) 
 	break;}
 

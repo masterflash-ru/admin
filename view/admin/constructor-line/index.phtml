@@ -129,7 +129,11 @@ if (isset($_POST['save_all'])){//запись
                         'pole_type'=>$form_spis_,
                         'interface_name'=>$_POST['interface_name'],
                         'table_type'=>0,
-                        'value'=>serialize(array('form_elements_new_record'=>$_POST['form_elements_new_record'],'form_elements_jmp_record'=>$_POST['form_elements_jmp_record'])),
+                        'value'=>serialize(array('form_elements_new_record'=>$_POST['form_elements_new_record'],
+                                                 'form_elements_jmp_record'=>$_POST['form_elements_jmp_record'],
+                                                'create_new_zap_flag'=>$_POST['create_new_zap_flag']
+                                                ),
+                                          ),
                         'properties'=>$_POST['functions_save_interface'],
                         'functions_befo_out'=>$_POST['functions_load_interface'],
                         'functions_befo_del'=>$_POST['functions_del_interface'],
@@ -447,15 +451,18 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
               <?=simba::getSpValue1 (["Табличная","Форма с полями"],array(0,1,2),$struct0['col_por']);?>
             </select>
             &nbsp;&nbsp;Для формы выводить элементы:<?php $form_elements_=unserialize($struct0['value'])?> 
-            <input name="form_elements_new_record" type="hidden" id="form_elements_new_record" value="0">
+            <label><input name="form_elements_new_record" type="hidden" id="form_elements_new_record" value="0">
             <input name="form_elements_new_record" type="checkbox" id="form_elements_new_record" value="1" <?php if ($form_elements_['form_elements_new_record']>0) echo 'checked ';?>>
-            Создать запись
+            Создать запись</label>
 
-            <input name="form_elements_jmp_record" type="hidden" id="form_elements_jmp_record" value="0">
+            <label><input name="form_elements_jmp_record" type="hidden" id="form_elements_jmp_record" value="0">
             <input name="form_elements_jmp_record" type="checkbox" id="form_elements_jmp_record" value="1" <?php if ($form_elements_['form_elements_jmp_record']>0) echo 'checked ';?>>
-            Переходы по записям
+            Переходы по записям</label>
             
-            
+            <label><input name="create_new_zap_flag" type="hidden" id="create_new_zap_flag" value="0">
+            <input name="create_new_zap_flag" type="checkbox" id="create_new_zap_flag" value="1" <?php if ($form_elements_['create_new_zap_flag']>0) echo 'checked ';?>>
+            Насильно установить в режим ввода новой записи</label>
+          
             <br>
            <span id="msg__">Список полей взять из поля:</span>
             <select name="form_spis[]"  id="form_spis[]" >
