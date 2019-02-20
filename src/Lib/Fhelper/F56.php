@@ -10,31 +10,33 @@ class F56 extends Fhelperabstract
 {
 	protected $hname="Ссылка для открытия другого интерфейса в МОДАЛЬНОМ окне";
 	protected $category=100;
-	protected $properties_keys=["interface_type","interface_name","link_type","window_width","window_height"];
+	protected $properties_keys=["interface_type","interface_name","link_type","window_width","window_height","reload"];
 	protected $properties_text=["interface_type"=>"Типы интерфейсов (0-Линейный,1-Древовидный,2-Форма,3-модуль), ч/з)",
 								"interface_name"=>"Имена интерфейсов/имен файлов модулей, ч/з ",
 								"link_type"=>"Тип ссылки",
                                 "window_width"=>"Ширина окна",
-                                "window_height"=>"Высота окна"
+                                "window_height"=>"Высота окна",
+                                "reload"=>"После закрытия окна перезагрузить основное окно"
 								];
 	
 	protected $properties_item_type=["interface_type"=>0,
 								"interface_name"=>0,
 								"link_type"=>1,
                                 "window_width"=>1,
-                                "window_height"=>1
+                                "window_height"=>1,
+                                "reload"=>1,
 								];
 	
 	protected $itemcount=1;
 		protected $properties_listid=[
-
-					            'link_type'=>["link","button","menu"]
-								];
+            'link_type'=>["link","button","menu"],
+            "reload"=>[0,1],
+        ];
 
 	protected $properties_listtext=[
-
-							'link_type' => ["Обычная","Кнопка","Выпадающее меню"]
-                ];
+        "reload"=>["Нет","Да"],
+        'link_type' => ["Обычная","Кнопка","Выпадающее меню"]
+    ];
     protected static $flag_dialog=true;
 
 public function __construct($item_id)
@@ -60,15 +62,19 @@ public function render()
     if (!empty($this->properties['window_height'])){
         $height=(int)$this->properties['window_height'];
     } else {$height=600;}
+    
+    if (!isset($this->properties['reload'])){
+        $this->properties['reload']=0;
+    }
 
 	for ($i=0;$i<count($interface_type);$i++)
 		{
 		if ($interface_type[$i]==0) $_url="line/";
 		if ($interface_type[$i]==1) $_url="tree/";
 		if ($interface_type[$i]==3) $_url="";
-		$jmp[$i]='onclick=\'f56("/adm/'. $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'",'.$width.','.$height.');return false;\'';
+		$jmp[$i]='onclick=\'f56("/adm/'. $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'",'.$width.','.$height.','.$this->properties['reload'].');return false;\'';
         
-        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value))."@".$width."@".$height;
+        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value))."@".$width."@".$height."@".$this->properties['reload'];
 
 
         switch ($this->properties['link_type']){

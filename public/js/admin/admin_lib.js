@@ -40,6 +40,11 @@ $('.dtpicker' ).datetimepicker({
 
     f49();
     gf56();
+$( "#f56_dialog" ).dialog({
+      resizable: true,
+    autoOpen:false,
+});
+    
 });
 
 
@@ -62,7 +67,7 @@ function gf56()
             event.preventDefault();
             if (ui.item.value){
                 var v=ui.item.value.split("@");
-                f56(v[0],v[1],v[2]);
+                f56(v[0],v[1],v[2],v[3]);
                 $( ".controlgroup56 option[value='']" ).prop("selected",true);
             }
         }
@@ -166,27 +171,28 @@ for (win_name in db_item48)
 	}
 
 
-function f56(url,w,h)
+function f56(url,w,h,reload)
 {
     h=parseInt(h);
     w=parseInt(w);
-$( "#f56_dialog" ).dialog({
-      resizable: true,
-      height: h+65,
-      width: w+30,
-      modal: true,
-      open: function(ev, ui){
-             $('#iframe56').attr({'src':url,'width':w,'height':h});
-          }
-
-});
+    $( "#f56_dialog" ).dialog( "option", { 
+        height: h+65,
+        width: w+30,
+        modal: true,
+        open: function(ev, ui){ $('#iframe56').attr({'src':url,'width':w,'height':h});},
+        close: function(){if (reload>0){location.href=location.href.split('?')[0]+'?'+Math.random();}}
+     } );
+    $( "#f56_dialog" ).dialog("open");
+}
+function f56_close()
+{
+    $( "#f56_dialog" ).dialog("close");
 }
 
 function f57(button,hiden)
 {/*hiden: владелец,группа,код_доступа*/
 var rez,r=0;
 v=hiden.val().split(',');
-
 $( "#f57_dialog" ).dialog({
       resizable: true,
       width: "auto",
