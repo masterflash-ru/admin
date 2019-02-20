@@ -460,7 +460,7 @@ return simba::getSpValue1 ($item_['name'],$item_['id'],$tek,$item_['gr'] );
             Переходы по записям</label>
             
             <label><input name="create_new_zap_flag" type="hidden" id="create_new_zap_flag" value="0">
-            <input name="create_new_zap_flag" type="checkbox" id="create_new_zap_flag" value="1" <?php if ($form_elements_['create_new_zap_flag']>0) echo 'checked ';?>>
+            <input name="create_new_zap_flag" type="checkbox" id="create_new_zap_flag" value="1" <?php if (isset($form_elements_['create_new_zap_flag']) && $form_elements_['create_new_zap_flag']>0) echo 'checked ';?>>
             Насильно установить в режим ввода новой записи</label>
           
             <br>

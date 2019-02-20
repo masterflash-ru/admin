@@ -340,15 +340,16 @@ $row_item=$id;
 public  function get_js_special($flag='')
 {//flag - true - выдаются только данные к скриптам
 $out="";
-
-define ('__get_js_special__',1);
-$out="\n<script language=\"JavaScript\" type=\"text/JavaScript\">";
-$out.="
-var full_data_now=nl_create_now_date('".$this->date_time_locale_format['date_time_format']."')
-var data_now=nl_create_now_date('".$this->date_time_locale_format['date_format']."');
-var time_now=nl_create_now_date('".$this->date_time_locale_format['time_format']."')
-";
-$out.="</script>";
+if (!defined("__get_js_special__")){
+    define ('__get_js_special__',1);
+    $out="\n<script language=\"JavaScript\" type=\"text/JavaScript\">";
+    $out.="
+    var full_data_now=nl_create_now_date('".$this->date_time_locale_format['date_time_format']."')
+    var data_now=nl_create_now_date('".$this->date_time_locale_format['date_format']."');
+    var time_now=nl_create_now_date('".$this->date_time_locale_format['time_format']."')
+    ";
+    $out.="</script>";
+}
 return $out;
 }
 

@@ -1,22 +1,6 @@
 <?php
 /*
-21.4.17 - добавлен параметр view из ZEND, для генерации полей этим фреймворком
-
-1.4.16 - добавлен костыль для выпадающего списка в доп поле, значения могут принимать сериализованные данные.
-
-15.3.16 - если поле является псевданимом (в конструкторе, тогда при удалении записи не вызывается описатель удаления поля в html_item.xml)
-	(строка 420)
-
-17.4.15 - изменен алгоритм обработки настроек из ini файлов
-
-
-добавлены костыли для обработки файлов настроек, они трансформируются в константы для этого модкуля
-
-
-
-Манипуляции с линейным интерфесом структура которого хранится в спец. таблоице.
-
-Более не поддерживается
+Более не поддерживается, только добавляются новые костыли
 
 */
 namespace Admin\Lib;
@@ -33,22 +17,9 @@ use Admin\Lib\Simba;
 class Ioline
 {
 /*
-01.08.2013 - теперь при удалении передаются параметры properties как и при записи
-
-
-
-13.05.2012 - сиправлена ошибка, не учитывалось то что возвращает функция до записи поля
-05.05.2012 - исправлена ситуация, когда первичный ключ таблиц должен получаться из параметра get_interface_input 
-02.08.2010 исправлена обработка параметра get_interface_input в области доп. поля
-28.7.2010 добработано вызов глобальных функций для получения/записи/удаления строк интерфейса
-21.12.2009 убраны функции серии ereg - для перехода в PHP6
-17.12.09 Введена обработка ошибок по исключениям, ошибки теперь обрабатывает обработчик Exception, все локализовано теперь
-17.12.09 обработчики операций (стандарнтых) можно переназначать, можно назначить действия на определенные имена элементов на форме браузера
-Убраны передачи по ссылке в методы и функции
-Наведен порядок с ошибками типа Notice
 
 */
-
+public $last_insert_id=0;
 public $error_row=[];//список бракованых идентификаторов таблицы, поля не прошли проверку! (целые строки)
 public $error_item=[];//индивидуальные бракованные элементы
 public $interface_name;//имя интерфейса для работы
@@ -86,6 +57,7 @@ public $button_optimize_table_name='_optimize_table_';//имя кнопки в �
 public $function_save_field_name;//имя функции записи одной записи, если не пусто, то вызывается эта функция, иначе встроеная
 public $function_del_field_name;//имя функции обработчика удаления записи если не пусто, то вызывается эта функция, иначе встроеная
 
+public $flag_out_form=true; //используется только внутри, 
 public $form_item;
 public $view;
 public $connection;
@@ -133,10 +105,11 @@ function save_field($id)
     }
 
     //проверим код формы и убедимся что это не подделка
-    if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
-        {throw new Exception("Не верная подпись формы");//неверная подпись формы
+    if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] && $this->flag_out_form) {
+        throw new Exception("Не верная подпись формы");//неверная подпись формы
+        echo $_SESSION['io_line_interface'][$this->interface_name];
         return false;
-        }
+    }
 
     //получить имена переменных
     if ($id) {
@@ -348,6 +321,7 @@ function save_field($id)
                     $infa=$fn($this, $tab_rec1, $id);
                     unset($_SESSION["FUNCTION_SAVE_AFTER_ADD_LINES"]);
                 }
+            $this->last_insert_id=$id;
 
             }
         }
@@ -356,15 +330,16 @@ function save_field($id)
 function save_all()
 {
 	//вгачале проверим подпись формы
-if(isset($_POST['cod_form']) && isset($_SESSION['io_line_interface'][$this->interface_name]) && $_SESSION['io_line_interface'][$this->interface_name]==$_POST['cod_form'] ) 
-		{
-		$id=[];
-		if ($_POST['global_action_id_array']>'') $id=explode(',',$_POST['global_action_id_array']); 
-		for ($i=0;$i<count($id);$i++) $this->save_field($id[$i]);
-		}
-		else {throw new Exception("Не верная подпись формы");//неверная подпись формы
-			}
-
+    if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] && $this->flag_out_form) {
+        throw new Exception("Не верная подпись формы");//неверная подпись формы
+    }
+	$id=[];
+	if ($_POST['global_action_id_array']>'') {
+        $id=explode(',',$_POST['global_action_id_array']); 
+    }
+	for ($i=0;$i<count($id);$i++) {
+        $this->save_field($id[$i]);
+    }
 }
 
 
@@ -377,7 +352,7 @@ if (!$this->aclService->checkAcl("d",$this->permission)){
 }
 
 //проверим код формы и убедимся что это не подделка
-if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] ) 
+if($_SESSION['io_line_interface'][$this->interface_name]!=$_POST['cod_form'] && $this->flag_out_form) 
 	{throw new Exception("Не верная подпись формы");//неверная подпись формы
 	return false;
 	}
@@ -462,7 +437,7 @@ if ($this->struct0['functions_befo_del'])
 
 
 
-public function create_interface($interface_name,$flag_out_form=true,View $view=NULL)
+public function create_interface($interface_name,$flag_out_form=true,View $view=NULL,array $options=[])
 {
 	$this->line_table_obj->view=$view;
 //$flag_out_form - если ложь, тэг формы не выводить
@@ -471,9 +446,12 @@ if (isset($_GET['get_interface_input'])) {$this->get_interface_input=unserialize
 /*
 можно использовать в запросах SQL, в виде $get_interface_input (пока это единичный вариант!!!!!!!!!!!!!!!!!!!)
 */
+if (!isset($_POST['cod_form'])){
+    $_POST['cod_form']="";
+}
 
 $this->line_table_obj->flag_out_form=$flag_out_form;
-
+$this->flag_out_form=$flag_out_form;
 
 $this->interface_name=$interface_name; //имя интерфейса
 //по идентификатору полуячить имя таблицы с которой работаем
@@ -559,7 +537,19 @@ $a=unserialize($this->struct0['value']);
 $this->line_table_obj->button_create_new_item_flag=$a['form_elements_new_record'];
 $this->line_table_obj->buttons_jmp_flag=$a['form_elements_jmp_record'];
 $this->line_table_obj->create_new_zap_flag=$a['create_new_zap_flag'];
-    
+
+if (!empty($options)){
+    if (isset($options['create_new_zap_flag'])){
+        $this->line_table_obj->create_new_zap_flag=$options['create_new_zap_flag'];
+    }
+    if (isset($options['button_create_new_item_flag'])){
+        $this->line_table_obj->button_create_new_item_flag=$options['button_create_new_item_flag'];
+    }
+    if (isset($options['buttons_jmp_flag'])){
+        $this->line_table_obj->buttons_jmp_flag=$options['buttons_jmp_flag'];
+    }
+}
+
 //запись
 //массовые операции global_action_id_array- список активных идентификаторов таблицы, т.е. те, которые выведены на экран
 if (isset($_POST[$this->button_save_all_name]))
@@ -828,31 +818,32 @@ if (isset($arr[$this->pole__id]) )
 												);//print_r(unserialize($struct3['properties']));
 												
 			//проверить, если это кнопки, тогда внести фиктивный массив идентификаторов, что бы было не пусто!
-			if (preg_match ("/^[1-9]/",$struct3['col_name'])) $this->line_table_obj->row_all_value($i,$arr[$this->pole__id],[]);//$arr['__error_flag__']); 
-					else  {
-								@$this->line_table_obj->row_all_value($i,$arr[$struct3['col_name']],$this->error_item1[$struct3['col_name']]);//это знаяение по имени колонки
-							
-							}
+			if (preg_match ("/^[1-9]/",$struct3['col_name'])) {
+                $this->line_table_obj->row_all_value($i,$arr[$this->pole__id],[]);//$arr['__error_flag__']); 
+            } else {
+                @$this->line_table_obj->row_all_value($i,$arr[$struct3['col_name']],$this->error_item1[$struct3['col_name']]);//это знаяение по имени колонки
+            }
 			
 		}
 }
 $this->create_start_end_items(4);//генерировать последнюю строку, она аналогично формируется как и первая
 
-//print_r($this->col_function_array_rez);
 $this->line_table_obj->col_name=$this->cap;//это заголовки колонок из языкового файла
-$_SESSION['io_line_interface'][$this->interface_name]=md5(microtime());//уникальный код формы
-$this->line_table_obj->cod_form=$_SESSION['io_line_interface'][$this->interface_name];
 
 }
 
 public function print_interface()
 {
-echo $this->line_table_obj->tab_print();
+    $_SESSION['io_line_interface'][$this->interface_name]=md5(microtime());//уникальный код формы
+    $this->line_table_obj->cod_form=$_SESSION['io_line_interface'][$this->interface_name];
+    echo $this->line_table_obj->tab_print();
 }
 
 public function get_interface()
 {
-return $this->line_table_obj->tab_fetch();
+    $_SESSION['io_line_interface'][$this->interface_name]=md5(microtime());//уникальный код формы
+    $this->line_table_obj->cod_form=$_SESSION['io_line_interface'][$this->interface_name];
+    return $this->line_table_obj->tab_fetch();
 }
 
 
