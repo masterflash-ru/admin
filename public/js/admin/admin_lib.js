@@ -37,12 +37,41 @@ $('.dtpicker' ).datetimepicker({
 	timeInput: true,
 	timeFormat: "hh:mm:ss",
 });
+/*добавление кнопок в диалоговое окно*/
+$.widget( "app.dialog", $.ui.dialog, {
+        options: {
+            iconButtons: [],
+            _flag:true
+        },
+         _setOptions: function( options ) {
+                this._super( options );
+             if (this.options._flag){
+                 this._create();
+                 this.options._flag=false;
+             }
+            },
+        _create: function() {
+            this._super();
+            var $titlebar = this.uiDialog.find( ".ui-dialog-titlebar" );
+            $.each( this.options.iconButtons, function( i, v ) {
+                var $button = $( "<button/>" ).text( this.text ),
+                    right = $titlebar.find( "button:last" ).css( "right" );
+                $button.button( { icons: { primary: this.icon }, text: false } )
+                       .addClass( "ui-dialog-titlebar-close" )
+                       .css( "right", ( parseInt( right ) + 22) + "px" )
+                       .click( this.click )
+                       .appendTo( $titlebar );
+            });
+    
+        }
+ });
 
-    f49();
-    gf56();
+f49();
+gf56();
 $( "#f56_dialog" ).dialog({
       resizable: true,
     autoOpen:false,
+
 });
     
 });
@@ -170,18 +199,48 @@ for (win_name in db_item48)
 	document.getElementById(db_item48[win_name]["io_item"]+"_text").innerHTML=text_.join(",");
 	}
 
-
+var win_f56;
 function f56(url,w,h,reload)
 {
     h=parseInt(h);
     w=parseInt(w);
-    $( "#f56_dialog" ).dialog( "option", { 
+    win_f56=$( "#f56_dialog" ).dialog( "option", { 
         height: h+65,
         width: w+30,
         modal: true,
+        temp:{},
         open: function(ev, ui){ $('#iframe56').attr({'src':url,'width':w,'height':h});},
-        close: function(){if (reload>0){location.href=location.href.split('?')[0]+'?'+Math.random();}}
-     } );
+        close: function(){if (reload>0){location.href=location.href.split('?')[0]+'?'+Math.random();}},
+        iconButtons: [
+            {
+                icon: "ui-icon-arrow-4-diag",
+                click: function( e ) {
+                    e.preventDefault;
+                    var options = $( "#f56_dialog" ).dialog( "option" );
+                    if (options.temp.full){
+                            $( "#f56_dialog" ).dialog( "option", {
+                                height:options.temp.height,
+                                width:options.temp.width,
+                                temp:{
+                                full:false,
+                            }
+                            });
+
+                        } else{console.log(options.temp.full);
+                            $( "#f56_dialog" ).dialog( "option", {
+                                height:$(window).height(),
+                                width:$(window).width(),
+                                temp:{
+                                full:true,
+                                width:options.width,
+                                height:options.height
+                            }
+                            });
+                        }
+                }
+            },
+        ],
+    } );
     $( "#f56_dialog" ).dialog("open");
 }
 function f56_close()

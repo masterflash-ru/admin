@@ -13,6 +13,7 @@
 body, input, textarea, table, td, th {font-family:Verdana,Arial,Helvetica, sans-serif;
 font-size:12px;
 }
+body{padding: 0;margin: 0}
 th span{color:#ff0000}
 input[name*=del],button[name*=del] {color:#fff; background-color:#F00}
 input[name*=save],button[name*=save] {color:#000; background-color:#6F0}
