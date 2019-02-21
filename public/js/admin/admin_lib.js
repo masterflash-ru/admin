@@ -209,12 +209,12 @@ function f56(url,w,h,reload)
         width: w+30,
         modal: true,
         temp:{},
-        open: function(ev, ui){ $('#iframe56').attr({'src':url,'width':w,'height':h});},
+        open: function(ev, ui){ $('#iframe56').attr({'src':url,'width':'100%','height':h});},
         close: function(){if (reload>0){location.href=location.href.split('?')[0]+'?'+Math.random();}},
         iconButtons: [
             {
                 icon: "ui-icon-arrow-4-diag",
-                click: function( e ) {
+                click: function( e ) {$( "#catalog" ).tabs( "refresh" );
                     e.preventDefault;
                     var options = $( "#f56_dialog" ).dialog( "option" );
                     if (options.temp.full){
