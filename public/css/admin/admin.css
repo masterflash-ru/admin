@@ -1,0 +1,59 @@
+.permiss{
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    border: black;
+    padding-top: .3rem;
+    padding-right: 0.6rem;
+    padding-left: 0.6rem;
+    padding-bottom: .3rem
+}
+.permiss_ok{background-color:green; color:white}
+.permiss_cancel{background-color:red; color:white}
+body, input, textarea, table, td, th {font-family:Verdana,Arial,Helvetica, sans-serif;
+font-size:12px;
+}
+th span{color:#ff0000}
+input[name*=del],button[name*=del] {color:#fff; background-color:#F00}
+input[name*=save],button[name*=save] {color:#000; background-color:#6F0}
+input[name*=create] {color:#000; background-color:#3CF}
+/*#actions_tree_out>img {padding-top:5px; padding-bottom:5px;}*/
+#actions_tree_out{width:1900px;}
+#actions_tree_out table {padding-top:5px; padding-bottom:5px;}
+#actions_tree_out table td{white-space:nowrap}
+table{border-collapse:collapse}
+input[type=text] + button{
+	background-color: #535D94;
+	color: #fff;
+	font-size: 14px;
+	padding-top: 3px;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-bottom: 3px
+}
+.menu {
+	font-family: Verdana;
+	font-size: 11px;
+	line-height: 4px;
+	color: #0000FF;
+
+
+}
+.menu0 {
+	font-weight: bold;
+	color: #FF0000;
+
+}
+.main {
+    border-collapse:collapse;
+	width:100%    
+}
+
+.main td{
+	padding: 4px;
+}
+.main .lmenu{border-right: 1px solid #000000; width:200px; vertical-align:top}
+.f101, .f101 td, .f101 th{
+    border: 1px solid #757575; padding: 6px
+}
+.f101 th{color: red}
