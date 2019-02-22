@@ -66,15 +66,25 @@ $.widget( "app.dialog", $.ui.dialog, {
         }
  });
 
-f49();
+    
+});
+
+
+
+
+
+/*УСТАРЕВШЕЕ**/
+$(document).ready(function() {
+    f49();
 gf56();
 $( "#f56_dialog" ).dialog({
       resizable: true,
     autoOpen:false,
 
 });
-    
+
 });
+
 
 
 function f49()
