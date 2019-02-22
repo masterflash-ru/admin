@@ -1,16 +1,19 @@
 <!doctype html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <title>Система управления сайтом</title>
 <link href="/css/admin/jquery-ui-timepicker-addon.css" rel="stylesheet" type="text/css">
 <link href="/css/admin/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<link href="/css/admin/ui.jqgrid.css" rel="stylesheet" type="text/css">   
 <link href="/css/admin/admin.css" rel="stylesheet" type="text/css">
 <script language="JavaScript" src="/js/admin/jquery-3.1.0.min.js" type="text/JavaScript"></script>
 <script language="JavaScript" src="/js/admin/jquery.cookie.js" type="text/JavaScript"></script>   
 <script language="JavaScript" src="/js/admin/jquery-ui.min.js" type="text/JavaScript"></script>
+<script language="JavaScript" src="/js/admin/jquery.jqGrid.min.js" type="text/JavaScript"></script>   
+<script language="JavaScript" src="/js/admin/grid.locale-ru.js" type="text/JavaScript"></script> 
 <script language="JavaScript" src="/js/admin/jquery-ui-timepicker-addon.min.js" type="text/JavaScript"></script>
-<script language="JavaScript" src="/js/admin/admin_lib.js" type="text/JavaScript"></script>
+<script language="JavaScript" src="/js/admin/admin_lib.js?<?=date("d.Y")?>" type="text/JavaScript"></script>
 <?= $this->headScript()?>
 </head><body>
 <?php

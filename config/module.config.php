@@ -184,7 +184,10 @@ return [
             //если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
 			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
-			Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
+			
+            
+            /*устаревшее ПО*/
+            Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
 			Controller\ConstructorTreeController::class => Controller\Factory\ConstructorTreeControllerFactory::class,
 			Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
 			Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
@@ -227,5 +230,10 @@ return [
 	
 	//конфигурация хранения дампов
 	'backup_folder'=>"data/backup",
+    
+    /*описатели интерфейсов*/
+    "interface"=>[
+        "my"=>__DIR__."/test.ini",
+    ]
 
 ];
