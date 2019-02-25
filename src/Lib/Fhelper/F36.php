@@ -76,22 +76,15 @@ public function render()
 		$fck_connector_config->FileTypesPath_File=$this->const[0];//путь к файлам и др. 
 		$fck_connector_config->FileTypesPath_Image=$this->const[0];//путь к файлам с картинками и др. 
 
-		$js="";
-		if (!defined("_F36_")) 
-			{
-				define ("_F36_",1);
-				$js='<script src="/htmledit/ckeditor.js"></script>';
-			}
-		
 		$input = new Element\Text($this->name[0]);
 		$input->setValue($this->value);
-		$input->setAttributes($this->zatr);//\Zend\Debug\Debug::dump($input);exit;
+		$input->setAttributes($this->zatr);
 
 		$input1 = new Element\Textarea("data_".$this->name[0]);
 		$input1->setValue($data);
 		$input1->setAttribute("class","ckeditor");
 
-	return "Имя файла:".$this->view->FormElement($input).$this->view->FormElement($input1).$js;
+	return "Имя файла:".$this->view->FormElement($input).$this->view->FormElement($input1);
 			//$this->view->formTextArea("data_".$this->name[0],$data,["class"=>"ckeditor"]).$js;
 }
 

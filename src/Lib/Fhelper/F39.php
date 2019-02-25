@@ -52,17 +52,11 @@ public function render()
 		$fck_connector_config->FileTypesPath_File=$this->const[0];//путь к файлам и др. 
 		$fck_connector_config->FileTypesPath_Image=$this->const[0];//путь к файлам с картинками и др. 
 		
-		$js="";
-		if (!defined("_F36_")) 
-			{
-				define ("_F36_",1);
-				$js='<script src="/htmledit/ckeditor.js"></script>';
-			}
 		$input1 = new Element\Textarea($this->name[0]);
 		$input1->setValue($this->value);
 		$input1->setAttribute("class","ckeditor");
 
-	return $this->view->FormElement($input1).$js;
+	return $this->view->FormElement($input1);
 }
 
 

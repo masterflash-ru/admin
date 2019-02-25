@@ -30,7 +30,38 @@ return [
                 ],
 				'may_terminate' => true,
 				'child_routes' => [
+                    /*общий интерфейс*/
+                    'io-edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/io-edit/:interface',
+                            'constraints' => [
+                                'interface' => '[a-zA-Z0-9_-]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\IoEditController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    /*ввод-вывод для jpgrid*/
+                    'io-jpgrid' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/io-jpgrid/:interface/:subinterface/:action',
+                            'constraints' => [
+                                'interface' => '[a-zA-Z0-9_-]+',
+                                'subinterface'=>'[a-zA-Z0-9_-]+',
+                                'action'=>'[a-zA-Z0-9_-]+',
+                            ],
+
+                            'defaults' => [
+                                'controller' => Controller\IoEditController::class,
+                            ],
+                        ],
+                    ],
 							
+                    /*устаревшее*/
 							'line' => [
 								'type' => Segment::class,
 								'options' => [
@@ -184,6 +215,7 @@ return [
             //если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
 			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
+            Controller\IoEditController::class => Controller\Factory\IoEditControllerFactory::class,
 			
             
             /*устаревшее ПО*/
@@ -217,6 +249,7 @@ return [
     'service_manager' => [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
+            Service\GpGrid::class => Service\Factory\GpGridFactory::class,
 			
         ],
     ],
@@ -226,6 +259,9 @@ return [
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],
+       'strategies' => [
+            'ViewJsonStrategy',
+        ],
     ],
 	
 	//конфигурация хранения дампов
@@ -233,7 +269,7 @@ return [
     
     /*описатели интерфейсов*/
     "interface"=>[
-        "my"=>__DIR__."/test.ini",
+        "my"=>__DIR__."/my.php",
     ]
 
 ];

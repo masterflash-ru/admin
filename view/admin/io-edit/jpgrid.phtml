@@ -1,0 +1,81 @@
+<?php
+/*
+* генерирует jpgrid
+* на входе:
+* $options - опции из сооттветсвующей секции конфига
+* $type - это имя ключа конфига, т.е. составное имя инетрфейса фактичеки, которое мы обрабатываем в текущий момент
+* $interface -  это имя глобальное имя интерфейса глобального
+*/
+use Zend\Json\Json;
+
+Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
+
+
+$options=$this->options;
+//
+//удалим опции не относящиеся к генерации
+foreach (["read"] as $d){
+    unset($options[$d]);
+}
+//\Zend\Debug\Debug::dump($options);
+
+
+$options["datatype"]="json";
+$options["mtype"]="GET";
+$options["url"]=$this->url("adm/io-jpgrid",
+                           [
+                               "subinterface"=>$type,
+                               "interface"=>$interface,
+                               "action" => "readjpgrid"
+                           ]
+                           );
+$options["pager"]="#".$options["container"]."_pager";
+//$options["PostData"]=["123234234234234234"=>"234234324523452345"];
+
+
+$navgrid=$options["navgrid"];
+unset($options["navgrid"]);
+
+//$jpgrid= json_encode($options,JSON_PRETTY_PRINT+JSON_NUMERIC_CHECK);
+
+
+$jpgrid= json::encode($options,true);
+
+$js_s=["\"datepicker\"","\"ckeditor\"","\"defaultdate\"","\"defaultdatetime\""];
+$js_t=["dataInit.datepicker","dataInit.ckeditor","defaultValue.defaultdate","defaultValue.defaultdatetime"];
+
+$jpgrid=str_replace($js_s,$js_t,$jpgrid);
+
+
+?>
+
+<table id="<?=$options["container"]?>"></table> 
+<div id="<?=$options["container"]?>_pager"></div>
+
+<script type="text/javascript">
+$(function () {
+"use strict";
+$.extend($.jgrid.defaults, { ajaxGridOptions:{error:function(xhr,status,error){
+  alert('HTTP status code: ' + xhr.status + '\n' +
+              'textStatus: ' + status + '\n' +
+              'errorThrown: ' + error+'\n\n\n HTTP body (jqXHR.responseText): ' + '\n' + xhr.responseText);  
+} }});
+    
+var dataInit={},defaultValue={};
+/*привязка к внешних сервисам*/
+dataInit.datepicker=function (el){$(el).datepicker({dateFormat:'dd.mm.yy'});}
+dataInit.ckeditor=function (el){$(el).ckeditor();}
+/*получение значений по умолчанию*/
+defaultValue.defaultdate=function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}
+defaultValue.defaultdatetime=function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(',',"");}
+
+$("#<?=$options["container"]?>").jqGrid(<?=$jpgrid?>);
+$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', <?=json::encode($navgrid["button"],true)?>, /*кнопки в панели*/
+              {}, // use default settings for edit
+               {}, // use default settings for add
+               {},  // delete instead that del:false we need this
+               {multipleSearch : true}, //можно добавлять условия
+               {closeOnEscape:true});
+
+}); 
+</script>
