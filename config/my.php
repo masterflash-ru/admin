@@ -16,9 +16,9 @@ return [
         /*чтение опции*/
         "read"=>[
             "db"=>[ /*SQL выборка*/
-                "sql"=>"select * from users",
+                "sql"=>"select * from news",
                 "options"=>[
-                    
+                    "PrimaryKey"=>"id"
                 ],
             ],
             
@@ -32,7 +32,7 @@ return [
         "rowNum" => 10,
         "rowList" => [10,20,50],
         "sortname" => "id",
-       // "sortorder" => "desc",
+        "sortorder" => "desc",
         "viewrecords" => true,
         "autoencode" => true,
         "hidegrid" => false,
@@ -49,8 +49,8 @@ return [
         ],
         "colNames" => [
             "id",
-            "имя",
-            "дата регистрации",
+            "заголовок",
+            "дата публикации",
             "операция",
         ],
         "colModel" => [
@@ -62,30 +62,29 @@ return [
                 "editable" => false,
             ],
             [
-                "id" => "name",
+                "id" => "caption",
                 "hidden" => false,
-                "name" => "name",
+                "name" => "caption",
                 "width" => 200,
                 "editable" => true,
-                "edittype" => "textarea",
+                "edittype" => "text",
                 "formoptions" => [
-                    "rowpos" => 2,
-                    "colpos" => true,
+                   // "rowpos" => 2,
+                   // "colpos" => true,
                     "elmprefix" => "*",
                     "elmsuffix" =>"" ,
-                    "label" => "Новый текст",
                 ],
             ],
             [
-                "id" => "date_registration",
+                "id" => "date_public",
                 "hidden" => false,
-                "name" => "date_registration",
+                "name" => "date_public",
                 "width" => 200,
                 "editable" => true,
                 "edittype" => true,
                 "formatter" => "date",
                 "editoptions" => [
-                    "dataInit" => "datepicker",
+                    "dataInit" => "datetimepicker",
                     "defaultValue" => "defaultdatetime",
                     "size" => 50,
                 ],
@@ -94,6 +93,7 @@ return [
                 "id" => "myac",
                 "name" => "myac",
                 "formatter" => "actions",
+                "sortable"=>false,
                 "formatoptions" => [
                     "keys" => true,
                 ]

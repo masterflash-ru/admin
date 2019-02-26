@@ -41,8 +41,8 @@ unset($options["navgrid"]);
 
 $jpgrid= json::encode($options,true);
 
-$js_s=["\"datepicker\"","\"ckeditor\"","\"defaultdate\"","\"defaultdatetime\""];
-$js_t=["dataInit.datepicker","dataInit.ckeditor","defaultValue.defaultdate","defaultValue.defaultdatetime"];
+$js_s=["\"datepicker\"","\"datetimepicker\"" , "\"ckeditor\"","\"defaultdate\"","\"defaultdatetime\""];
+$js_t=["dataInit.datepicker","dataInit.datetimepicker", "dataInit.ckeditor","defaultValue.defaultdate","defaultValue.defaultdatetime"];
 
 $jpgrid=str_replace($js_s,$js_t,$jpgrid);
 
@@ -64,10 +64,13 @@ $.extend($.jgrid.defaults, { ajaxGridOptions:{error:function(xhr,status,error){
 var dataInit={},defaultValue={};
 /*привязка к внешних сервисам*/
 dataInit.datepicker=function (el){$(el).datepicker({dateFormat:'dd.mm.yy'});}
+dataInit.datetimepicker=function (el){$(el).datetimepicker({timeInput: true,timeFormat: "hh:mm:ss",dateFormat:'dd.mm.yy'});}
 dataInit.ckeditor=function (el){$(el).ckeditor();}
 /*получение значений по умолчанию*/
 defaultValue.defaultdate=function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}
 defaultValue.defaultdatetime=function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(',',"");}
+
+
 
 $("#<?=$options["container"]?>").jqGrid(<?=$jpgrid?>);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', <?=json::encode($navgrid["button"],true)?>, /*кнопки в панели*/

@@ -1,5 +1,3 @@
-$(document).ready(function() {
-	'use strict';
 $.datepicker.regional['ru'] = {
 	closeText: 'Закрыть',
 	prevText: '&#x3c;Пред',
@@ -26,12 +24,16 @@ $.timepicker.regional['ru'] = {
 	timezoneText: 'Часовой пояс',
 	currentText: 'Сейчас',
 	closeText: 'Закрыть',
-	timeFormat: 'HH:mm',
+	timeFormat: 'HH:mm:ss',
 	amNames: ['AM', 'A'],
 	pmNames: ['PM', 'P'],
 	isRTL: false
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
+
+
+$(document).ready(function() {
+	'use strict';
 
 $('.dtpicker' ).datetimepicker({
 	timeInput: true,
