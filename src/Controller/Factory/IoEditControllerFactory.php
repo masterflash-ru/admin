@@ -4,7 +4,7 @@ namespace Admin\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-use Admin\Service\GpGrid;
+use Admin\Service\GqGrid;
 
 
 
@@ -17,9 +17,9 @@ class IoEditControllerFactory implements FactoryInterface
         $connection=$container->get('DefaultSystemDb');
        $config=$container->get("config");
 	   $cache = $container->get('DefaultSystemCache');
-        $jpgrid=$container->get(GpGrid::class);
+        $jqgrid=$container->get(GqGrid::class);
 
-       return new $requestedName( $connection,$cache,$config,$jpgrid);
+       return new $requestedName( $connection,$cache,$config,$jqgrid);
     }
 }
 

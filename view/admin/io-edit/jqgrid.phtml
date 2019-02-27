@@ -1,6 +1,6 @@
 <?php
 /*
-* генерирует jpgrid
+* генерирует jqgrid
 * на входе:
 * $options - опции из сооттветсвующей секции конфига
 * $type - это имя ключа конфига, т.е. составное имя инетрфейса фактичеки, которое мы обрабатываем в текущий момент
@@ -22,11 +22,11 @@ foreach (["read"] as $d){
 
 $options["datatype"]="json";
 $options["mtype"]="GET";
-$options["url"]=$this->url("adm/io-jpgrid",
+$options["url"]=$this->url("adm/io-jqgrid",
                            [
                                "subinterface"=>$type,
                                "interface"=>$interface,
-                               "action" => "readjpgrid"
+                               "action" => "readjqgrid"
                            ]
                            );
 $options["pager"]="#".$options["container"]."_pager";
@@ -36,15 +36,15 @@ $options["pager"]="#".$options["container"]."_pager";
 $navgrid=$options["navgrid"];
 unset($options["navgrid"]);
 
-//$jpgrid= json_encode($options,JSON_PRETTY_PRINT+JSON_NUMERIC_CHECK);
+//$jqgrid= json_encode($options,JSON_PRETTY_PRINT+JSON_NUMERIC_CHECK);
 
 
-$jpgrid= json::encode($options,true);
+$jqgrid= json::encode($options,true);
 
 $js_s=["\"datepicker\"","\"datetimepicker\"" , "\"ckeditor\"","\"defaultdate\"","\"defaultdatetime\""];
 $js_t=["dataInit.datepicker","dataInit.datetimepicker", "dataInit.ckeditor","defaultValue.defaultdate","defaultValue.defaultdatetime"];
 
-$jpgrid=str_replace($js_s,$js_t,$jpgrid);
+$jqgrid=str_replace($js_s,$js_t,$jqgrid);
 
 
 ?>
@@ -72,7 +72,7 @@ defaultValue.defaultdatetime=function(){var formatter = new Intl.DateTimeFormat(
 
 
 
-$("#<?=$options["container"]?>").jqGrid(<?=$jpgrid?>);
+$("#<?=$options["container"]?>").jqGrid(<?=$jqgrid?>);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', <?=json::encode($navgrid["button"],true)?>, /*кнопки в панели*/
               {}, // use default settings for edit
                {}, // use default settings for add

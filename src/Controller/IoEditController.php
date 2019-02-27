@@ -16,7 +16,7 @@ class IoEditController extends AbstractActionController
 	protected $connection;
     protected $cache;
     protected $config;
-    protected $jpgrid;
+    protected $jqgrid;
     protected $default_config=[
         "main"=>[
             "caption"=>"",
@@ -25,18 +25,18 @@ class IoEditController extends AbstractActionController
             "container"=>"my",
             "type"=>"window"
         ],
-        "jpgrid"=>[
+        "jqgrid"=>[
         ],
         
     ];
 
 
-public function __construct ($connection,$cache,$config,$jpgrid)
+public function __construct ($connection,$cache,$config,$jqgrid)
 {
 	$this->connection=$connection;
     $this->cache=$cache;
     $this->config=$config;
-    $this->jpgrid=$jpgrid;
+    $this->jqgrid=$jqgrid;
 }
 
 
@@ -56,9 +56,9 @@ public function indexAction()
 }
 
 /**
-* чтение для jpgrid
+* чтение для jqgrid
 */
-public function readjpgridAction()
+public function readjqgridAction()
 {
     try {
         $interface=$this->params('interface',"");
@@ -67,10 +67,10 @@ public function readjpgridAction()
         $options=include $this->config["interface"][$interface];
         $options=$options[$subinterface];
 
-        $this->jpgrid->setOptions($options);
+        $this->jqgrid->setOptions($options);
 
 
-        $rez=$this->jpgrid->load($this->params()->fromQuery());
+        $rez=$this->jqgrid->load($this->params()->fromQuery());
 
 
         $view=new JsonModel($rez);

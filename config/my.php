@@ -8,11 +8,11 @@ return [
         "podval" => "Это информация в конце интерфейса",
         "container" => "my",
         "type" => [
-            "jpgrid"=>"jpgrid_type"
+            "jqgrid"=>"jqgrid_type"
         ],
     ],
-    "jpgrid_type" => [
-        "container" => "myjpgrid",
+    "jqgrid_type" => [
+        "container" => "myjqgrid",
         /*чтение опции*/
         "read"=>[
             "db"=>[ /*SQL выборка*/

@@ -7,7 +7,7 @@ use Interop\Container\ContainerInterface;
 
 */
 
-class GpGridFactory
+class GqGridFactory
 {
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)

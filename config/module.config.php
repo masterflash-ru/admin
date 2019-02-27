@@ -44,11 +44,11 @@ return [
                             ],
                         ],
                     ],
-                    /*ввод-вывод для jpgrid*/
-                    'io-jpgrid' => [
+                    /*ввод-вывод для jqgrid*/
+                    'io-jqgrid' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/io-jpgrid/:interface/:subinterface/:action',
+                            'route'    => '/io-jqgrid/:interface/:subinterface/:action',
                             'constraints' => [
                                 'interface' => '[a-zA-Z0-9_-]+',
                                 'subinterface'=>'[a-zA-Z0-9_-]+',
@@ -249,7 +249,7 @@ return [
     'service_manager' => [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
-            Service\GpGrid::class => Service\Factory\GpGridFactory::class,
+            Service\GqGrid::class => Service\Factory\GqGridFactory::class,
 			
         ],
     ],

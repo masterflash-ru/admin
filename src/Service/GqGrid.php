@@ -9,7 +9,7 @@ use ADO\Service\Command;
 use Zend\Stdlib\ArrayUtils;
 
 
-class GpGrid
+class GqGrid
 {
 	protected $connection;
     protected $options;
