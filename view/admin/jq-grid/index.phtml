@@ -1,0 +1,78 @@
+<?php
+/*
+* генерирует jqgrid
+* на входе:
+* $options - опции из сооттветсвующей секции конфига
+* $interface -  это имя глобальное имя интерфейса глобального
+*/
+use Zend\Json\Json;
+
+Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
+
+$options=$this->options;
+
+//\Zend\Debug\Debug::dump($options);
+
+
+$options["layout"]["datatype"]="json";
+$options["layout"]["mtype"]="GET";
+$options["layout"]["url"]=$this->url("adm/io-jqgrid",
+                           [
+                               "interface"=>$interface,
+                               "action" => "readjqgrid"
+                           ]
+                           );
+
+$options["layout"]["editurl"]=$this->url("adm/io-jqgrid",
+                           [
+                               "interface"=>$interface,
+                               "action" => "editjqgrid"
+                           ]
+                           );
+
+$options["layout"]["pager"]="#".$options["container"]."_pager";
+
+/*опции навигации*/
+$navgrid_options=$options["layout"]["navgrid"];
+unset($options["layout"]["navgrid"]);
+
+/*все опции в грид*/
+$jqgrid= json::encode($options["layout"],true);
+
+$js_s=["\"datepicker\"",
+       "\"datetimepicker\"" ,
+       "\"ckeditor\"",
+       "\"defaultdate\"",
+       "\"defaultdatetime\"",
+      ];
+$js_t=["dataInit.datepicker",
+       "dataInit.datetimepicker", 
+       "dataInit.ckeditor",
+       "defaultValue.defaultdate",
+       "defaultValue.defaultdatetime", 
+      ];
+
+$jqgrid=str_replace($js_s,$js_t,$jqgrid);
+
+
+?>
+<table id="<?=$options["container"]?>"></table> 
+<div id="<?=$options["container"]?>_pager"></div>
+
+<script type="text/javascript">
+$(function () {
+"use strict";
+var jqgrid_options=<?=$jqgrid?>,
+    button_options=<?=json::encode($navgrid_options["button"],true)?>;
+
+    
+$("#<?=$options["container"]?>").jqGrid(jqgrid_options);
+$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', button_options, /*кнопки в панели*/
+              {}, // use default settings for edit
+               {}, // use default settings for add
+               {},  // delete instead that del:false we need this
+               {multipleSearch : true}, //можно добавлять условия
+               {closeOnEscape:true});
+
+}); 
+</script>

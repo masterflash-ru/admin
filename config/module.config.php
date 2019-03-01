@@ -31,32 +31,33 @@ return [
 				'may_terminate' => true,
 				'child_routes' => [
                     /*общий интерфейс*/
-                    'io-edit' => [
+                    'universal-interface' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/io-edit/:interface',
+                            'route'    => '/universal-interface/:interface',
                             'constraints' => [
                                 'interface' => '[a-zA-Z0-9_-]+',
                             ],
                             'defaults' => [
-                                'controller' => Controller\IoEditController::class,
+                                'controller' => Controller\UinterfaceController::class,
                                 'action'     => 'index',
                             ],
                         ],
                     ],
+                    
+                    
                     /*ввод-вывод для jqgrid*/
                     'io-jqgrid' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/io-jqgrid/:interface/:subinterface/:action',
+                            'route'    => '/io-jqgrid/:interface/:action',
                             'constraints' => [
                                 'interface' => '[a-zA-Z0-9_-]+',
-                                'subinterface'=>'[a-zA-Z0-9_-]+',
                                 'action'=>'[a-zA-Z0-9_-]+',
                             ],
 
                             'defaults' => [
-                                'controller' => Controller\IoEditController::class,
+                                'controller' => Controller\JqGridController::class,
                             ],
                         ],
                     ],
@@ -215,7 +216,7 @@ return [
             //если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
 			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
-            Controller\IoEditController::class => Controller\Factory\IoEditControllerFactory::class,
+            Controller\JqGridController::class => Controller\Factory\JqGridControllerFactory::class,
 			
             
             /*устаревшее ПО*/
@@ -230,8 +231,8 @@ return [
     	
 		//если у контроллера нет коннструктора или он не нужен или пустой
         'invokables' => [
-           Controller\CkeditorController::class => Controller\CkeditorController::class,
-			
+            Controller\CkeditorController::class => Controller\CkeditorController::class,
+            Controller\UinterfaceController::class =>Controller\UinterfaceController::class,
         ],
 	],
 
@@ -240,9 +241,17 @@ return [
     'view_helpers' => [
         'factories' => [
             View\Helper\Menu::class => View\Helper\Factory\MenuFactory::class,
+            View\Helper\ITabs::class => View\Helper\Factory\ITabsFactory::class,
+            View\Helper\IArray::class => View\Helper\Factory\IArrayFactory::class,
+            View\Helper\IUniversal::class => View\Helper\Factory\IUniversalFactory::class,
+            View\Helper\IJqgrid::class => View\Helper\Factory\IJqgridFactory::class,
         ],
         'aliases' => [
             'adminMenu' => View\Helper\Menu::class,
+            'itabs' => View\Helper\ITabs::class,
+            'iarray' => View\Helper\IArray::class,
+            'iuniversal' => View\Helper\IUniversal::class,
+            'ijqgrid' => View\Helper\IJqgrid::class,
         ],
     ],
 	
@@ -270,6 +279,9 @@ return [
     /*описатели интерфейсов*/
     "interface"=>[
         "my"=>__DIR__."/my.php",
+        "tabs1"=>__DIR__."/tabs1.php",
+        "tabs2"=>__DIR__."/tabs2.php",
+        "grid"=>__DIR__."/grid.php",
     ]
 
 ];

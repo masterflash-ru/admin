@@ -56,7 +56,7 @@ public function onDispatch(MvcEvent $event)
             return;
         } else {
             //получилось, что root -у доступа нет, выводим сообщение
-            echo "получилось, что root -у доступа нет к <b>{$controllerName}/{$actionName}</b><br>Проверьте таблицу доступа";
+            //echo "получилось, что root -у доступа нет к <b>{$controllerName}/{$actionName}</b><br>Проверьте таблицу доступа";
             $viewModel->setTemplate('layout/admin_layout');
             return;
         }

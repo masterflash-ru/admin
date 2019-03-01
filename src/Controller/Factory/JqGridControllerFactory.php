@@ -10,7 +10,7 @@ use Admin\Service\GqGrid;
 
 /**
  */
-class IoEditControllerFactory implements FactoryInterface
+class JqGridControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -19,7 +19,7 @@ class IoEditControllerFactory implements FactoryInterface
 	   $cache = $container->get('DefaultSystemCache');
         $jqgrid=$container->get(GqGrid::class);
 
-       return new $requestedName( $connection,$cache,$config,$jqgrid);
+       return new $requestedName( $connection,$cache,$config["interface"],$jqgrid);
     }
 }
 
