@@ -51,18 +51,14 @@ return [
                         "edit" => true,
                         "add" => true,
                         "del" => true, 
-                        "view" => true,
+                        "view" => false,
                         "cloneToTop" => true,
+                        "search" => false,
+                        
                     ],
                 ],
                 "colModel" => [
-                    [
-                        "id" => "id",
-                        "hidden" => true,
-                        "name" => "id",
-                        "editable" => false,
-                        "key"=>true
-                    ],
+
                     GqGridColModelHelper::text("caption",["label"=>"Заголовок"]),
                     GqGridColModelHelper::datetime("date_public",["label"=>"Дата публикации"]),
                     GqGridColModelHelper::checkbox("public"),
@@ -78,7 +74,7 @@ return [
                         "formatter"=>"select",
                     ],*/
                     
-                    GqGridColModelHelper::ckeditor("full_news"),
+                    GqGridColModelHelper::ckeditor("full_news",["label"=>"Статья полностью"]),
                   
                     
                     [/*Кнопки перехода на другой интерфейс*/

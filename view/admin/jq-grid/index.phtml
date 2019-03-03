@@ -39,20 +39,6 @@ unset($options["layout"]["navgrid"]);
 /*все опции в грид*/
 $jqgrid= json::encode($options["layout"], false, ['enableJsonExprFinder' => true]);
 
-$js_s=["\"datepicker\"",
-
-       "\"ckeditor\"",
-       "\"defaultdate\"",
-       "\"defaultdatetime\"",
-      ];
-$js_t=["dataInit.datepicker",
-
-       "dataInit.ckeditor",
-       "defaultValue.defaultdate",
-       "defaultValue.defaultdatetime", 
-      ];
-
-$jqgrid=str_replace($js_s,$js_t,$jqgrid);
 
 if (isset($options["caption"])){
     echo $options["caption"];
@@ -65,10 +51,10 @@ if (isset($options["caption"])){
 $(function () {
 "use strict";
 var jqgrid_options=<?=$jqgrid?>,
-    button_options=<?=json::encode($navgrid_options["button"],true)?>;
+    navgrid_button_options=<?=json::encode($navgrid_options["button"],true)?>;
 
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
-$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', button_options, /*кнопки в панели*/
+$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', navgrid_button_options, /*кнопки в панели*/
               {width:"auto",closeOnEscape:true,closeAfterEdit: true, recreateForm: true}, //опции в окно при редактировании edit
                {width:"auto",closeOnEscape:true,closeAfterAdd: true, recreateForm: true}, // опции в окно при добавлении add
                {closeOnEscape:true},  // delete instead that del:false we need this
