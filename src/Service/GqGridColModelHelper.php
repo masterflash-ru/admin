@@ -111,6 +111,29 @@ class GqGridColModelHelper
     }
 
     /**
+    * вывод выпадающего списка
+    * 
+    */
+    public static function select(string $name, array $options=[])
+    {
+        if (isset($options["editoptions"]["load_value"])){
+            //внешний источник, в виде обращения к функции
+            
+            
+            unset($options["editoptions"]["load_value"]);
+        }
+        return ArrayUtils::merge([
+           "name" => $name,
+            "editable" => true,
+            "edittype" => "select",
+            "editoptions"=>[
+                "value"=>[]
+            ],
+            "formatter"=>"select",
+        ],$options);
+    }
+
+    /**
     * вывод редактора ckeditor
     * в сетке он скрыт
     */

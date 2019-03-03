@@ -18,6 +18,7 @@ class IJqgrid extends AbstractHelper
         "caption" => "",
         "podval" => "",
         "read"=>[],
+        "write"=>[],
         "layout"=>[]
     ];
 
@@ -37,8 +38,6 @@ public function __invoke(string $interface)
     $options=include $options;
     $options=ArrayUtils::merge($this->def_options,$options["options"]);
 
-    //\Zend\Debug\Debug::dump($options);
     return $this->getView()->partial("admin/jq-grid/index",["options"=>$options,"interface"=>$interface]);
-    return "IJqgrid";
 }
 }
