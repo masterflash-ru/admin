@@ -65,14 +65,13 @@ $(function () {
 var jqgrid_options=<?=$jqgrid?>,
     button_options=<?=json::encode($navgrid_options["button"],true)?>;
 
-    
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', button_options, /*кнопки в панели*/
-              {}, // use default settings for edit
-               {}, // use default settings for add
+              {width:"auto",closeOnEscape:true}, //опции в окно при редактировании edit
+               {width:"auto",closeOnEscape:true}, // опции в окно при добавлении add
                {},  // delete instead that del:false we need this
                {multipleSearch : true}, //можно добавлять условия
-               {closeOnEscape:true});
+               {closeOnEscape:true}); //опции при просмотре записи в окошке
 
 }); 
 </script>

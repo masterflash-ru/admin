@@ -18,10 +18,11 @@ class GetControllersInfoFactory
 {
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-		$connection=$container->get('DefaultSystemDb');
-       $Router=$container->get("Application")->getMvcEvent()->getRouter();
-        return new GetControllersInfo($connection,$Router,$options);
-    }
+{
+    $connection=$container->get('DefaultSystemDb');
+    $Router=$container->get("Application")->getMvcEvent()->getRouter();
+    $config=$container->get('config');
+    return new GetControllersInfo($connection,$Router,$options,$config);
+}
 }
 

@@ -313,6 +313,8 @@ protected function writeDb(array $postParameters,array $options)
 */
 protected function _dateConvert($in)
 {
+    $in=trim($in);
+    if (empty($in)){return null;}
     $d=new DateTime($in);
     return (string)$d->format('Y-m-d');
 }
@@ -324,6 +326,8 @@ protected function _dateConvert($in)
 */
 protected function _datetimeConvert($in)
 {
+    $in=trim($in);
+    if (empty($in)){return null;}
     $d=new DateTime($in);
     return (string)$d->format('Y-m-d H:i:s');
 }
