@@ -2,6 +2,7 @@
 namespace Admin;
 
 use Admin\Service\GqGridColModelHelper;
+use Zend\Json\Expr;
 
 return [
         /*jqgrid - сетка*/
@@ -31,6 +32,7 @@ return [
             ],
             /*внешний вид*/
             "layout"=>[
+                
                 "caption" => "Это заголовок грида",
                 "height" => "auto",
                 "width" => 1000,

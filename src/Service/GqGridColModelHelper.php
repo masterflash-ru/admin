@@ -8,6 +8,10 @@
 namespace Admin\Service;
 
 use Zend\Stdlib\ArrayUtils;
+use Zend\Json\Expr;
+
+
+/*"gridComplete"=>new Expr("function (){alert(123);}"),*/
 
 class GqGridColModelHelper
 {
@@ -63,7 +67,7 @@ class GqGridColModelHelper
     
     /**
     * вывод многострочного эл-та
-    * в сетке он скрыт
+    * 
     */
     public static function textarea(string $name, array $options=[])
     {
@@ -91,7 +95,7 @@ class GqGridColModelHelper
     
     /**
     * вывод одиночного флажка
-    * в сетке он скрыт
+    * 
     */
     public static function checkbox(string $name, array $options=[])
     {
@@ -118,7 +122,7 @@ class GqGridColModelHelper
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
-                "dataInit" => "ckeditor",
+                "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
             ],
             "editrules"=>[
                 "edithidden"=>true,
@@ -128,7 +132,7 @@ class GqGridColModelHelper
     
     /**
     * вывод даты-времени + виджет выбора
-    * в сетке он скрыт
+    * 
     */
     public static function datetime(string $name, array $options=[])
     {
@@ -136,17 +140,17 @@ class GqGridColModelHelper
             "name" => $name,
             "editable" => true,
             "edittype" => "text",
-            "formatter" => "datetime", /*date*/
+            "formatter" => "datetime",
             "editoptions" => [
-                "dataInit" => "datetimepicker",
-                "defaultValue" => "defaultdatetime",
+                "dataInit"=>new Expr('function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});}'),
+                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(",","");}'),
                 "size" => 50,
             ],
         ],$options);
     }
     /**
     * вывод даты + виджет выбора
-    * в сетке он скрыт
+    *
     */
     public static function date(string $name, array $options=[])
     {
@@ -156,9 +160,9 @@ class GqGridColModelHelper
             "edittype" => "text",
             "formatter" => "date",
             "editoptions" => [
-                "dataInit" => "datepicker",
-                "defaultValue" => "defaultdate",
-                "size" => 50,
+                "dataInit"=>new Expr('function (el){$(el).datepicker({dateFormat:"dd.mm.yy"});}'),
+                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}'),
+                "size" => 40,
             ],
         ],$options);
     }

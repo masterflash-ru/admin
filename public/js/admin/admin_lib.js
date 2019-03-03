@@ -32,7 +32,6 @@ $.timepicker.regional['ru'] = {
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
 });
-var dataInit={},defaultValue={};
 
 
 $.extend($.jgrid.defaults, { 
@@ -45,14 +44,7 @@ $.extend($.jgrid.defaults, {
 });
     
 
-/*привязка к внешних сервисам*/
-dataInit.datepicker=function (el){$(el).datepicker({dateFormat:'dd.mm.yy'});}
-dataInit.datetimepicker=function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:'dd.mm.yy'});}
-dataInit.ckeditor=function (el){$(el).ckeditor();}
 
-/*получение значений по умолчанию*/
-defaultValue.defaultdate=function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}
-defaultValue.defaultdatetime=function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(',',"");}
 
 $.extend($.fn.fmatter , {
     datetime : function(cellval, opts, rwd, act) {
@@ -66,7 +58,14 @@ $.extend($.fn.fmatter , {
         if(!$.fmatter.isEmpty(cellval)) {
             return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
         }
-        return $.fn.fmatter.defaultFormat(cellval, opts);}
+        return $.fn.fmatter.defaultFormat(cellval, opts);
+    },
+    /*форматтер для открытия новых интерфейсов*/
+    interface : function(cellval, opts, rwd, act) {
+        return '<button>111</button><button>2222</button>';
+        //return $.fn.fmatter.defaultFormat(cellval, opts);
+    }
+
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -78,13 +77,6 @@ $.extend($.fn.fmatter.datetime , {
             return $.jgrid.parseDate.call(this, op.newfullformat,cellval,op.srcfullformat,op);
         }
         return $.fn.fmatter.defaultFormat(cellval, opts);
-    }
-});
-/*форматтер для открытия новых интерфейсов*/
-$.extend($.fn.fmatter , {
-    interface : function(cellval, opts, rwd, act) {
-        return '<button>111</button><button>2222</button>';
-        //return $.fn.fmatter.defaultFormat(cellval, opts);
     }
 });
 

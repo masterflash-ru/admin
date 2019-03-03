@@ -37,16 +37,16 @@ $navgrid_options=$options["layout"]["navgrid"];
 unset($options["layout"]["navgrid"]);
 
 /*все опции в грид*/
-$jqgrid= json::encode($options["layout"],true);
+$jqgrid= json::encode($options["layout"], false, ['enableJsonExprFinder' => true]);
 
 $js_s=["\"datepicker\"",
-       "\"datetimepicker\"" ,
+
        "\"ckeditor\"",
        "\"defaultdate\"",
        "\"defaultdatetime\"",
       ];
 $js_t=["dataInit.datepicker",
-       "dataInit.datetimepicker", 
+
        "dataInit.ckeditor",
        "defaultValue.defaultdate",
        "defaultValue.defaultdatetime", 
