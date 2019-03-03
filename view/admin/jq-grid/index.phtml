@@ -54,7 +54,9 @@ $js_t=["dataInit.datepicker",
 
 $jqgrid=str_replace($js_s,$js_t,$jqgrid);
 
-
+if (isset($options["caption"])){
+    echo $options["caption"];
+}
 ?>
 <table id="<?=$options["container"]?>"></table> 
 <div id="<?=$options["container"]?>_pager"></div>
@@ -67,11 +69,17 @@ var jqgrid_options=<?=$jqgrid?>,
 
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', button_options, /*кнопки в панели*/
-              {width:"auto",closeOnEscape:true}, //опции в окно при редактировании edit
-               {width:"auto",closeOnEscape:true}, // опции в окно при добавлении add
-               {},  // delete instead that del:false we need this
+              {width:"auto",closeOnEscape:true,closeAfterEdit: true, recreateForm: true}, //опции в окно при редактировании edit
+               {width:"auto",closeOnEscape:true,closeAfterAdd: true, recreateForm: true}, // опции в окно при добавлении add
+               {closeOnEscape:true},  // delete instead that del:false we need this
                {multipleSearch : true}, //можно добавлять условия
-               {closeOnEscape:true}); //опции при просмотре записи в окошке
+               {closeOnEscape:true,width:"auto"}); //опции при просмотре записи в окошке
 
 }); 
 </script>
+<?php
+if (isset($options["podval"])){
+    echo $options["podval"];
+}
+
+?>

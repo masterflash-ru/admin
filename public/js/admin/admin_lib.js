@@ -1,4 +1,5 @@
-$.datepicker.regional['ru'] = {
+$(document).ready(function() {
+    $.datepicker.regional['ru'] = {
 	closeText: 'Закрыть',
 	prevText: '&#x3c;Пред',
 	nextText: 'След&#x3e;',
@@ -30,6 +31,7 @@ $.timepicker.regional['ru'] = {
 	isRTL: false
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
+});
 var dataInit={},defaultValue={};
 
 
@@ -45,25 +47,26 @@ $.extend($.jgrid.defaults, {
 
 /*привязка к внешних сервисам*/
 dataInit.datepicker=function (el){$(el).datepicker({dateFormat:'dd.mm.yy'});}
-dataInit.datetimepicker=function (el){$(el).datetimepicker({timeInput: true,timeFormat: "hh:mm:ss",dateFormat:'dd.mm.yy'});}
+dataInit.datetimepicker=function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:'dd.mm.yy'});}
 dataInit.ckeditor=function (el){$(el).ckeditor();}
+
 /*получение значений по умолчанию*/
 defaultValue.defaultdate=function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}
 defaultValue.defaultdatetime=function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(',',"");}
 
 $.extend($.fn.fmatter , {
     datetime : function(cellval, opts, rwd, act) {
-    var op = $.extend({},opts.date);
-            if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
-                op = $.extend({},op,opts.colModel.formatoptions);
-            }
-            if(!op.reformatAfterEdit && act === 'edit'){
-                return $.fn.fmatter.defaultFormat(cellval, opts);
-            }
-            if(!$.fmatter.isEmpty(cellval)) {
-                return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
-            }
-            return $.fn.fmatter.defaultFormat(cellval, opts);}
+        var op = $.extend({},opts.date);
+        if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
+            op = $.extend({},op,opts.colModel.formatoptions);
+        }
+        if(!op.reformatAfterEdit && act === 'edit'){
+            return $.fn.fmatter.defaultFormat(cellval, opts);
+        }
+        if(!$.fmatter.isEmpty(cellval)) {
+            return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
+        }
+        return $.fn.fmatter.defaultFormat(cellval, opts);}
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -77,6 +80,13 @@ $.extend($.fn.fmatter.datetime , {
         return $.fn.fmatter.defaultFormat(cellval, opts);
     }
 });
+/*форматтер для открытия новых интерфейсов*/
+$.extend($.fn.fmatter , {
+    interface : function(cellval, opts, rwd, act) {
+        return '<button>111</button><button>2222</button>';
+        //return $.fn.fmatter.defaultFormat(cellval, opts);
+    }
+});
 
 
 
@@ -86,7 +96,7 @@ $(document).ready(function() {
 	'use strict';
 $('.dtpicker' ).datetimepicker({
 	timeInput: true,
-	timeFormat: "hh:mm:ss",
+	timeFormat: "HH:mm:ss",
 });
 /*добавление кнопок в диалоговое окно*/
 $.widget( "app.dialog", $.ui.dialog, {

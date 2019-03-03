@@ -4,7 +4,7 @@ namespace Admin;
 use Admin\Service\GqGridColModelHelper;
 
 return [
-        /*TABS вкладки*/
+        /*jqgrid - сетка*/
         "type" => "ijqgrid",
         "description"=>"Описание интерфейса",
         "options" => [
@@ -53,15 +53,6 @@ return [
                         "cloneToTop" => true,
                     ],
                 ],
-                "colNames" => [
-                    "id",
-                    "заголовок",
-                    "дата публикации",
-                    "публ.",
-                    "Полная новость",
-                    "Другой интерфейс",
-                    "операция",
-                ],
                 "colModel" => [
                     [
                         "id" => "id",
@@ -70,52 +61,20 @@ return [
                         "editable" => false,
                         "key"=>true
                     ],
-                    [
-                        "name" => "caption",
-                        "width" => 200,
-                        "editable" => true,
-                        "edittype" => "text",
-                        "formoptions" => [
-                            // "rowpos" => 2,
-                            // "colpos" => true,
-                            "elmprefix" => "*",
-                            "elmsuffix" =>"" ,
-                        ],
-                        "editoptions" => [
-                            "size" => 80,
-                        ],
-                        "editrules"=>[
-                            "required"=>true,
-                        ],
-                    ],
-                    [/*формат дата + выбор даты*/
-                        "name" => "date_public",
-                        "editable" => true,
-                        "edittype" => "text",
-                        "formatter" => "datetime", /*date*/
-                        "editoptions" => [
-                            "dataInit" => "datetimepicker",
-                            "defaultValue" => "defaultdatetime",
-                            "size" => 50,
-                        ],
-                    ],
-                    /*[/*флажок* /
-                        "name" => "public",
-                        "editable" => true,
-                        "edittype" => "checkbox",
-                        "editoptions"=>["value"=>"1:0"],/*значение флажка (установлен-сброшен)* /
-                        "formatter"=>"checkbox",
-                    ],*/
-                    [/*выпадающий список*/
+                    GqGridColModelHelper::text("caption",["label"=>"Заголовок"]),
+                    GqGridColModelHelper::datetime("date_public",["label"=>"Дата публикации"]),
+                    GqGridColModelHelper::checkbox("public"),
+
+                    /*[/*выпадающий список* /
                         "name" => "public",
                         "editable" => true,
                         "edittype" => "select",
                         "editoptions"=>[
-                            "value"=>[1=>"Да",0=>"Нет"],/*значение выпадающего списка Фиксировано*/
+                            "value"=>[1=>"Да",0=>"Нет"],/*значение выпадающего списка Фиксировано* /
                             //"dataUrl"=>"/adm/ddddd"
                         ],
                         "formatter"=>"select",
-                    ],
+                    ],*/
                     
                     GqGridColModelHelper::ckeditor("full_news"),
                   

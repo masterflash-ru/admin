@@ -292,9 +292,9 @@ protected function writeDb(array $postParameters,array $options)
             }
             foreach ($postParameters as $k=>$v){
                 if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
-                //$rs->Fields->Item[$k]->Value=$v;
+                $rs->Fields->Item[$k]->Value=$v;
             }
-            //$rs->Update();
+            $rs->Update();
             break;
         }
         default:{
