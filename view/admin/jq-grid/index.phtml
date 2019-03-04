@@ -50,6 +50,7 @@ if (isset($options["caption"])){
 <script type="text/javascript">
 $(function () {
 "use strict";
+
 var jqgrid_options=<?=$jqgrid?>,
     navgrid_button_options=<?=json::encode($navgrid_options["button"],true)?>;
 
@@ -61,7 +62,17 @@ $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', na
                {multipleSearch : true}, //можно добавлять условия
                {closeOnEscape:true,width:"auto"}); //опции при просмотре записи в окошке
 
-}); 
+});
+function formatImage(cellValue, options, rowObject) {
+            var imageHtml = "<img src='/" + cellValue + "' originalValue='" + cellValue + "' />";
+            return imageHtml;
+        }
+
+function unformatImage(cellValue, options, cellObject) {
+            return $(cellObject.html()).attr("originalValue");
+        }
+
+
 </script>
 <?php
 if (isset($options["podval"])){

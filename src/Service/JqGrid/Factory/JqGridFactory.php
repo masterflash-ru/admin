@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Service\Factory;
+namespace Admin\Service\JqGrid\Factory;
 
 use Interop\Container\ContainerInterface;
 
@@ -7,15 +7,15 @@ use Interop\Container\ContainerInterface;
 
 */
 
-class GqGridFactory
+class JqGridFactory
 {
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-		$connection=$container->get('DefaultSystemDb');
+		//$connection=$container->get('DefaultSystemDb');
         $config=$container->get('config');
 
-        return new $requestedName($connection,$config);
+        return new $requestedName($container);
     }
 }
 

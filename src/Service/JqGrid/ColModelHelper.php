@@ -5,20 +5,25 @@
 * функции возвращают массив пригодный для 
 * добавления в конфиг ColModel
 */
-namespace Admin\Service;
+namespace Admin\Service\JqGrid;
 
 use Zend\Stdlib\ArrayUtils;
 use Zend\Json\Expr;
 
 
-/*"gridComplete"=>new Expr("function (){alert(123);}"),*/
-
-class GqGridColModelHelper
+class ColModelHelper
 {
+    /*это сервис менеджер для обрашения ко всему фреймворка*/
+    protected static $container;
     
+    /*установка контейнера системы - serviceManager*/
+    public static function setContainer($container)
+    {
+        self::$container=$container;
+    }
     
-    
-    
+
+
     /**
     * посточные кнопки действия
     */
@@ -116,14 +121,14 @@ class GqGridColModelHelper
     */
     public static function select(string $name, array $options=[])
     {
-        if (isset($options["editoptions"]["load_value"])){
+        if (isset($options["editoptions"]["load_value"]) && self::$container){
             //внешний источник, в виде обращения к функции
-            
-            
+            $obj=new $options["editoptions"]["load_value"](self::$container) ;
+            $options["editoptions"]["value"]=$obj ();
             unset($options["editoptions"]["load_value"]);
         }
         return ArrayUtils::merge([
-           "name" => $name,
+            "name" => $name,
             "editable" => true,
             "edittype" => "select",
             "editoptions"=>[
@@ -152,7 +157,25 @@ class GqGridColModelHelper
             ],
         ],$options);
     }
-    
+
+    /**
+    * вывод фото из хранилища по ID
+    * 
+    */
+    public static function image(string $name, array $options=[])
+    {
+        return ArrayUtils::merge([
+           "name" => $name,
+            "helpers"=>[
+                "helper"=>Plugin\Images::class,
+                "options"=>[
+                    "imageid"=>"id", //имя поля с ID
+                ],
+            ],
+            "formatter"=>new Expr("formatImage"),
+        ],$options);
+    }
+
     /**
     * вывод даты-времени + виджет выбора
     * 
@@ -164,6 +187,15 @@ class GqGridColModelHelper
             "editable" => true,
             "edittype" => "text",
             "formatter" => "datetime",
+            "helpers"=>[
+                "write"=>[
+                    "helper"=>Plugin\Datetime::class,
+                    "options"=>[
+                        "toformat"=>"'Y-m-d H:i:s'",
+                    ],
+                ],
+            ],
+
             "editoptions" => [
                 "dataInit"=>new Expr('function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});}'),
                 "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(",","");}'),

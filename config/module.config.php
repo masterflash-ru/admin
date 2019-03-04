@@ -258,8 +258,8 @@ return [
     'service_manager' => [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
-            Service\GqGrid::class => Service\Factory\GqGridFactory::class,
-			
+            Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
+			Service\JqGrid\Adapter\Db::class => Service\JqGrid\Adapter\Factory\Db::class,
         ],
     ],
     

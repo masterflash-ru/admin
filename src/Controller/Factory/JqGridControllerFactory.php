@@ -4,7 +4,7 @@ namespace Admin\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-use Admin\Service\GqGrid;
+use Admin\Service\JqGrid\JqGrid;
 
 
 
@@ -17,7 +17,7 @@ class JqGridControllerFactory implements FactoryInterface
         $connection=$container->get('DefaultSystemDb');
        $config=$container->get("config");
 	   $cache = $container->get('DefaultSystemCache');
-        $jqgrid=$container->get(GqGrid::class);
+        $jqgrid=$container->get(JqGrid::class);
 
        return new $requestedName( $connection,$cache,$config["interface"],$jqgrid);
     }

@@ -35,7 +35,7 @@ $.timepicker.setDefaults($.timepicker.regional['ru']);
 
 
 $.extend($.jgrid.defaults, { 
-    jaxGridOptions:{error:function(xhr,status,error){
+    ajaxGridOptions:{error:function(xhr,status,error){
         alert('HTTP status code: ' + xhr.status + '\n' +
               'textStatus: ' + status + '\n' +
               'errorThrown: ' + error+'\n\n\n HTTP body (jqXHR.responseText): ' + '\n' + xhr.responseText);
