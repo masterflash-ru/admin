@@ -15,6 +15,11 @@ class BackupRestoreControllerFactory implements FactoryInterface
 
 		//имя базы данных из конфига
 		$config = $container->get('Config');
+        
+        
+        $serviceListener = $container->get('ServiceListener');
+        
+        
 		return new BackupRestoreController($config);
     }
 }

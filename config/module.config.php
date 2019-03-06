@@ -259,7 +259,11 @@ return [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
             Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
-			Service\JqGrid\Adapter\Db::class => Service\JqGrid\Adapter\Factory\Db::class,
+            
+            Service\JqGrid\PluginManager::class => Service\JqGrid\Factory\PluginManagerFactory::class,
+        ],
+        'aliases' => [
+            'JqGridManager' => Service\JqGrid\PluginManager::class,
         ],
     ],
     
@@ -276,6 +280,13 @@ return [
 	//конфигурация хранения дампов
 	'backup_folder'=>"data/backup",
     
+    /*плагины для сетки JqGrid*/
+    "JqGridPlugin"=>[
+        'factories' => [
+        ],
+        'aliases' =>[
+        ],
+    ],
     /*описатели интерфейсов*/
     "interface"=>[
         "my"=>__DIR__."/my.php",

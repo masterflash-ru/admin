@@ -7,11 +7,14 @@ use Zend\Stdlib\ArrayUtils;
 use Exception;
 use DateTime;
 use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\ServiceManager;
 
 use Mf\Storage\Service\ImagesLib;
 
 class JqGrid
 {
+    
+    protected $plugins;
     protected $container;
     protected $options;
     /*описание колонок из конфига
@@ -37,9 +40,9 @@ class JqGrid
     /**/
 
     
-    public function __construct(ContainerInterface $container) 
+    public function __construct($pluginManager) 
     {
-        $this->container=$container;
+        $this->setPluginManager($pluginManager);
     }
     
 
@@ -56,23 +59,6 @@ class JqGrid
         }*/
         //смотрим описание колонок
         $this->colModel=$options["layout"]["colModel"];
-        //пробежим по колонкам и поищем что конвертировать
-        foreach ($options["layout"]["colModel"] as $col){
-            if (!isset($col["formatter"])){
-                continue;
-            }
-            switch ($col["formatter"]){
-                case "date":{
-                    $this->convert_fields[$col["name"]]="_dateConvert";
-                    break;
-                }
-                case "datetime":{
-                    $this->convert_fields[$col["name"]]="_datetimeConvert";
-                    break;
-                }
-            }
-            
-        }
     }
 
 
@@ -113,30 +99,28 @@ class JqGrid
         /*нормализуем GET параметры из грида*/
         $get=ArrayUtils::merge($this->default_getparameters,$get);
         
-        $adapter=$this->container->get($this->options["read"]["adapter"]);
-        $rez= $adapter->read($get,$this->options["read"]["options"]);
-        
-        
-        foreach ($this->options["layout"]["colModel"] as $colModel ){
-            if (isset($colModel["helpers"]["read"])){
-                $h=new $colModel["helpers"]["read"]["helper"];
-                
-                foreach ($rez["rows"] as $k=>$v){
-                    $rez["rows"][$k][$colModel["name"]]=$h($rez["rows"][$k][$colModel["name"]]);
-                }
+        //при помощи плагина читаем содержимое
+        foreach ($this->options["read"] as $plugin_name=>$options){
+            $plugin=$this->plugin($plugin_name);
+            $plugin->setOptions($options);
+            $rez=$plugin->read($get);
+        }
 
+        //пробежим по всем колонкам и проверим там наличие плагинов обработки
+        foreach ($this->options["layout"]["colModel"] as $colModel ){
+            if (isset($colModel["plugins"]["read"])){
+                //есть плагин/ны для обработки после чтения, применим его
+                foreach ($colModel["plugins"]["read"] as $plugin_name=>$options){
+                    //пробежим по всем элементам данных и передадим в плагин значение и опции
+                    $plugin=$this->plugin($plugin_name);
+                    //добавим в опции 
+                    $plugin->setOptions($options);
+                    foreach ($rez["rows"] as $index=>$value){
+                        $rez["rows"][$index][$colModel["name"]]=$plugin->read($rez["rows"][$index][$colModel["name"]],$index,$value);
+                    }
+                }
             }
-            
         }
-        
-        
-        $ImagesLib=$this->container->get(ImagesLib::class);
-        foreach ($rez["rows"] as $k=>$v){
-            $rez["rows"][$k]["img"]=$ImagesLib->loadImage("news",$v["img"],"admin_img");
-        }
-        
-        
-        
         return $rez;
     }
 
@@ -155,49 +139,79 @@ class JqGrid
         /*пробежим по полям и если нужно, конвертируем
         * надо или нет конвертировать проверяется из метаописаний colModel
         **/
-        foreach ($postParameters as $k=>$v){
-            if (array_key_exists($k,$this->convert_fields)){
-                $cc=$this->convert_fields[$k];
-                $postParameters[$k]=$this->$cc($postParameters[$k]);
+
+        //пробежим по всем колонкам и проверим там наличие плагинов обработки
+        foreach ($this->options["layout"]["colModel"] as $colModel ){
+            if (isset($colModel["plugins"]["write"])){
+                //есть плагин/ны для обработки после чтения, применим его
+                foreach ($colModel["plugins"]["write"] as $plugin_name=>$options){
+                    //пробежим по всем элементам данных и передадим в плагин значение и опции
+                    $plugin=$this->plugin($plugin_name);
+                    $plugin->setOptions($options);
+                    $postParameters[$colModel["name"]]=$plugin->write($postParameters[$colModel["name"]],$postParameters);
+                }
             }
         }
-        
-        //выполним хелперы, если они есть
-        
-        
-        $adapter=$this->container->get($this->options["write"]["adapter"]);
-        return $adapter->write($postParameters,$this->options["write"]["options"]);
-
-
-
+        //при помощи плагина пишем содержимое
+        $rez=[];
+        foreach ($this->options["write"] as $plugin_name=>$options){
+            $plugin=$this->plugin($plugin_name);
+            $plugin->setOptions($options);
+            $r=$plugin->write($postParameters);
+            if (!empty($r)){
+                $rez[]=$r;
+            }
+        }
+        return implode("",$rez);
     }
 
-
-
 /**
-* внутренняя для конвертирования даты из ru в ISO
-* $in - входное значение
-* возвращает конвертированный вариант
+* для прямого обращения к плагинам
 */
-protected function _dateConvert($in)
-{
-    $in=trim($in);
-    if (empty($in)){return null;}
-    $d=new DateTime($in);
-    return (string)$d->format('Y-m-d');
-}
+    public function __call($method, $params)
+    {
+        $plugin = $this->plugin($method);
+        if (is_callable($plugin)) {
+            return call_user_func_array($plugin, $params);
+        }
 
-/**
-* внутренняя для конвертирования даты-времени из ru в ISO
-* $in - входное значение
-* возвращает конвертированный вариант
-*/
-protected function _datetimeConvert($in)
-{
-    $in=trim($in);
-    if (empty($in)){return null;}
-    $d=new DateTime($in);
-    return (string)$d->format('Y-m-d H:i:s');
-}
+        return $plugin;
+    }
+    /**
+     * Get plugin manager instance
+     *
+     * @return PluginManager
+     */
+    public function getPluginManager()
+    {
+        if (! $this->plugins) {
+            $this->setPluginManager(new PluginManager(new ServiceManager));
+        }
+        return $this->plugins;
+    }
+
+    /**
+     * Set plugin manager instance
+     *
+     * @param  $plugins Plugin manager
+     * @return 
+     */
+    public function setPluginManager(PluginManager $plugins)
+    {
+        $this->plugins = $plugins;
+        return $this;
+    }
+    /**
+     * Retrieve a  by name
+     *
+     * @param  string     $name    Name of  to return
+     * @param  null|array $options Options to pass to constructor (if not already instantiated)
+     * @return 
+     */
+    public function plugin($name, array $options = null)
+    {
+        $plugins = $this->getPluginManager();
+        return $plugins->get($name, $options);
+    }
 
 }

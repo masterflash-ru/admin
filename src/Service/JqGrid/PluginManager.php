@@ -1,0 +1,91 @@
+<?php
+/**
+* менеджер плагинов для работы с сеткой
+*/
+
+namespace Admin\Service\JqGrid;
+
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\Factory\InvokableFactory;
+
+
+class PluginManager extends AbstractPluginManager
+{
+    /**
+     * плагины в виде алиасов
+     *
+     * @var array
+     */
+    protected $aliases = [
+        "db" => Plugin\Db::class,
+        "Db" => Plugin\Db::class,
+        "cache" => Plugin\Cache::class,
+        "Cache" => Plugin\Cache::class,
+        
+        
+        
+        "Datetime"=>   Plugin\Datetime::class,
+        "Date"=>   Plugin\Date::class,
+        "datetime"=>   Plugin\Datetime::class,
+        "date"=>   Plugin\Date::class,
+        "Images" => Plugin\Images::class,
+        "images" => Plugin\Images::class,
+        
+        "Translit" => Plugin\Translit::class,
+        "translit" => Plugin\Translit::class,
+    ];
+    
+
+    /**
+     * плагины фабрики
+     *
+     * @var array
+     */
+    protected $factories = [
+        Plugin\Db::class => Plugin\Factory\Db::class,
+        Plugin\Cache::class => Plugin\Factory\Cache::class,
+        
+        /*поэлементная обработка*/
+        Plugin\Datetime::class => InvokableFactory::class,
+        Plugin\Date::class => InvokableFactory::class,
+        Plugin\Images::class => Plugin\Factory\Images::class,
+        Plugin\Translit::class => InvokableFactory::class,
+    ];
+
+    /**
+     * Whether or not to share by default; default to false (v2)
+     *
+     * @var bool
+     */
+    protected $shareByDefault = false;
+
+    /**
+     * Whether or not to share by default; default to false (v3)
+     *
+     * @var bool
+     */
+    protected $sharedByDefault = false;
+
+    /**
+     * Default instance type
+     *
+     * @var string
+     */
+    protected $instanceOf = null;
+
+    /**
+     * Constructor
+     *
+     * After invoking parent constructor, add an initializer to inject the
+     * attached translator, if any, to the currently requested helper.
+     *
+     * {@inheritDoc}
+     */
+    public function __construct($configOrContainerInstance = null, array $v3config = [])
+    {
+        parent::__construct($configOrContainerInstance, $v3config);
+    }
+
+
+
+}

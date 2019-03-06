@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Service\JqGrid\Adapter\Factory;
+namespace Admin\Service\JqGrid\Plugin\Factory;
 
 use Interop\Container\ContainerInterface;
 

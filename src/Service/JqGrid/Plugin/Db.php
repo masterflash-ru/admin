@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Service\JqGrid\Adapter;
+namespace Admin\Service\JqGrid\Plugin;
 
 /*
 */
@@ -10,10 +10,9 @@ use Zend\Stdlib\ArrayUtils;
 use Exception;
 
 
-class Db
+class Db extends AbstractPlugin
 {
 	protected $connection;
-    protected $options;
     protected $def_options_read=[
         "sql"=>"",
         "PrimaryKey"=>null,
@@ -46,9 +45,9 @@ class Db
     ];
 * возвращает массив формата грида, который к упаковке в json
 */
-public function read(array $get,array $options)
+public function read(array $get)
 {
-    $options=ArrayUtils::merge($this->def_options_read,$options);
+    $options=ArrayUtils::merge($this->def_options_read,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
     $rs->PageSize=(int)$get["rows"];
@@ -117,9 +116,9 @@ public function read(array $get,array $options)
     ];
 * $options - опции из секции write секции конфига
 */
-public function write(array $postParameters,array $options)
+public function write(array $postParameters)
 {
-    $options=ArrayUtils::merge($this->def_options_write,$options);
+    $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
     $sql=$options["sql"];

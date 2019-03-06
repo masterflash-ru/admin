@@ -166,10 +166,13 @@ class ColModelHelper
     {
         return ArrayUtils::merge([
            "name" => $name,
-            "helpers"=>[
-                "helper"=>Plugin\Images::class,
-                "options"=>[
-                    "imageid"=>"id", //имя поля с ID
+            "plugins"=>[
+                "read"=>[
+                    "Images" =>[
+                        "image_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "storage_item_rule_name"=>"admin_img"   //имя правила из хранилища
+                    ],
                 ],
             ],
             "formatter"=>new Expr("formatImage"),
@@ -187,10 +190,9 @@ class ColModelHelper
             "editable" => true,
             "edittype" => "text",
             "formatter" => "datetime",
-            "helpers"=>[
+            "plugins"=>[
                 "write"=>[
-                    "helper"=>Plugin\Datetime::class,
-                    "options"=>[
+                    "datetime"=>[
                         "toformat"=>"'Y-m-d H:i:s'",
                     ],
                 ],

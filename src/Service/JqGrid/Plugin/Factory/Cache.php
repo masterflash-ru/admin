@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Service\JqGrid\Factory;
+namespace Admin\Service\JqGrid\Plugin\Factory;
 
 use Interop\Container\ContainerInterface;
 
@@ -7,13 +7,13 @@ use Interop\Container\ContainerInterface;
 
 */
 
-class JqGridFactory
+class Cache
 {
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 {
-    $pluginManager=$container->get('JqGridManager');
-    return new $requestedName($pluginManager);
+	$cache=$container->get('DefaultSystemCache');
+    return new $requestedName($cache);
 }
 }
 
