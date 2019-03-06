@@ -13,16 +13,6 @@ use Zend\Json\Expr;
 
 class ColModelHelper
 {
-    /*это сервис менеджер для обрашения ко всему фреймворка*/
-    protected static $container;
-    
-    /*установка контейнера системы - serviceManager*/
-    public static function setContainer($container)
-    {
-        self::$container=$container;
-    }
-    
-
 
     /**
     * посточные кнопки действия
@@ -121,12 +111,6 @@ class ColModelHelper
     */
     public static function select(string $name, array $options=[])
     {
-        if (isset($options["editoptions"]["load_value"]) && self::$container){
-            //внешний источник, в виде обращения к функции
-            $obj=new $options["editoptions"]["load_value"](self::$container) ;
-            $options["editoptions"]["value"]=$obj ();
-            unset($options["editoptions"]["load_value"]);
-        }
         return ArrayUtils::merge([
             "name" => $name,
             "editable" => true,

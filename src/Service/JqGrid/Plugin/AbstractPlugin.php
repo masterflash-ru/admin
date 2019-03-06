@@ -19,4 +19,11 @@ abstract class AbstractPlugin
         $this->options=ArrayUtils::merge($this->def_options,$options);
     }
     
+    /**
+    * заглушка
+    */
+    public function colModel(array $colModel)
+    {
+        
+    }
 }

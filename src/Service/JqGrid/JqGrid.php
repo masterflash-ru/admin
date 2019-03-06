@@ -6,7 +6,6 @@ namespace Admin\Service\JqGrid;
 use Zend\Stdlib\ArrayUtils;
 use Exception;
 use DateTime;
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceManager;
 
 use Mf\Storage\Service\ImagesLib;
@@ -114,6 +113,7 @@ class JqGrid
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
                     //добавим в опции 
+                    $options["colModel"]=$colModel;
                     $plugin->setOptions($options);
                     foreach ($rez["rows"] as $index=>$value){
                         $rez["rows"][$index][$colModel["name"]]=$plugin->read($rez["rows"][$index][$colModel["name"]],$index,$value);
@@ -147,6 +147,7 @@ class JqGrid
                 foreach ($colModel["plugins"]["write"] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
+                    $options["colModel"]=$colModel;
                     $plugin->setOptions($options);
                     $postParameters[$colModel["name"]]=$plugin->write($postParameters[$colModel["name"]],$postParameters);
                 }

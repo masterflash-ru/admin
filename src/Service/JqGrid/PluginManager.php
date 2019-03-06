@@ -33,6 +33,11 @@ class PluginManager extends AbstractPluginManager
         
         "Translit" => Plugin\Translit::class,
         "translit" => Plugin\Translit::class,
+        
+        "SelectFromDb" => Plugin\SelectFromDb::class,
+        "selectFromDb" => Plugin\SelectFromDb::class,
+        "selectfromdb" => Plugin\SelectFromDb::class,
+        
     ];
     
 
@@ -50,6 +55,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Date::class => InvokableFactory::class,
         Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Translit::class => InvokableFactory::class,
+        Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
     ];
 
     /**

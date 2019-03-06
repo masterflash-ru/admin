@@ -13,8 +13,8 @@ class IJqgridFactory implements FactoryInterface
 {
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 {
-    ColModelHelper::setContainer($container);
-   $config=$container->get('config');
-    return new $requestedName($config["interface"]);
+    $config=$container->get('config');
+    $pluginManager=$container->get('JqGridManager');
+    return new $requestedName($config["interface"],$pluginManager);
 }
 }
