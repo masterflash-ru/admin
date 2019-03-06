@@ -150,6 +150,12 @@ class ColModelHelper
     {
         return ArrayUtils::merge([
            "name" => $name,
+            "editable" => true,
+            
+            "edittype"=>"text",
+            "editoptions"=>[
+                "src"=>"/media/pics/"
+            ],
             "plugins"=>[
                 "read"=>[
                     "Images" =>[
@@ -159,7 +165,7 @@ class ColModelHelper
                     ],
                 ],
             ],
-            "formatter"=>new Expr("formatImage"),
+            "formatter"=>"image",
         ],$options);
     }
 

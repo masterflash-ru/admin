@@ -12,6 +12,10 @@ Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 $options=$this->options;
 
 //\Zend\Debug\Debug::dump($options);
+//удалим всю информацию о плагинах, она не нужна
+foreach ($options["layout"]["colModel"] as $k=>$v){
+    unset($options["layout"]["colModel"][$k]["plugins"]);
+}
 
 
 $options["layout"]["datatype"]="json";
@@ -63,12 +67,12 @@ $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', na
                {closeOnEscape:true,width:"auto"}); //опции при просмотре записи в окошке
 
 });
-function formatImage(cellValue, options, rowObject) {
+/*function formatImage(cellValue, options, rowObject) {
             var imageHtml = "<img src='/" + cellValue + "' originalValue='" + cellValue + "' />";
             return imageHtml;
         }
-
-function unformatImage(cellValue, options, cellObject) {
+*/
+function image1(cellValue, options, cellObject) {
             return $(cellObject.html()).attr("originalValue");
         }
 

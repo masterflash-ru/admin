@@ -32,10 +32,11 @@ $.timepicker.regional['ru'] = {
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
 });
+var dataInit={},defaultValue={};
 
 
 $.extend($.jgrid.defaults, { 
-    ajaxGridOptions:{error:function(xhr,status,error){
+    jaxGridOptions:{error:function(xhr,status,error){
         alert('HTTP status code: ' + xhr.status + '\n' +
               'textStatus: ' + status + '\n' +
               'errorThrown: ' + error+'\n\n\n HTTP body (jqXHR.responseText): ' + '\n' + xhr.responseText);
@@ -43,8 +44,6 @@ $.extend($.jgrid.defaults, {
                    }
 });
     
-
-
 
 $.extend($.fn.fmatter , {
     datetime : function(cellval, opts, rwd, act) {
@@ -56,16 +55,26 @@ $.extend($.fn.fmatter , {
             return $.fn.fmatter.defaultFormat(cellval, opts);
         }
         if(!$.fmatter.isEmpty(cellval)) {
-            return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
+            return cellval;
+            //return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
         }
         return $.fn.fmatter.defaultFormat(cellval, opts);
     },
-    /*форматтер для открытия новых интерфейсов*/
-    interface : function(cellval, opts, rwd, act) {
-        return '<button>111</button><button>2222</button>';
-        //return $.fn.fmatter.defaultFormat(cellval, opts);
+    image : function(cellval, opts, rwd, act) {
+        console.log(act);
+        var op = {};//$.extend({},opts.date);
+        if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
+            op = $.extend({},op,opts.colModel.formatoptions);
+        }
+        
+        if(!op.reformatAfterEdit && act === 'edit'){
+            return "<img src='/" + cellval + "' originalValue='" + cellval + "' />";
+        }
+        if(!$.fmatter.isEmpty(cellval)) {
+           return "<img src='/" + cellval + "' originalValue='" + cellval + "' />";
+        }
+        
     }
-
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -79,6 +88,20 @@ $.extend($.fn.fmatter.datetime , {
         return $.fn.fmatter.defaultFormat(cellval, opts);
     }
 });
+$.extend($.fn.fmatter.image , {
+    unformat : function (cellval, opts) {
+        var op = $.jgrid.getRegional(this, 'formatter.image') || {};
+        if(opts.formatoptions !== undefined) {
+            op = $.extend({},op,opts.formatoptions);
+        }
+        if(!$.fmatter.isEmpty(cellval)) {
+           // return $.jgrid.parseDate.call(this, op.newfullformat,cellval,op.srcfullformat,op);
+        }
+        return "<img src='/" + cellval + "' originalValue='" + cellval + "' /><input type=\"file\">";
+        return $.fn.fmatter.defaultFormat(cellval, opts);
+    }
+});
+
 
 
 
