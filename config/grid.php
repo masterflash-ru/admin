@@ -1,7 +1,7 @@
 <?php
 namespace Admin;
 
-use Admin\Service\GqGridColModelHelper;
+use Admin\Service\JqGrid\ColModelHelper;
 use Zend\Json\Expr;
 
 return [
@@ -59,9 +59,9 @@ return [
                 ],
                 "colModel" => [
 
-                    GqGridColModelHelper::text("caption",["label"=>"Заголовок"]),
-                    GqGridColModelHelper::datetime("date_public",["label"=>"Дата публикации"]),
-                    GqGridColModelHelper::checkbox("public"),
+                    ColModelHelper::text("caption",["label"=>"Заголовок"]),
+                    ColModelHelper::datetime("date_public",["label"=>"Дата публикации"]),
+                    ColModelHelper::checkbox("public"),
 
                     /*[/*выпадающий список* /
                         "name" => "public",
@@ -74,7 +74,7 @@ return [
                         "formatter"=>"select",
                     ],*/
                     
-                    GqGridColModelHelper::ckeditor("full_news",["label"=>"Статья полностью"]),
+                    ColModelHelper::ckeditor("full_news",["label"=>"Статья полностью"]),
                   
                     
                     [/*Кнопки перехода на другой интерфейс*/
@@ -87,7 +87,7 @@ return [
                         ]
                     ],
 
-                    GqGridColModelHelper::cellActions(),
+                    ColModelHelper::cellActions(),
                     
                 
                 ],

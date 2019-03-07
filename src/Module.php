@@ -55,6 +55,7 @@ public function onDispatch(MvcEvent $event)
         if ($user!=1){
             //авторизованы, но доступ запрещен
             $controller->redirect()->toRoute('accessdenied');
+
             return;
         } else {
             //получилось, что root -у доступа нет, выводим сообщение
