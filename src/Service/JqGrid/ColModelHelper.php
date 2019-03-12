@@ -152,9 +152,12 @@ class ColModelHelper
            "name" => $name,
             "editable" => true,
             
-            "edittype"=>"text",
+            "edittype"=>"file",
             "editoptions"=>[
-                "src"=>"/media/pics/"
+                //"custom_element"=>new Expr('imageEdit'),
+                //"custom_value"=>new Expr('imageSave'),
+                "enctype"=> "multipart/form-data",
+                
             ],
             "plugins"=>[
                 "read"=>[
@@ -165,7 +168,8 @@ class ColModelHelper
                     ],
                 ],
             ],
-            "formatter"=>"image",
+            "formatter"=>"file",
+            //"unformat"=>new Expr("imageUnFormat"),
         ],$options);
     }
 

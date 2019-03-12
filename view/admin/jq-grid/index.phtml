@@ -54,28 +54,56 @@ if (isset($options["caption"])){
 <script type="text/javascript">
 $(function () {
 "use strict";
-
 var jqgrid_options=<?=$jqgrid?>,
     navgrid_button_options=<?=json::encode($navgrid_options["button"],true)?>;
+jqgrid_options.dataProxy=$.jgrid.ext.ajaxFormProxy;
+jqgrid_options.useDataProxy=true;
+
 
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', navgrid_button_options, /*кнопки в панели*/
-              {width:"auto",closeOnEscape:true,closeAfterEdit: true, recreateForm: true}, //опции в окно при редактировании edit
-               {width:"auto",closeOnEscape:true,closeAfterAdd: true, recreateForm: true}, // опции в окно при добавлении add
+              {width:"auto",closeOnEscape:true,closeAfterEdit: true, recreateForm: true,useDataProxy: true,
+              
+               onInitializeForm : function(formid){
+                    $(formid).attr('method','POST');
+                    $(formid).attr('action','');
+                    $(formid).attr('enctype','multipart/form-data');
+                }
+              }, //опции в окно при редактировании edit
+               {width:"auto",closeOnEscape:true,closeAfterAdd: true, recreateForm: true,useDataProxy: true,
+            
+               onInitializeForm : function(formid){
+                    $(formid).attr('method','POST');
+                    $(formid).attr('action','');
+                    $(formid).attr('enctype','multipart/form-data');
+                }}, // опции в окно при добавлении add
                {closeOnEscape:true},  // delete instead that del:false we need this
                {multipleSearch : true}, //можно добавлять условия
                {closeOnEscape:true,width:"auto"}); //опции при просмотре записи в окошке
+var lastSelection;
+function editRow(id) {
+    if (id && id !== lastSelection) {
+        var grid = $("#<?=$options["container"]?>");
+        grid.jqGrid('restoreRow',lastSelection);
+        grid.jqGrid('editRow',id, {
+            keys: true,
+            onEnter : function(rowid, options, event) {
+                if (confirm("Save the row with ID: "+rowid) === true) {
+                    $(this).jqGrid("saveRow", rowid, options );
+                }
+            }
+        });
+        lastSelection = id;
+    }
+}
+
+$('#<?=$options["container"]?>').jqGrid('inlineNav','#<?=$options["container"]?>_pager',
+                                        {"editParams":{"editRowParams":
+                                                       {"beforeSaveRow":function( options, rowId ){console.log(rowId);}}
+                                                      }
+                                        });
 
 });
-/*function formatImage(cellValue, options, rowObject) {
-            var imageHtml = "<img src='/" + cellValue + "' originalValue='" + cellValue + "' />";
-            return imageHtml;
-        }
-*/
-function image1(cellValue, options, cellObject) {
-            return $(cellObject.html()).attr("originalValue");
-        }
-
 
 </script>
 <?php

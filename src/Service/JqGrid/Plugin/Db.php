@@ -117,7 +117,7 @@ public function read(array $get)
 * $options - опции из секции write секции конфига
 */
 public function write(array $postParameters)
-{
+{//throw new \Exception("!!!!");
     $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
@@ -141,9 +141,9 @@ public function write(array $postParameters)
             }
             foreach ($postParameters as $k=>$v){
                 if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
-                $rs->Fields->Item[$k]->Value=$v;
+               // $rs->Fields->Item[$k]->Value=$v;
             }
-            $rs->Update();
+            //$rs->Update();
             break;
         }
         default:{

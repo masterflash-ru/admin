@@ -53,7 +53,7 @@ public function readjqgridAction()
         $errors="Ошибка: ".$e->getMessage()."\nФайл:".$e->getFile()."\nСтрока:".$e->getLine()."\nТрассировка:".$e->getTraceAsString();
         //любое исключение - 404
         $this->getResponse()->setStatusCode(404);
-        return $this->getResponse()->setContent($errors);
+        return $this->getResponse()->setContent(nl2br($errors));
     }
 }
 
@@ -73,7 +73,7 @@ public function editjqgridAction()
         $errors="Ошибка: ".$e->getMessage()."\nФайл:".$e->getFile()."\nСтрока:".$e->getLine()."\nТрассировка:".$e->getTraceAsString();
         //любое исключение - 404
         $this->getResponse()->setStatusCode(404);
-        return $this->getResponse()->setContent($errors);
+        return $this->getResponse()->setContent(nl2br($errors));
     }
 }
 }
