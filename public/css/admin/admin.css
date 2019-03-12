@@ -18,6 +18,7 @@ th span{color:#ff0000}
 input[name*=del],button[name*=del] {color:#fff; background-color:#F00}
 input[name*=save],button[name*=save] {color:#000; background-color:#6F0}
 input[name*=create] {color:#000; background-color:#3CF}
+.jqgrid-img{max-width: 100%}
 /*#actions_tree_out>img {padding-top:5px; padding-bottom:5px;}*/
 #actions_tree_out{width:1900px;}
 #actions_tree_out table {padding-top:5px; padding-bottom:5px;}

@@ -11,7 +11,7 @@ Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 
 $options=$this->options;
 
-//\Zend\Debug\Debug::dump($options);
+//\Zend\Debug\Debug::dump($options["layout"]["colModel"]);
 //удалим всю информацию о плагинах, она не нужна
 foreach ($options["layout"]["colModel"] as $k=>$v){
     unset($options["layout"]["colModel"][$k]["plugins"]);

@@ -117,7 +117,7 @@ public function read(array $get)
 * $options - опции из секции write секции конфига
 */
 public function write(array $postParameters)
-{//throw new \Exception("!!!!");
+{//print_r(array_keys($_POST));print_r($_FILES);print_r($_POST["img"]);
     $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
@@ -141,11 +141,26 @@ public function write(array $postParameters)
             }
             foreach ($postParameters as $k=>$v){
                 if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
-               // $rs->Fields->Item[$k]->Value=$v;
+                if (array_key_exists($k,$rs->DataColumns->Item_text)){
+                    $rs->Fields->Item[$k]->Value=$v;
+                }
             }
-            //$rs->Update();
+            $rs->Update();
             break;
         }
+        case "add":{
+            $rs->AddNew();
+            foreach ($postParameters as $k=>$v){
+                if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
+                if (array_key_exists($k,$rs->DataColumns->Item_text)){
+                    $rs->Fields->Item[$k]->Value=$v;
+                }
+            }
+            $rs->Update();
+
+            break;
+        }
+        
         default:{
             throw new  Exception($postParameters["oper"]." - не известная операция записи/редактирования JqGrid");
         }

@@ -134,7 +134,7 @@ class ColModelHelper
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
-                "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
+               //"dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
             ],
             "editrules"=>[
                 "edithidden"=>true,
@@ -148,16 +148,15 @@ class ColModelHelper
     */
     public static function image(string $name, array $options=[])
     {
-        return ArrayUtils::merge([
+        $def=[
            "name" => $name,
             "editable" => true,
             
-            "edittype"=>"file",
+            "edittype"=>"custom",
             "editoptions"=>[
-                //"custom_element"=>new Expr('imageEdit'),
-                //"custom_value"=>new Expr('imageSave'),
-                "enctype"=> "multipart/form-data",
-                
+                "custom_element"=>new Expr('imageEdit'),
+                "custom_value"=>new Expr('imageSave'),
+        
             ],
             "plugins"=>[
                 "read"=>[
@@ -167,10 +166,26 @@ class ColModelHelper
                         "storage_item_rule_name"=>"admin_img"   //имя правила из хранилища
                     ],
                 ],
+                "write"=>[
+                    "Images"=>[
+                        "image_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "database_table_name"=>""               //имя таблицы SQL куда вставляем, нужно для новых записей
+                    ],
+                ],
             ],
-            "formatter"=>"file",
-            //"unformat"=>new Expr("imageUnFormat"),
-        ],$options);
+            "formatter"=>"image",
+            "classes"=>"jqgrid-img"
+        ];
+        if (isset($options["plugins"]["read"])){
+            unset($def["plugins"]["read"]);
+        }
+        if (isset($options["plugins"]["write"])){
+            unset($def["plugins"]["write"]);
+        }
+        
+        return ArrayUtils::merge($def,$options);
+        
     }
 
     /**
@@ -179,7 +194,7 @@ class ColModelHelper
     */
     public static function datetime(string $name, array $options=[])
     {
-        return ArrayUtils::merge([/*формат дата + выбор даты*/
+        $def=[/*формат дата + выбор даты*/
             "name" => $name,
             "editable" => true,
             "edittype" => "text",
@@ -197,7 +212,12 @@ class ColModelHelper
                 "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(",","");}'),
                 "size" => 50,
             ],
-        ],$options);
+        ];
+        if (isset($options["plugins"]["write"])){
+            unset($def["plugins"]["write"]);
+        }
+        return ArrayUtils::merge($def,$options);
+
     }
     /**
     * вывод даты + виджет выбора

@@ -8,7 +8,7 @@ $.jgrid.ext =
         opts.error=function(xhr, status, error){$.jgrid.info_dialog("Ошибка", xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left"});}
         var $form = $('#FrmGrid_' + $(this).getGridParam('id'));
         var ele = $form.find('INPUT,TEXTAREA,SELECT').not(':file');
-         ele.each(function () {$(this).data('name', $(this).attr('name'));$(this).removeAttr('name');});		
+         ele.each(function () {$(this).data('name', $(this).attr('name'));$(this).removeAttr('name');});
 		$form.ajaxSubmit(opts);
 		setTimeout(function()
 		{
@@ -51,16 +51,19 @@ $.extend($.fn.fmatter , {
         return $.fn.fmatter.defaultFormat(cellval, opts);
     },
     image : function(cellval, opts, rwd, act) {
-        var op = {};//$.extend({},opts.date);
+        var opColModel = $.extend({classes:""},opts.colModel),op={},img_class="";
         if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
             op = $.extend({},op,opts.colModel.formatoptions);
         }
+        if (opColModel.classes){
+            img_class=' class="'+opColModel.classes+'"';
+        }
         
         if(!op.reformatAfterEdit && act === 'edit'){
-            return "<img src='/" + cellval + "' />";
+            return "<img "+img_class+" src='/" + cellval + "' />";
         }
         if(!$.fmatter.isEmpty(cellval)) {
-           return "<img src='/" + cellval + "' />";
+           return "<img "+img_class+" src='/" + cellval + "' />";
         }
         
     }
@@ -94,29 +97,16 @@ $.extend($.fn.fmatter.image , {
 /*расширение для редактирования*/
 function imageEdit(value, options)
 {
-    var el=$("<img src='"+value+"'><br><input type='hidden' value='"+value+"'><input type='file'>");
-    //el.val(value);
-  return el;
+return $("<div data-value=\""+value+"\"><img src=\""+value+"\" style='max-width:250px'/><br><input type='file' name=\"file_"+options.name+"\"></div>");
 }
 function imageSave(elem, operation, value)
-{//console.log(operation);
-    //console.log(elem);
- //console.log(value);
+{
  if(operation === 'get') {//запись на сервер
-       
-     console.log(    $(elem[3]).val()  );
-     return $(elem[3]).val();
+     return $(elem).data("value");
     } else if(operation === 'set') {
-       $('input',elem).val(value);
+       return "";
     }
 }
-$.extend($.jgrid.inlineEdit, {
-                beforeSaveRow: function (options, rowid) {
-console.log(options);
-                   
-                    return true;
-                }
-            });
 
 
 /*сериализация и отправка при редактировании строки* /
