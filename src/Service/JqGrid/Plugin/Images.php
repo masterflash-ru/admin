@@ -98,6 +98,7 @@ public function edit($value,$postParameters)
         //Array ( [name] => _0006s_0020_роял ред делишес.jpg [type] => image/jpeg [tmp_name] => ./data/images/_0006s_0020_роял ред делишес.jpg [error] => 0 [size] => 348221 )
         $data = $inputFilter->getValue('file_'.$input_name);
         if (!empty($data)){
+            //быда загрузка файла, заносим в хранилище
             $this->ImagesLib->selectStorageItem($this->options["storage_item_name"]);
             return $this->ImagesLib->saveImages($data["name"],$this->options["storage_item_name"],$postParameters[$this->options["image_id"]]);
         }
