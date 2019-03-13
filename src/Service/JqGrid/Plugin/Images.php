@@ -11,6 +11,7 @@ use Exception;
 class Images extends AbstractPlugin
 {
     protected $ImagesLib;
+    protected $connection;
     protected $def_options =[
         "image_id"=>"id",                        //имя поля с ID
         "storage_item_name" => "",              //имя секции в хранилище
@@ -20,9 +21,10 @@ class Images extends AbstractPlugin
 
 
     
-    public function __construct($ImagesLib) 
+    public function __construct($ImagesLib,$connection) 
     {
 		$this->ImagesLib=$ImagesLib;
+        $this->connection=$connection;
     }
     
 
@@ -34,6 +36,20 @@ public function read($value,$index,$row)
 {
     return $this->ImagesLib->loadImage($this->options["storage_item_name"],$row[$this->options["image_id"]],$this->options["storage_item_rule_name"]);
 }
+
+/**
+* добвление новой записи, ID еще нет, выисляется следующий и под ним записывается в хранилище
+*/
+public function add($value,$postParameters)
+{
+    $rs=$this->connection->Execute("SELECT AUTO_INCREMENT  FROM information_schema.tables
+                                                WHERE
+                                                  table_name = '".$this->options["database_table_name"]."'
+                                                  AND table_schema = DATABASE()");
+    $postParameters["id"]=$rs->Fields->Item['AUTO_INCREMENT']->Value;
+    return $this->edit($value,$postParameters);
+}
+
 
 /**
 * обработка фото по правилам прописанных в парвилах хранилища
@@ -50,8 +66,11 @@ array(3) {
 если загрузки не было, возвращается пустой массив
 * если была ошибка - исключение
 */
-public function write($value,$postParameters)
+public function edit($value,$postParameters)
 {
+    if (empty($this->options["storage_item_name"])){
+        throw new Exception("Не указано имя секции конфига с хранилищем, куда записывать файлы");
+    }
     $input_name=$this->options["colModel"]["name"];
     $data_folder='./data/datastorage';
     $file = new FileInput('file_'.$input_name);
@@ -92,5 +111,17 @@ public function write($value,$postParameters)
     return [];
 }
 
+/**
+*удаление записи
+* $postParameters - то что пришло от сетки, обычно 
+* id - ID записи
+* oper - равно "del"
+*/
+public function del(array $postParameters)
+{
+    $id=(int)$postParameters["id"];
+    $this->ImagesLib->deleteFile($this->options["storage_item_name"],$id);
+}
 
+    
 }

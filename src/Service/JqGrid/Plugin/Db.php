@@ -97,6 +97,11 @@ public function read(array $get)
     return $rez;    
 }
 
+public function add(array $postParameters)
+{
+    return $this->edit($postParameters);
+}
+
 /**
 * запись в базу
 * $postParameters - массив того что посылает JqGrid как есть:
@@ -116,7 +121,7 @@ public function read(array $get)
     ];
 * $options - опции из секции write секции конфига
 */
-public function write(array $postParameters)
+public function edit(array $postParameters)
 {//print_r(array_keys($_POST));print_r($_FILES);print_r($_POST["img"]);
     $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
@@ -157,18 +162,30 @@ public function write(array $postParameters)
                 }
             }
             $rs->Update();
-
             break;
         }
-        
+        case "del":{/*редактирование, находим запись по ключу*/
+            //найдем нужную запись
+            $rs->Find($options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."'");
+            if ($rs->EOF) {
+                throw new  Exception("Запись ".$options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."' не найдена!");
+            }
+            $rs->Delete();
+            $rs->Update();
+            break;
+        }
+
         default:{
             throw new  Exception($postParameters["oper"]." - не известная операция записи/редактирования JqGrid");
         }
     }
-    
-
 }
 
-
-
+/**
+* удаление записи
+*/
+public function del(array $postParameters)
+{
+    return $this->edit($postParameters);
+}
 }

@@ -9,10 +9,13 @@ class Translit extends AbstractPlugin
 {
 
     protected $def_options =[
-        "source"=>""
+        "source"=>"name"
     ];
-
-public function write($value,$postParameters)
+public function add($value,$postParameters)
+{
+    return $this->edit($value,$postParameters);
+}
+public function edit($value,$postParameters)
 {
     $value=trim($value);
     if (empty($value)) {

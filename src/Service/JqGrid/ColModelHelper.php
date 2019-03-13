@@ -166,22 +166,33 @@ class ColModelHelper
                         "storage_item_rule_name"=>"admin_img"   //имя правила из хранилища
                     ],
                 ],
-                "write"=>[
+                "edit"=>[
                     "Images"=>[
                         "image_id"=>"id",                        //имя поля с ID
                         "storage_item_name" => "",              //имя секции в хранилище
-                        "database_table_name"=>""               //имя таблицы SQL куда вставляем, нужно для новых записей
+                    ],
+                ],
+                "add"=>[
+                    "Images"=>[
+                        "image_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "database_table_name"=>""               //имя таблицы SQL куда вставляем новые записи (НЕ ФОТО)!, нужно для новых записей
+                    ],
+                ],
+                "del"=>[
+                    "Images"=>[
+                        "image_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
                     ],
                 ],
             ],
             "formatter"=>"image",
             "classes"=>"jqgrid-img"
         ];
-        if (isset($options["plugins"]["read"])){
-            unset($def["plugins"]["read"]);
-        }
-        if (isset($options["plugins"]["write"])){
-            unset($def["plugins"]["write"]);
+        foreach (["read","add","edit","del"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
         }
         
         return ArrayUtils::merge($def,$options);
@@ -200,7 +211,12 @@ class ColModelHelper
             "edittype" => "text",
             "formatter" => "datetime",
             "plugins"=>[
-                "write"=>[
+                "edit"=>[
+                    "datetime"=>[
+                        "toformat"=>"'Y-m-d H:i:s'",
+                    ],
+                ],
+                "add"=>[
                     "datetime"=>[
                         "toformat"=>"'Y-m-d H:i:s'",
                     ],
@@ -213,8 +229,10 @@ class ColModelHelper
                 "size" => 50,
             ],
         ];
-        if (isset($options["plugins"]["write"])){
-            unset($def["plugins"]["write"]);
+        foreach (["read","add","edit","del"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
         }
         return ArrayUtils::merge($def,$options);
 
@@ -225,7 +243,7 @@ class ColModelHelper
     */
     public static function date(string $name, array $options=[])
     {
-        return ArrayUtils::merge([/*формат дата + выбор даты*/
+        $def=[/*формат дата + выбор даты*/
             "name" => $name,
             "editable" => true,
             "edittype" => "text",
@@ -235,7 +253,26 @@ class ColModelHelper
                 "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}'),
                 "size" => 40,
             ],
-        ],$options);
+            "plugins"=>[
+                "edit"=>[
+                    "datetime"=>[
+                        "toformat"=>"'Y-m-d H:i:s'",
+                    ],
+                ],
+                "add"=>[
+                    "datetime"=>[
+                        "toformat"=>"'Y-m-d H:i:s'",
+                    ],
+                ],
+            ],
+        ];
+        foreach (["read","add","edit","del"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
+        }
+        return ArrayUtils::merge($def,$options);
+
     }
     
 }

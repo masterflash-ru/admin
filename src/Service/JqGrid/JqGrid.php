@@ -140,25 +140,35 @@ class JqGrid
         * надо или нет конвертировать проверяется из метаописаний colModel
         **/
 
+        if (!(isset($postParameters["oper"]) && in_array($postParameters["oper"],["add","edit","del"]))){
+            return "";
+        }
+        //операция
+        $oper=$postParameters["oper"];
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
         foreach ($this->options["layout"]["colModel"] as $colModel ){
-            if (isset($colModel["plugins"]["write"])){
+            if (isset($colModel["plugins"][$oper])){
                 //есть плагин/ны для обработки после чтения, применим его
-                foreach ($colModel["plugins"]["write"] as $plugin_name=>$options){
+                foreach ($colModel["plugins"][$oper] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
                     $options["colModel"]=$colModel;
                     $plugin->setOptions($options);
-                    $postParameters[$colModel["name"]]=$plugin->write($postParameters[$colModel["name"]],$postParameters);
+                    if (isset($postParameters[$colModel["name"]])){
+                        $postParameters[$colModel["name"]]=$plugin->$oper($postParameters[$colModel["name"]],$postParameters);
+                    }
+                    if ($oper=="del" && isset($postParameters["id"])){
+                        $plugin->del($postParameters);
+                    }
                 }
             }
         }
         //при помощи плагина пишем содержимое
         $rez=[];
-        foreach ($this->options["write"] as $plugin_name=>$options){
+        foreach ($this->options[$oper] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $r=$plugin->write($postParameters);
+            $r=$plugin->$oper($postParameters);
             if (!empty($r)){
                 $rez[]=$r;
             }

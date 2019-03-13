@@ -17,11 +17,14 @@ class Cache extends AbstractPlugin
 		$this->cache=$cache;
     }
     
-
+public function del(array $postParameters)
+{
+    $this->edit($postParameters);
+}
 /**
 * Очистка кеша
 */
-public function write()
+public function edit(array $postParameters)
 {
     if (!empty($this->options["keys"])){
         $this->cache->removeItems($this->options["keys"]);

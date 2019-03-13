@@ -13,7 +13,8 @@ class Images
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 {
 	$ImagesLib=$container->get(ImagesLib::class);
-    return new $requestedName($ImagesLib);
+    $connection=$container->get('DefaultSystemDb');
+    return new $requestedName($ImagesLib,$connection);
 }
 }
 

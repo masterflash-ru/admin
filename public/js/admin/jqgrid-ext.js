@@ -60,10 +60,16 @@ $.extend($.fn.fmatter , {
         }
         
         if(!op.reformatAfterEdit && act === 'edit'){
-            return "<img "+img_class+" src='/" + cellval + "' />";
+            if (!$.fmatter.isEmpty(cellval)){
+                return "<img "+img_class+" src='" + cellval + "' />";
+            } else {
+                return "";
+            }
         }
         if(!$.fmatter.isEmpty(cellval)) {
            return "<img "+img_class+" src='/" + cellval + "' />";
+        } else {
+            return "";
         }
         
     }
