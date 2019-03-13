@@ -134,7 +134,7 @@ class ColModelHelper
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
-               //"dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
+               "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
             ],
             "editrules"=>[
                 "edithidden"=>true,
