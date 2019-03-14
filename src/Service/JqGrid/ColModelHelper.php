@@ -9,6 +9,7 @@ namespace Admin\Service\JqGrid;
 
 use Zend\Stdlib\ArrayUtils;
 use Zend\Json\Expr;
+use Zend\Session\Container;
 
 
 class ColModelHelper
@@ -128,18 +129,28 @@ class ColModelHelper
     */
     public static function ckeditor(string $name, array $options=[])
     {
-        return ArrayUtils::merge([
+
+        $def=[
             "name" => $name,
             "hidden" => true,
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
                "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
+                "Path_File"=>"media/files",
+                "Path_Image"=>"media/pic",
             ],
             "editrules"=>[
                 "edithidden"=>true,
             ],
-        ],$options);
+        ];
+        $options=ArrayUtils::merge($def,$options);
+        $fck_connector_config = new Container('fck_connector_config');
+		$fck_connector_config->Enabled=true;
+		$fck_connector_config->FileTypesPath_File=$options["editoptions"]["Path_File"];
+		$fck_connector_config->FileTypesPath_Image=$options["editoptions"]["Path_Image"];
+        return $options;
+
     }
 
     /**
@@ -222,7 +233,6 @@ class ColModelHelper
                     ],
                 ],
             ],
-
             "editoptions" => [
                 "dataInit"=>new Expr('function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});}'),
                 "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(",","");}'),
@@ -256,12 +266,12 @@ class ColModelHelper
             "plugins"=>[
                 "edit"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d H:i:s'",
+                        "toformat"=>"'Y-m-d'",
                     ],
                 ],
                 "add"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d H:i:s'",
+                        "toformat"=>"'Y-m-d'",
                     ],
                 ],
             ],

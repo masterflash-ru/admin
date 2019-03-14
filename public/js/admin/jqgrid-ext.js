@@ -44,9 +44,11 @@ $.extend($.fn.fmatter , {
         if(!op.reformatAfterEdit && act === 'edit'){
             return $.fn.fmatter.defaultFormat(cellval, opts);
         }
+        if(op.reformatAfterEdit && act === 'edit'){
+            return $cellval;
+        }
         if(!$.fmatter.isEmpty(cellval)) {
-            return cellval;
-            //return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
+            return $.jgrid.parseDate.call(this, op.srcfullformat,cellval,op.newfullformat,op);
         }
         return $.fn.fmatter.defaultFormat(cellval, opts);
     },
@@ -58,7 +60,6 @@ $.extend($.fn.fmatter , {
         if (opColModel.classes){
             img_class=' class="'+opColModel.classes+'"';
         }
-        
         if(!op.reformatAfterEdit && act === 'edit'){
             if (!$.fmatter.isEmpty(cellval)){
                 return "<img "+img_class+" src='" + cellval + "' />";
@@ -114,21 +115,3 @@ function imageSave(elem, operation, value)
     }
 }
 
-
-/*сериализация и отправка при редактировании строки* /
-$.fn.serializefiles = function() {
-    var obj = $(this);
-
-    var formData = new FormData();
-    $.each($(obj).find("input[type='file']"), function(i, tag) {
-        $.each($(tag)[0].files, function(i, file) {
-            formData.append(tag.name, file);
-        });
-    });
-    var params = $(obj).serializeArray();
-    $.each(params, function (i, val) {
-        formData.append(val.name, val.value);
-    });
-    return formData;
-};
-*/
