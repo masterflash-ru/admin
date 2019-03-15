@@ -161,13 +161,11 @@ class ColModelHelper
     {
         $def=[
            "name" => $name,
-            "editable" => true,
-            
+            "editable" => true,         
             "edittype"=>"custom",
             "editoptions"=>[
                 "custom_element"=>new Expr('imageEdit'),
                 "custom_value"=>new Expr('imageSave'),
-        
             ],
             "plugins"=>[
                 "read"=>[
@@ -205,9 +203,7 @@ class ColModelHelper
                 unset($def["plugins"][$act]);
             }
         }
-        
         return ArrayUtils::merge($def,$options);
-        
     }
 
     /**
@@ -224,12 +220,12 @@ class ColModelHelper
             "plugins"=>[
                 "edit"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d H:i:s'",
+                        "toformat"=>"Y-m-d H:i:s",
                     ],
                 ],
                 "add"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d H:i:s'",
+                        "toformat"=>"Y-m-d H:i:s",
                     ],
                 ],
             ],
@@ -266,12 +262,12 @@ class ColModelHelper
             "plugins"=>[
                 "edit"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d'",
+                        "toformat"=>"Y-m-d",
                     ],
                 ],
                 "add"=>[
                     "datetime"=>[
-                        "toformat"=>"'Y-m-d'",
+                        "toformat"=>"Y-m-d",
                     ],
                 ],
             ],
@@ -282,7 +278,45 @@ class ColModelHelper
             }
         }
         return ArrayUtils::merge($def,$options);
+    }
+
+    /**
+    * вывод кодов доступов
+    * 
+    */
+    public static function permissions(string $name, array $options=[])
+    {
+        $def=[
+            "name" => $name,
+            "formatter" => "permissions",
+            "plugins"=>[
+                "read"=>[
+                    "Permissions" =>[],
+                ],
+                "edit"=>[
+                    "Permissions" =>[],
+                ],
+                "add"=>[
+                    "Permissions" =>[],
+                ],
+                "colModel"=>[//плагин срабатывает при генерации сетки, вызывается в помощнике сетки
+                    "Permissions"=>[]
+                ]
+            ],
+            "editable" => true,
+            "edittype"=>"custom",
+            "editoptions"=>[
+                "custom_element"=>new Expr('permissionsEdit'),
+                "custom_value"=>new Expr('permissionsSave'),
+            ],
+        ];
+        foreach (["read","add","edit","colModel"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
+        }
+        return ArrayUtils::merge($def,$options);
 
     }
-    
+
 }

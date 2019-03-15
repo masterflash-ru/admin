@@ -34,6 +34,9 @@ class PluginManager extends AbstractPluginManager
         "Translit" => Plugin\Translit::class,
         "translit" => Plugin\Translit::class,
         
+        "Permissions" => Plugin\Permissions::class,
+        "permissions" => Plugin\Permissions::class,
+        
         "SelectFromDb" => Plugin\SelectFromDb::class,
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
@@ -56,6 +59,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Translit::class => InvokableFactory::class,
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
+        Plugin\Permissions::class => Plugin\Factory\Permissions::class,
     ];
 
     /**

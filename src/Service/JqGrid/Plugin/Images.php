@@ -40,7 +40,7 @@ public function read($value,$index,$row)
 /**
 * добвление новой записи, ID еще нет, выисляется следующий и под ним записывается в хранилище
 */
-public function add($value,$postParameters)
+public function add($value,&$postParameters)
 {
     $rs=$this->connection->Execute("SELECT AUTO_INCREMENT  FROM information_schema.tables
                                                 WHERE
@@ -66,7 +66,7 @@ array(3) {
 если загрузки не было, возвращается пустой массив
 * если была ошибка - исключение
 */
-public function edit($value,$postParameters)
+public function edit($value,&$postParameters)
 {
     if (empty($this->options["storage_item_name"])){
         throw new Exception("Не указано имя секции конфига с хранилищем, куда записывать файлы");

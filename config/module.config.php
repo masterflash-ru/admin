@@ -289,10 +289,10 @@ return [
     ],
     /*описатели интерфейсов*/
     "interface"=>[
-        "my"=>__DIR__."/my.php",
-        "tabs1"=>__DIR__."/tabs1.php",
-        "tabs2"=>__DIR__."/tabs2.php",
-        "grid"=>__DIR__."/grid.php",
+        "permissions"=>__DIR__."/admin.permissions.php",
+        //"tabs1"=>__DIR__."/tabs1.php",
+        //"tabs2"=>__DIR__."/tabs2.php",
+        //"grid"=>__DIR__."/grid.php",
     ]
 
 ];

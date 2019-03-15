@@ -32,8 +32,134 @@ $.timepicker.regional['ru'] = {
 };
 $.timepicker.setDefaults($.timepicker.regional['ru']);
 });
-var dataInit={},defaultValue={};
 
+function stripslashes( str ) 
+{
+ return (str+'').replace(/\0/g, '0').replace(/\\([\\'"])/g, '$1');
+}
+
+function unserialize(data)
+{data=stripslashes( data );
+    if (!data) return new Array();
+	//определим кодировку
+	var charset_;
+	if (document.all) charset_=document.charset.toLowerCase(); else charset_=document.characterSet.toLowerCase();
+	
+	var error = function (type, msg, filename, line){throw new window[type](msg, filename, line);};
+    var read_until = function (data, offset, stopchr){//('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+        var buf = [];
+        var chr = data.slice(offset, offset + 1);
+        var i = 2;
+        while (chr != stopchr) {
+            if ((i+offset) > data.length) {
+                error('Error', 'Invalid');
+            }
+            buf.push(chr);
+            chr = data.slice(offset + (i - 1),offset + i);
+            i += 1;
+        }
+        return [buf.length, buf.join('')];
+    };
+    var read_chrs = function (data, offset, length){
+        var buf;
+        var i = 0;
+        buf = [];
+        while (i < length)
+			{
+    	        var chr = data.slice(offset + (i - 1),offset + i);
+        	    buf.push(chr);
+				i++;
+				
+				if (chr.search(/[а-яА-Я]/)>-1 && charset_=='utf-8') length--;//коррекция, в utf-8 русские буквы кодируются 2-мя символами в РНР, здесь - одним
+        	}
+        return [buf.length, buf.join('')];
+    };
+    var _unserialize = function (data, offset){
+        var readdata;
+        var readData;
+        var chrs = 0;
+        var ccount;
+        var stringlength;
+        var keyandchrs;
+        var keys;
+ 
+        if(!offset) offset = 0;
+        var dtype = (data.slice(offset, offset + 1)).toLowerCase();
+        
+        var dataoffset = offset + 2;
+        var typeconvert = new Function('x', 'return x');
+        
+        switch(dtype){
+            case "i":
+                typeconvert = new Function('x', 'return parseInt(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "b":
+                typeconvert = new Function('x', 'return (parseInt(x) == 1)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "d":
+                typeconvert = new Function('x', 'return parseFloat(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "n":
+                readdata = null;
+            break;
+            case "s"://var aaa=unserialize('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+                ccount = read_until(data, dataoffset, ':');
+                chrs = ccount[0];
+                stringlength = ccount[1];//длина строки которая, т.е. число которое есть в s:6
+                dataoffset += chrs + 2;
+                
+                readData = read_chrs(data, dataoffset+1, parseInt(stringlength));
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 2;
+                if(chrs != parseInt(stringlength) && chrs != readdata.length){
+                    error('SyntaxError', 'String length mismatch');
+                }
+            break;
+            case "a":
+                readdata = {};
+                
+                keyandchrs = read_until(data, dataoffset, ':');
+                chrs = keyandchrs[0];
+                keys = keyandchrs[1];
+                dataoffset += chrs + 2;
+                
+                for(var i = 0;i < parseInt(keys);i++){
+                    var kprops = _unserialize(data, dataoffset);
+                    var kchrs = kprops[1];
+                    var key = kprops[2];
+                    dataoffset += kchrs;
+                    
+                    var vprops = _unserialize(data, dataoffset);
+                    var vchrs = vprops[1];
+                    var value = vprops[2];
+                    dataoffset += vchrs;
+                    
+                    readdata[key] = value;
+                }
+                
+                dataoffset += 1;
+            break;
+            default: alert(data);
+                error('SyntaxError', 'Unknown / Unhandled data type(s): ' + dtype+' strItem:'+dataoffset);
+            break;
+        }
+        return [dtype, dataoffset - offset, typeconvert(readdata)];
+    };
+    return _unserialize(data, 0)[2];
+}
 
 
 
@@ -691,133 +817,7 @@ newOutline +='</table>';
 document.getElementById(tree_name+'_out').innerHTML=newOutline
 }
 
-function stripslashes( str ) 
-{
- return (str+'').replace(/\0/g, '0').replace(/\\([\\'"])/g, '$1');
-}
 
-function unserialize(data)
-{data=stripslashes( data );
-    if (!data) return new Array();
-	//определим кодировку
-	var charset_;
-	if (document.all) charset_=document.charset.toLowerCase(); else charset_=document.characterSet.toLowerCase();
-	
-	var error = function (type, msg, filename, line){throw new window[type](msg, filename, line);};
-    var read_until = function (data, offset, stopchr){//('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
-        var buf = [];
-        var chr = data.slice(offset, offset + 1);
-        var i = 2;
-        while (chr != stopchr) {
-            if ((i+offset) > data.length) {
-                error('Error', 'Invalid');
-            }
-            buf.push(chr);
-            chr = data.slice(offset + (i - 1),offset + i);
-            i += 1;
-        }
-        return [buf.length, buf.join('')];
-    };
-    var read_chrs = function (data, offset, length){
-        var buf;
-        var i = 0;
-        buf = [];
-        while (i < length)
-			{
-    	        var chr = data.slice(offset + (i - 1),offset + i);
-        	    buf.push(chr);
-				i++;
-				
-				if (chr.search(/[а-яА-Я]/)>-1 && charset_=='utf-8') length--;//коррекция, в utf-8 русские буквы кодируются 2-мя символами в РНР, здесь - одним
-        	}
-        return [buf.length, buf.join('')];
-    };
-    var _unserialize = function (data, offset){
-        var readdata;
-        var readData;
-        var chrs = 0;
-        var ccount;
-        var stringlength;
-        var keyandchrs;
-        var keys;
- 
-        if(!offset) offset = 0;
-        var dtype = (data.slice(offset, offset + 1)).toLowerCase();
-        
-        var dataoffset = offset + 2;
-        var typeconvert = new Function('x', 'return x');
-        
-        switch(dtype){
-            case "i":
-                typeconvert = new Function('x', 'return parseInt(x)');
-                readData = read_until(data, dataoffset, ';');
-                chrs = readData[0];
-                readdata = readData[1];
-                dataoffset += chrs + 1;
-            break;
-            case "b":
-                typeconvert = new Function('x', 'return (parseInt(x) == 1)');
-                readData = read_until(data, dataoffset, ';');
-                chrs = readData[0];
-                readdata = readData[1];
-                dataoffset += chrs + 1;
-            break;
-            case "d":
-                typeconvert = new Function('x', 'return parseFloat(x)');
-                readData = read_until(data, dataoffset, ';');
-                chrs = readData[0];
-                readdata = readData[1];
-                dataoffset += chrs + 1;
-            break;
-            case "n":
-                readdata = null;
-            break;
-            case "s"://var aaa=unserialize('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
-                ccount = read_until(data, dataoffset, ':');
-                chrs = ccount[0];
-                stringlength = ccount[1];//длина строки которая, т.е. число которое есть в s:6
-                dataoffset += chrs + 2;
-                
-                readData = read_chrs(data, dataoffset+1, parseInt(stringlength));
-                chrs = readData[0];
-                readdata = readData[1];
-                dataoffset += chrs + 2;
-                if(chrs != parseInt(stringlength) && chrs != readdata.length){
-                    error('SyntaxError', 'String length mismatch');
-                }
-            break;
-            case "a":
-                readdata = {};
-                
-                keyandchrs = read_until(data, dataoffset, ':');
-                chrs = keyandchrs[0];
-                keys = keyandchrs[1];
-                dataoffset += chrs + 2;
-                
-                for(var i = 0;i < parseInt(keys);i++){
-                    var kprops = _unserialize(data, dataoffset);
-                    var kchrs = kprops[1];
-                    var key = kprops[2];
-                    dataoffset += kchrs;
-                    
-                    var vprops = _unserialize(data, dataoffset);
-                    var vchrs = vprops[1];
-                    var value = vprops[2];
-                    dataoffset += vchrs;
-                    
-                    readdata[key] = value;
-                }
-                
-                dataoffset += 1;
-            break;
-            default: alert(data);
-                error('SyntaxError', 'Unknown / Unhandled data type(s): ' + dtype+' strItem:'+dataoffset);
-            break;
-        }
-        return [dtype, dataoffset - offset, typeconvert(readdata)];
-    };
-    return _unserialize(data, 0)[2];
-}
 	function makeArray ( array ) {
 		var ret = Array();
 		for (k in array ) ret[k]=array[k]
