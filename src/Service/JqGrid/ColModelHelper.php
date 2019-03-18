@@ -34,7 +34,9 @@ class ColModelHelper
             ]
         ],$options);
     }
-    
+
+
+
     /**
     * вывод однострочного эл-та
     * в сетке он скрыт
@@ -46,15 +48,6 @@ class ColModelHelper
             //"width" => 200,
             "editable" => true,
             "edittype" => "text",
-            "formoptions" => [
-                // "rowpos" => 2,
-                // "colpos" => true,
-               // "elmprefix" => "*",
-                //"elmsuffix" =>"" ,
-            ],
-            "editoptions" => [
-                "size" => 100,
-            ],
             "editrules"=>[
                 "required"=>false,
             ],

@@ -41,6 +41,8 @@ class PluginManager extends AbstractPluginManager
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
         
+        //"Autocomplete" => Plugin\Autocomplete::class,
+        //"autocomplete" => Plugin\Autocomplete::class,
     ];
     
 
@@ -60,6 +62,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Translit::class => InvokableFactory::class,
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
+       // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 
     /**

@@ -165,6 +165,9 @@ class JqGrid
         }
         //при помощи плагина пишем содержимое
         $rez=[];
+        if (!isset($this->options[$oper])) {
+            throw new  Exception ("Операция $oper не описана в конфиге интерфейса");
+        }
         foreach ($this->options[$oper] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);

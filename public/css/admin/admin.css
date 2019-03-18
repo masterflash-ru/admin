@@ -63,3 +63,123 @@ td span.inline-edit-cell img{max-width: 100% !important}
     border: 1px solid #757575; padding: 6px
 }
 .f101 th{color: red}
+
+
+.field-with-error ul.tagit {
+    border: 1px solid #f15a5c
+}
+ul.tagit {
+    height: auto;
+    min-height: 30px;
+    list-style: none;
+    border: 1px solid #d2d6d7;
+    background-color: #fff;
+    border-radius: 5px;
+    margin: 0;
+    padding: 2px 3px;
+    overflow: hidden
+}
+ul.tagit input[type="text"] {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    width: inherit;
+    outline: none;
+    border: none;
+    background-color: inherit;
+    box-shadow: none;
+    height: auto;
+    line-height: 1
+}
+ul.tagit.infocus {
+    box-shadow: none;
+    border-color: #2d72d9
+}
+ul.tagit li {
+    display: block;
+    float: left;
+    margin: 1px 0 1px 2px
+}
+ul.tagit li.tagit-new {
+    margin: 1px 5px 1px 2px
+}
+ul.tagit li.tagit-new input {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 22px;
+    padding-left: 7px
+}
+.tagit-choice {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    border: 1px solid #d2d6d7;
+    color: #333;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 22px;
+    max-height: 22px;
+    text-transform: uppercase;
+    padding-right: 15px
+}
+.tagit-choice input {
+    display: block;
+    float: left;
+    margin: 4px 5px 4px 0
+}
+.tagit-choice input:focus {
+    border: 0
+}
+.tagit-choice.remove {
+    border: 1px solid #f88688;
+    color: #f88688
+}
+.tagit-choice.remove .tagit-close .text-icon {
+    color: #f88688
+}
+.tagit-choice .tagit-label {
+    margin-right: 0;
+    text-decoration: none;
+    cursor: pointer;
+    padding-right: 15px
+}
+.tagit-choice .tagit-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: 0;
+    width: 17px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    display: block
+}
+.tagit-choice .tagit-close:hover {
+    color: #4f6173
+}
+.tagit-choice .tagit-close .text-icon {
+    display: inline;
+    color: #4f6173;
+    font-size: 17px;
+    line-height: 17px
+}
+.tagit-choice.tagit-choice-read-only {
+    padding: .2em .5em .2em .5em
+}
+.tagit-choice.tagit-choice-editable {
+    padding: 0 7px
+}
+.tagit-choice:hover {
+    border-color: #2d72d9;
+    color: #2d72d9
+}
+.tagit-choice:hover .tagit-close .text-icon {
+    color: #2d72d9
+}
+.tagit-hidden-field {
+    display: none
+}
+

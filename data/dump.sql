@@ -53,10 +53,10 @@ INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `locale`, `url`) VALUE
   (8, 'Древовидные интерфесы', 2, 6, 'ru_RU', '/adm/constructortree'),
   (9, 'Генератор Entity', 1, 1, 'ru_RU', '/adm/entity'),
   (10, 'Пользователи и группы', 1, 1, 'ru_RU', ''),
-  (11, 'Системные группы польз.', 2, 10, 'ru_RU', '/adm/line/users_group'),
+  (11, 'Системные группы польз.', 2, 10, 'ru_RU', '/adm/universal-interface/systemgroups'),
   (12, 'Группы пользователей', 2, 10, 'ru_RU', '/adm/line/users_group_nonsystem'),
   (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/line/users'),
-  (14, 'Доступы', 1, 1, 'ru_RU', '/adm/line/permissions');
+  (14, 'Доступы', 1, 1, 'ru_RU', '/adm/universal-interface/permissions');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 

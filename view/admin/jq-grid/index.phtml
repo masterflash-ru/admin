@@ -39,6 +39,24 @@ $options["layout"]["pager"]="#".$options["container"]."_pager";
 /*опции навигации*/
 $navgrid_options=$options["layout"]["navgrid"];
 unset($options["layout"]["navgrid"]);
+if (!isset($navgrid_options["delOptions"])){
+    $navgrid_options["delOptions"]=[];
+}
+if (!isset($navgrid_options["addOptions"])){
+    $navgrid_options["addOptions"]=[];
+}
+if (!isset($navgrid_options["editOptions"])){
+    $navgrid_options["editOptions"]=[];
+}
+if (!isset($navgrid_options["viewOptions"])){
+    $navgrid_options["viewOptions"]=[];
+}
+if (!isset($navgrid_options["searchOptions"])){
+    $navgrid_options["searchOptions"]=[];
+}
+if (!isset($navgrid_options["button"])){
+    $navgrid_options["button"]=[];
+}
 
 /*все опции в грид*/
 $jqgrid= json::encode($options["layout"], false, ['enableJsonExprFinder' => true]);
@@ -55,53 +73,28 @@ if (isset($options["caption"])){
 $(function () {
 "use strict";
 var jqgrid_options=<?=$jqgrid?>,
-    navgrid_button_options=<?=json::encode($navgrid_options["button"],true)?>;
+    navgrid_button_options=<?=json::encode($navgrid_options["button"],true)?>,
+    navgrid_edit_options=<?=json::encode($navgrid_options["editOptions"],true)?>,
+    navgrid_add_options=<?=json::encode($navgrid_options["addOptions"],true)?>,
+    navgrid_del_options=<?=json::encode($navgrid_options["delOptions"],true)?>,
+    navgrid_view_options=<?=json::encode($navgrid_options["viewOptions"],true)?>,
+    navgrid_search_options=<?=json::encode($navgrid_options["searchOptions"],true)?>;
 jqgrid_options.dataProxy=$.jgrid.ext.ajaxFormProxy;
 jqgrid_options.useDataProxy=true;
 
 
+navgrid_edit_options.useDataProxy=true;
+navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
+navgrid_add_options.useDataProxy=true;
+navgrid_add_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
+    
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
 $("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', navgrid_button_options, /*кнопки в панели*/
-              {width:"auto",closeOnEscape:true,closeAfterEdit: true, recreateForm: true,useDataProxy: true,
-              
-               onInitializeForm : function(formid){
-                    $(formid).attr('method','POST');
-                    $(formid).attr('action','');
-                    $(formid).attr('enctype','multipart/form-data');
-                }
-              }, //опции в окно при редактировании edit
-               {width:"auto",closeOnEscape:true,closeAfterAdd: true, recreateForm: true,useDataProxy: true,
-            
-               onInitializeForm : function(formid){
-                    $(formid).attr('method','POST');
-                    $(formid).attr('action','');
-                    $(formid).attr('enctype','multipart/form-data');
-                }}, // опции в окно при добавлении add
-               {closeOnEscape:true},  // delete instead that del:false we need this
-               {multipleSearch : true}, //можно добавлять условия
-               {closeOnEscape:true,width:"auto"}); //опции при просмотре записи в окошке
-var lastSelection;
-function editRow(id) {
-    if (id && id !== lastSelection) {
-        var grid = $("#<?=$options["container"]?>");
-        grid.jqGrid('restoreRow',lastSelection);
-        grid.jqGrid('editRow',id, {
-            keys: true,
-            onEnter : function(rowid, options, event) {
-                if (confirm("Save the row with ID: "+rowid) === true) {
-                    $(this).jqGrid("saveRow", rowid, options );
-                }
-            }
-        });
-        lastSelection = id;
-    }
-}
-
-$('#<?=$options["container"]?>').jqGrid('inlineNav','#<?=$options["container"]?>_pager',
-                                        {"editParams":{"editRowParams":
-                                                       {"beforeSaveRow":function( options, rowId ){console.log(rowId);}}
-                                                      }
-                                        });
+            navgrid_edit_options, //опции в окно при редактировании edit
+            navgrid_add_options, // опции в окно при добавлении add
+            navgrid_del_options,  // delete instead that del:false we need this
+            navgrid_search_options, //окно поиска
+            navgrid_view_options); //опции при просмотре записи в окошке
 
 });
 
@@ -112,3 +105,54 @@ if (isset($options["podval"])){
 }
 
 ?>
+
+<script>
+    //большой выбор путем autocomplite
+        $("#question_tags").tagit({
+        removeConfirmation: true,
+        allowSpaces: true,
+        animate: false,
+        tabIndex: 3,
+        autocomplete: {
+            minLength: 3,
+            source: function(request, response) {
+                $.ajax({
+                    url: "/adm/io-jqgrid",
+                    data: {
+                        term: request.term
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.display_name,
+                                value: item.display_name,
+                                ident: item.name,
+                                image_url: item.image_url
+                            }
+                        }))
+                    }
+                })
+            },
+            open: function() {
+                $(".ui-autocomplete:visible").css({
+                    top: "+=15",
+                    left: "+=-5"
+                })
+            },
+            create: function(event, ui) {
+                $(this).data("ui-autocomplete")._renderItem = function(ul, item) {
+                    ul.addClass("autocomplete_tags");
+                    var tagImage = "";
+                    if (item.image_url) {
+                        tagImage = '<img class="icon_suggest icon_tag-img" src="' + item.image_url + '" alt="user avatar" />'
+                    } else {
+                        tagImage = '<svg class="icon_suggest icon_tag_small" viewBox="0 0 32 32"><use xlink:href="images/sprite_0.1.svg#icon_tag"></use></svg>'
+                    }
+                    return $("<li class='ui-search-type-tag'>").append("<a>" + tagImage + "<span>" + item.label + "</span>" + "</a>").appendTo(ul)
+                }
+            }
+        }
+    });
+
+</script>
