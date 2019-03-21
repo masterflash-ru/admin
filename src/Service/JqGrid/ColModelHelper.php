@@ -145,7 +145,7 @@ class ColModelHelper
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
-              // "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
+               "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
                 "Path_File"=>"media/files",
                 "Path_Image"=>"media/pic",
             ],
