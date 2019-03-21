@@ -55,7 +55,7 @@ input[type=text] + button{
 	padding: 4px;
 }
 td input.inline-edit-cell{max-width: 100%}
-td span.inline-edit-cell input[type=file]{display: none}
+td span.inline-edit-cell input[type=file]{display1: none}
 td span.inline-edit-cell img{max-width: 100% !important}
 
 .main .lmenu{border-right: 1px solid #000000; width:200px; vertical-align:top}

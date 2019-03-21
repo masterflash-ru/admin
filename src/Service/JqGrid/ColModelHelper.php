@@ -51,6 +51,7 @@ class ColModelHelper
             "editrules"=>[
                 "required"=>false,
             ],
+            
         ],$options);
     }
     
@@ -65,12 +66,6 @@ class ColModelHelper
             //"width" => 200,
             "editable" => true,
             "edittype" => "textarea",
-            "formoptions" => [
-                // "rowpos" => 2,
-                // "colpos" => true,
-               // "elmprefix" => "*",
-                //"elmsuffix" =>"" ,
-            ],
             "editoptions" => [
                 "cols" => 120,
                 "rows"=>5
@@ -99,13 +94,16 @@ class ColModelHelper
         ],$options);
     }
 
+
+    
     /**
-    * вывод выпадающего списка
-    * 
+    * вывод выпадающего списка статично через модель колонки
+    * массив данных читается и передается прямо в сетку штатным форматтером
+    * есть недостаток, данные не меняются пока не будет перезагружена страница
     */
     public static function select(string $name, array $options=[])
     {
-        return ArrayUtils::merge([
+        $def=[
             "name" => $name,
             "editable" => true,
             "edittype" => "select",
@@ -113,7 +111,25 @@ class ColModelHelper
                 "value"=>[]
             ],
             "formatter"=>"select",
-        ],$options);
+        ];
+        //опции для чтения данных с сервера при редактировании
+        $def_editoptions=[
+            "dataUrl"=>null,
+            "cacheUrlData"=>false,
+        ];
+
+        $options=ArrayUtils::merge($def,$options);
+        
+        if (isset($options["plugins"]["ajaxRead"])){
+            foreach ($options["plugins"]["ajaxRead"] as $plugin_alias=>$plugin_options){
+                $plugin_options=ArrayUtils::merge($def_editoptions,$plugin_options);
+                $plugin_options["dataUrl"]="/adm/io-jqgrid-plugin/".$plugin_alias;
+                $plugin_options["buildSelect"]=new Expr("buildSelect");
+            }
+            $options["editoptions"]=ArrayUtils::merge($options["editoptions"],$plugin_options);
+            unset($options["plugins"]["ajaxRead"]);
+        }
+        return $options;
     }
 
     /**
@@ -129,7 +145,7 @@ class ColModelHelper
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
-               "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
+              // "dataInit"=>new Expr('function (el){$(el).ckeditor();}'),
                 "Path_File"=>"media/files",
                 "Path_Image"=>"media/pic",
             ],
@@ -159,6 +175,7 @@ class ColModelHelper
             "editoptions"=>[
                 "custom_element"=>new Expr('imageEdit'),
                 "custom_value"=>new Expr('imageSave'),
+
             ],
             "plugins"=>[
                 "read"=>[
@@ -308,6 +325,26 @@ class ColModelHelper
                 unset($def["plugins"][$act]);
             }
         }
+        return ArrayUtils::merge($def,$options);
+
+    }
+    /**
+    * вывод настроек SEO
+    * 
+    */
+    public static function seo(string $name, array $options=[])
+    {
+        $def=[
+            "name" => $name,
+            "width"=>250,
+            "formatter" => "seo",
+            "editable" => true,
+            "edittype"=>"custom",
+            "editoptions"=>[
+                "custom_element"=>new Expr('seoEdit'),
+                "custom_value"=>new Expr('seoSave'),
+            ],
+        ];
         return ArrayUtils::merge($def,$options);
 
     }

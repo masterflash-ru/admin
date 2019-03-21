@@ -91,7 +91,21 @@ $.extend($.fn.fmatter , {
            return "<div data-permissions=\""+cellval.join(",")+"\">"+users[cellval[0]]+":"+groups[cellval[1]]+" "+permissionToText(cellval[2])+" ("+parseInt(cellval[2],10).toString(8)+")"+"</div>" ;
         } 
             return "";
-    }
+    },
+    seo : function(cellval, opts, rwd, act) {
+        var opColModel = $.extend({},opts.colModel),op={},users,groups;
+        if(!$.fmatter.isEmpty(cellval)) {
+            if(!op.reformatAfterEdit && act === 'edit'){
+               // var seo=JSON.parse(cellval);
+            } 
+            var seo=unserialize(cellval);
+            var out=((seo.robots=="noindex")?"Запрет индексации,<br>\n":"")+
+                  ((seo.canonical)?"Кан. стр.:<b>"+seo.canonical+"</b>,<br>\n":"");
+            var d=$("<div>").attr("data-seo",cellval).html(out).wrap("<div></div>");
+           return d.parent().html();
+        } 
+        return "";
+    },
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -118,18 +132,27 @@ $.extend($.fn.fmatter.permissions , {
         return  cellval;
     }
 });
+$.extend($.fn.fmatter.seo , {
+    unformat : function (cellval, opts,cell) {
+        if(!$.fmatter.isEmpty(cellval)) {
+           return $('div', cell).data("seo");
+        }
+        return  cellval;
+    }
+});
+
 
 /*расширение для редактирования image*/
 function imageEdit(value, options)
 {
-return $("<div data-value=\""+value+"\"><img src=\""+value+"\" style='max-width:250px'/><br><input type='file' name=\"file_"+options.name+"\"></div>");
+return $("<div data-value=\""+value+"\"><img src=\""+value+"\" style='max-width:250px'/><br><input type='file' name=\"file_"+options.name+"\" id=\"file_"+options.name+"\"></div>");
 }
 function imageSave(elem, operation, value)
 {
  if(operation === 'get') {//запись на сервер
      return $(elem).data("value");
     } else if(operation === 'set') {
-       return "";
+       return $("img",elem).attr("src",value);
     }
 }
 
@@ -184,24 +207,7 @@ var ptable=$("<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" class=\"pe
         $('#pg',ptable).append($('<option>', {value: g, text : groups[g]  }));
     }
     $('#per1, #per2, #per3',ptable).append(p_list);
-    if (!p[2]){p[2]=0;}
-    $("#mode",ptable).text(permissionToText(p[2])+ " ("+pad(parseInt(p[2],10).toString(8),4)+")");  
-    $('#pu option:selected',ptable).prop('selected', false);
-    $('#pg option:selected',ptable).prop('selected', false);
-    $('#pu option[value="'+[p[0]]+'"]',ptable).prop('selected', true);
-    $('#pg option[value="'+[p[1]]+'"]',ptable).prop('selected', true);
-    var pp=p[2],p3=pp & 7;
-    $('#per3 option[value="'+p3+'"]',ptable).prop('selected', true);
-    pp=pp>>>3;
-    var p2=pp & 7;
-    $('#per2 option[value="'+p2+'"]',ptable).prop('selected', true);
-    pp=pp>>>3;
-    var p1=pp & 7;
-    $('#per1 option[value="'+p1+'"]',ptable).prop('selected', true);
-    pp=pp>>>3;
-    $('#sticky',ptable).prop('checked', pp & 1);
-    $('#sgid',ptable).prop('checked', pp & 2);
-    $('#suid',ptable).prop('checked', pp & 4);
+    permissionsSave(ptable, 'set', value);
    return ptable; 
 }
 function permissionsSave(elem, operation, value)
@@ -211,8 +217,54 @@ function permissionsSave(elem, operation, value)
      $(".perm_bits:checked",elem).each(function(index,element){
          r+=parseInt($(this).val());
      });
-     return parseInt($("#pu").val()||0)+","+parseInt($("#pg").val()||0)+","+parseInt(r+parseInt(parseInt($("#per1").val()+$("#per2").val()+$("#per3").val(),8).toString(10)))
+     r=parseInt($("#pu").val()||0)+","+parseInt($("#pg").val()||0)+","+parseInt(r+parseInt(parseInt($("#per1").val()+$("#per2").val()+$("#per3").val(),8).toString(10)))
+     return r;
     }
+if(operation === 'set'){
+    var p=value.split(","),ptable=elem;
+    if (!p[2]){p[2]=0;}
+        $("#mode",ptable).text(permissionToText(p[2])+ " ("+pad(parseInt(p[2],10).toString(8),4)+")");  
+        $('#pu option:selected',ptable).prop('selected', false);
+        $('#pg option:selected',ptable).prop('selected', false);
+        $('#pu option[value="'+[p[0]]+'"]',ptable).prop('selected', true);
+        $('#pg option[value="'+[p[1]]+'"]',ptable).prop('selected', true);
+        var pp=p[2],p3=pp & 7;
+        $('#per3 option[value="'+p3+'"]',ptable).prop('selected', true);
+        pp=pp>>>3;
+        var p2=pp & 7;
+        $('#per2 option[value="'+p2+'"]',ptable).prop('selected', true);
+        pp=pp>>>3;
+        var p1=pp & 7;
+        $('#per1 option[value="'+p1+'"]',ptable).prop('selected', true);
+        pp=pp>>>3;
+        $('#sticky',ptable).prop('checked', pp & 1);
+        $('#sgid',ptable).prop('checked', pp & 2);
+        $('#suid',ptable).prop('checked', pp & 4);
+    }
+}
+
+/*расширение для редактирования SEO*/
+function seoEdit(value, options)
+{
+    var v=unserialize(stripslashes(value)),
+    rez= $("<div>").attr("data-value",value),
+    c=$("<input>").attr({type:"checkbox",id:"robots"}).prop('checked',(v.robots=="noindex")?true:false).val(1),
+    i=$("<input>").attr({type:"text",id:"canonical",style:"padding:0;"}).val(v.canonical);
+    c=$("<label>Запретить индексацию: </label>").append(c);
+    i=$("<label>Канонич. адрес: </label>").append(i);
+    return rez.append(c).append("<br>").append(i);
+}
+function seoSave(elem, operation, value)
+{
+ if(operation === 'get') {//запись на сервер
+     var r=serialize({robots: ($("#robots",elem).prop('checked')?"noindex":""),canonical:$("#canonical",elem).val()});
+     return r.replace('O:6:"Object"',"a");
+    }
+if(operation === 'set'){
+    var seo=unserialize(value);
+    $("#robots",elem).prop('checked',(seo.robots=="noindex")?true:false);
+    $("#canonical",elem).val(seo.canonical);
+} 
 }
 
 function permissionToText($perms)
@@ -234,7 +286,278 @@ info += (($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x' ) : (($perms & 0x020
 return info;
 }
 
+/*формирование выпадающего списка из ответа сервера*/
+function buildSelect(data)
+{
+    var ov="<select>";
+    data=JSON.parse(data);
+    $.map(data,function (i,j){
+       ov+='<option value="'+j+'">'+i+'</option>';
+    });
+    return ov+"</select>";
+}
 
 
+$.jgrid.extend({
+    	saveRow : function(rowid, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc) {
+		// Compatible mode old versions
+		var args = $.makeArray(arguments).slice(1), o = {}, $t = this[0];
 
+		if( $.type(args[0]) === "object" ) {
+			o = args[0];
+		} else {
+			if ($.isFunction(successfunc)) { o.successfunc = successfunc; }
+			if (url !== undefined) { o.url = url; }
+			if (extraparam !== undefined) { o.extraparam = extraparam; }
+			if ($.isFunction(aftersavefunc)) { o.aftersavefunc = aftersavefunc; }
+			if ($.isFunction(errorfunc)) { o.errorfunc = errorfunc; }
+			if ($.isFunction(afterrestorefunc)) { o.afterrestorefunc = afterrestorefunc; }
+		}
+		o = $.extend(true, {
+			successfunc: null,
+			url: null,
+			extraparam: {},
+			aftersavefunc: null,
+			errorfunc: null,
+			afterrestorefunc: null,
+			restoreAfterError: true,
+			mtype: "POST",
+			saveui : "enable",
+			savetext : $.jgrid.getRegional($t,'defaults.savetext')
+		}, $.jgrid.inlineEdit, o );
+		// End compatible
+
+		var success = false, nm, tmp={}, tmp2={}, tmp3= {}, editable, fr, cv, ind, nullIfEmpty=false,
+		error = $.trim( $($t).jqGrid('getStyleUI', $t.p.styleUI+'.common', 'error', true) );
+		if (!$t.grid ) { return success; }
+		ind = $($t).jqGrid("getInd",rowid,true);
+		if(ind === false) {return success;}
+		var errors = $.jgrid.getRegional($t, 'errors'),
+		edit =$.jgrid.getRegional($t, 'edit'),
+		bfsr = $.isFunction( o.beforeSaveRow ) ? o.beforeSaveRow.call($t,o, rowid) :  undefined;
+		if( bfsr === undefined ) {
+			bfsr = true;
+		}
+		if(!bfsr) { return; }
+		editable = $(ind).attr("editable");
+		o.url = o.url || $t.p.editurl;
+		if (editable==="1") {
+			var cm, index, elem;
+			$('td[role="gridcell"]',ind).each(function(i) {
+				cm = $t.p.colModel[i];
+				nm = cm.name;
+				elem = "";
+				if ( nm !== 'cb' && nm !== 'subgrid' && cm.editable===true && nm !== 'rn' && !$(this).hasClass('not-editable-cell')) {
+					switch (cm.edittype) {
+						case "checkbox":
+							var cbv = ["Yes","No"];
+							if(cm.editoptions && cm.editoptions.value) {
+								cbv = cm.editoptions.value.split(":");
+							}
+							tmp[nm]=  $("input",this).is(":checked") ? cbv[0] : cbv[1];
+							elem = $("input",this);
+							break;
+						case 'text':
+						case 'password':
+						case 'textarea':
+						case "button" :
+							tmp[nm]=$("input, textarea",this).val();
+							elem = $("input, textarea",this);
+							break;
+						case 'select':
+							if(!cm.editoptions.multiple) {
+								tmp[nm] = $("select option:selected",this).val();
+								tmp2[nm] = $("select option:selected", this).text();
+							} else {
+								var sel = $("select",this), selectedText = [];
+								tmp[nm] = $(sel).val();
+								if(tmp[nm]) { tmp[nm]= tmp[nm].join(","); } else { tmp[nm] =""; }
+								$("select option:selected",this).each(
+									function(i,selected){
+										selectedText[i] = $(selected).text();
+									}
+								);
+								tmp2[nm] = selectedText.join(",");
+							}
+							if(cm.formatter && cm.formatter === 'select') { tmp2={}; }
+							elem = $("select",this);
+							break;
+						case 'custom' :
+							try {
+								if(cm.editoptions && $.isFunction(cm.editoptions.custom_value)) {
+									tmp[nm] = cm.editoptions.custom_value.call($t, $(".customelement",this),'get');
+									if (tmp[nm] === undefined) { throw "e2"; }
+								} else { throw "e1"; }
+							} catch (e) {
+								if (e==="e1") { $.jgrid.info_dialog(errors.errcap,"function 'custom_value' "+edit.msg.nodefined,edit.bClose, {styleUI : $t.p.styleUI }); }
+								else { $.jgrid.info_dialog(errors.errcap,e.message,edit.bClose, {styleUI : $t.p.styleUI }); }
+							}
+							break;
+					}
+					cv = $.jgrid.checkValues.call($t,tmp[nm],i);
+					if(cv[0] === false) {
+						index = i;
+						return false;
+					}
+					//if($t.p.autoencode) { tmp[nm] = $.jgrid.htmlEncode(tmp[nm]); }
+					if(o.url !== 'clientArray' && cm.editoptions && cm.editoptions.NullIfEmpty === true) {
+						if(tmp[nm] === "") {
+							tmp3[nm] = 'null';
+							nullIfEmpty = true;
+						}
+					}
+				}
+			});
+			if (cv[0] === false){
+				try {
+					if( $.isFunction($t.p.validationCell) ) {
+						$t.p.validationCell.call($t, elem, cv[1], ind.rowIndex, index);
+					} else {
+						var tr = $($t).jqGrid('getGridRowById', rowid),
+							positions = $.jgrid.findPos(tr);
+						$.jgrid.info_dialog(errors.errcap,cv[1],edit.bClose,{
+							left:positions[0],
+							top:positions[1]+$(tr).outerHeight(),
+							styleUI : $t.p.styleUI,
+							onClose: function(){
+								if(index >= 0 ) {
+									$("#"+rowid+"_" +$t.p.colModel[index].name).focus();
+								}
+							}
+						});
+					}
+				} catch (e) {
+					alert(cv[1]);
+				}
+				return success;
+			}
+			var idname, opers = $t.p.prmNames, oldRowId = rowid;
+			if ($t.p.keyName === false) {
+				idname = opers.id;
+			} else {
+				idname = $t.p.keyName;
+			}
+			if(tmp) {
+				tmp[opers.oper] = opers.editoper;
+				if (tmp[idname] === undefined || tmp[idname]==="") {
+					tmp[idname] = rowid;
+				} else if (ind.id !== $t.p.idPrefix + tmp[idname]) {
+					// rename rowid
+					var oldid = $.jgrid.stripPref($t.p.idPrefix, rowid);
+					if ($t.p._index[oldid] !== undefined) {
+						$t.p._index[tmp[idname]] = $t.p._index[oldid];
+						delete $t.p._index[oldid];
+					}
+					rowid = $t.p.idPrefix + tmp[idname];
+					$(ind).attr("id", rowid);
+					if ($t.p.selrow === oldRowId) {
+						$t.p.selrow = rowid;
+					}
+					if ($.isArray($t.p.selarrrow)) {
+						var i = $.inArray(oldRowId, $t.p.selarrrow);
+						if (i>=0) {
+							$t.p.selarrrow[i] = rowid;
+						}
+					}
+					if ($t.p.multiselect) {
+						var newCboxId = "jqg_" + $t.p.id + "_" + rowid;
+						$("input.cbox",ind)
+							.attr("id", newCboxId)
+							.attr("name", newCboxId);
+					}
+					// TODO: to test the case of frozen columns
+				}
+				if($t.p.inlineData === undefined) { $t.p.inlineData ={}; }
+				tmp = $.extend({},tmp,$t.p.inlineData,o.extraparam);
+			}
+				$($t).jqGrid("progressBar", {method:"show", loadtype : o.saveui, htmlcontent: o.savetext });
+				tmp3 = $.extend({},tmp,tmp3);
+				tmp3[idname] = $.jgrid.stripPref($t.p.idPrefix, tmp3[idname]);
+            tmp3=$.isFunction($t.p.serializeRowData) ? $t.p.serializeRowData.call($t, tmp3) : tmp3;
+           
+            //смотрим файлы, если есть
+            var f=$("<form>").attr({method:"POST",enctype:'multipart/form-data',action:o.url}).append($(":file",this));
+				
+            
+            var a_proxy=$.extend({
+					url:o.url,
+					data: tmp3,
+					type: o.mtype,
+					async : false, //?!?
+					complete: function(res,stat){
+						$($t).jqGrid("progressBar", {method:"hide", loadtype : o.saveui, htmlcontent: o.savetext});
+						if (stat === "success"){
+							var ret = true, sucret, k;
+							sucret = $($t).triggerHandler("jqGridInlineSuccessSaveRow", [res, rowid, o]);
+							if (!$.isArray(sucret)) {sucret = [true, tmp3];}
+							if (sucret[0] && $.isFunction(o.successfunc)) {sucret = o.successfunc.call($t, res);}
+							if($.isArray(sucret)) {
+								// expect array - status, data, rowid
+								ret = sucret[0];
+								tmp = sucret[1] || tmp;
+							} else {
+								ret = sucret;
+							}
+							if (ret===true) {
+								if($t.p.autoencode) {
+									$.each(tmp,function(n,v){
+										tmp[n] = $.jgrid.htmlDecode(v);
+									});
+								}
+								if(nullIfEmpty) {
+									$.each(tmp,function( n ){
+										if(tmp[n] === 'null' ) {
+											tmp[n] = '';
+										}
+									});
+								}
+								tmp = $.extend({},tmp, tmp2);
+								$($t).jqGrid("setRowData",rowid,tmp);
+								$(ind).attr("editable","0");
+								for(k=0;k<$t.p.savedRow.length;k++) {
+									if( String($t.p.savedRow[k].id) === String(rowid)) {fr = k; break;}
+								}
+								$($t).triggerHandler("jqGridInlineAfterSaveRow", [rowid, res, tmp, o]);
+								if( $.isFunction(o.aftersavefunc) ) { o.aftersavefunc.call($t, rowid, res, tmp, o); }
+								if(fr >= 0) { $t.p.savedRow.splice(fr,1); }
+								success = true;
+								$(ind).removeClass("jqgrid-new-row").off("keydown");
+							} else {
+								$($t).triggerHandler("jqGridInlineErrorSaveRow", [rowid, res, stat, null, o]);
+								if($.isFunction(o.errorfunc) ) {
+									o.errorfunc.call($t, rowid, res, stat, null);
+								}
+								if(o.restoreAfterError === true) {
+									$($t).jqGrid("restoreRow",rowid, o);
+								}
+							}
+						}
+					$($t).trigger('reloadGrid');
+                    },
+					error:function(res,stat,err){
+						$("#lui_"+$.jgrid.jqID($t.p.id)).hide();
+						$($t).triggerHandler("jqGridInlineErrorSaveRow", [rowid, res, stat, err, o]);
+						if($.isFunction(o.errorfunc) ) {
+							o.errorfunc.call($t, rowid, res, stat, err);
+						} else {
+							var rT = res.responseText || res.statusText;
+							try {
+								$.jgrid.info_dialog(errors.errcap,'<div class="'+error+'">'+ rT +'</div>', edit.bClose, {buttonalign:'right', styleUI : $t.p.styleUI });
+							} catch(e) {
+								alert(rT);
+							}
+						}
+						if(o.restoreAfterError === true) {
+							$($t).jqGrid("restoreRow",rowid, o);
+						}
+					}
+				}, $.jgrid.ajaxOptions, $t.p.ajaxRowOptions || {});//);
+            
+            f.ajaxSubmit(a_proxy);
+            
+            
+		}
+		return success;
+	}
+});
 

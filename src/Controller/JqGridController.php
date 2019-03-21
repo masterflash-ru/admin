@@ -6,7 +6,7 @@
 namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+//use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Exception;
 
@@ -16,8 +16,6 @@ class JqGridController extends AbstractActionController
     protected $cache;
     protected $config;
     protected $jqgrid;
-    protected $default_config=[
-    ];
 
 
 public function __construct ($connection,$cache,$config,$jqgrid)
@@ -75,5 +73,27 @@ public function editjqgridAction()
         $this->getResponse()->setStatusCode(404);
         return $this->getResponse()->setContent(nl2br($errors));
     }
+}
+    
+
+/**
+* работа с отдельными плагинами
+* возвращает json
+*/
+public function pluginAction()
+{
+    try {
+        $plugin_name=$this->params('name',"");
+        $plugin=$this->jqgrid->plugin($plugin_name,null);
+        $rez=$plugin->ajaxRead();
+        $view=new JsonModel($rez);
+        return $view;
+    } catch (Exception $e) {
+        $errors="Ошибка: ".$e->getMessage()."\nФайл:".$e->getFile()."\nСтрока:".$e->getLine()."\nТрассировка:".$e->getTraceAsString();
+        //любое исключение - 404
+        $this->getResponse()->setStatusCode(404);
+        return $this->getResponse()->setContent(nl2br($errors));
+    }
+
 }
 }

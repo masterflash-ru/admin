@@ -61,6 +61,21 @@ return [
                             ],
                         ],
                     ],
+                    /*ввод-вывод для jqgrid*/
+                    'io-jqgrid-plugin' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/io-jqgrid-plugin/:name',
+                            'constraints' => [
+                                'name' => '[a-zA-Z0-9_-]+',
+                            ],
+
+                            'defaults' => [
+                                'controller' => Controller\JqGridController::class,
+                                'action'     => 'plugin'
+                            ],
+                        ],
+                    ],
                     /*устаревшее*/
 							'line' => [
 								'type' => Segment::class,

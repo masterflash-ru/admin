@@ -82,6 +82,10 @@ var jqgrid_options=<?=$jqgrid?>,
 jqgrid_options.dataProxy=$.jgrid.ext.ajaxFormProxy;
 jqgrid_options.useDataProxy=true;
 
+/*jqgrid_options.ajaxRowOptions={
+    contentType:'multipart/form-data'
+}
+*/
 
 navgrid_edit_options.useDataProxy=true;
 navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
