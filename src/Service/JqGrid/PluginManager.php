@@ -41,6 +41,12 @@ class PluginManager extends AbstractPluginManager
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
         
+        "Locale" => Plugin\Locale::class,
+        "locale" => Plugin\Locale::class,
+        
+        "ClearContent" => Plugin\ClearContent::class,
+        "clearcontent" => Plugin\ClearContent::class,
+        
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
     ];
@@ -60,8 +66,10 @@ class PluginManager extends AbstractPluginManager
         Plugin\Date::class => InvokableFactory::class,
         Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Translit::class => InvokableFactory::class,
+        Plugin\ClearContent::class => InvokableFactory::class,
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
+        Plugin\Locale::class => Plugin\Factory\Locale::class,
        // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 
