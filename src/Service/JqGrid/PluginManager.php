@@ -46,6 +46,9 @@ class PluginManager extends AbstractPluginManager
         
         "ClearContent" => Plugin\ClearContent::class,
         "clearcontent" => Plugin\ClearContent::class,
+  
+        "LastMod" => Plugin\LastMod::class,
+        "lastmod" => Plugin\LastMod::class,
         
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
@@ -67,6 +70,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Translit::class => InvokableFactory::class,
         Plugin\ClearContent::class => InvokableFactory::class,
+        Plugin\LastMod::class => InvokableFactory::class,
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
         Plugin\Locale::class => Plugin\Factory\Locale::class,
