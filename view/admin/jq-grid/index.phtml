@@ -81,7 +81,7 @@ var jqgrid_options=<?=$jqgrid?>,
     navgrid_search_options=<?=json::encode($navgrid_options["searchOptions"],true)?>;
 jqgrid_options.dataProxy=$.jgrid.ext.ajaxFormProxy;
 jqgrid_options.useDataProxy=true;
-
+jqgrid_options.pager='#<?=$options["container"]?>_pager';
 /*jqgrid_options.ajaxRowOptions={
     contentType:'multipart/form-data'
 }
@@ -93,13 +93,25 @@ navgrid_add_options.useDataProxy=true;
 navgrid_add_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
     
 $("#<?=$options["container"]?>").jqGrid(jqgrid_options);
-$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', navgrid_button_options, /*кнопки в панели*/
+var jqgridnavGrid=$("#<?=$options["container"]?>").navGrid('#<?=$options["container"]?>_pager', navgrid_button_options, /*кнопки в панели*/
             navgrid_edit_options, //опции в окно при редактировании edit
             navgrid_add_options, // опции в окно при добавлении add
             navgrid_del_options,  // delete instead that del:false we need this
             navgrid_search_options, //окно поиска
             navgrid_view_options); //опции при просмотре записи в окошке
-
+/*
+//доп.кнопки в панели
+jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
+                {
+                    caption:"",
+                    buttonicon:"ui-icon-locked",
+                    onClickButton:null,
+                    position: "last",
+                    title:"Доступ к интерфейсу",
+                    id : "",
+                    cursor: "pointer"
+                });
+*/
 });
 
 </script>
