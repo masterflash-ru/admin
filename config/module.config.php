@@ -273,7 +273,6 @@ return [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
             Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
-            
             Service\JqGrid\PluginManager::class => Service\JqGrid\Factory\PluginManagerFactory::class,
         ],
         'aliases' => [

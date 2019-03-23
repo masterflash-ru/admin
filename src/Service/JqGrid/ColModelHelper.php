@@ -31,7 +31,14 @@ class ColModelHelper
                 "editformbutton"=>false,
                 "editbutton"=>true,
                 "delbutton"=>true,
-            ]
+                "editOptions"=>[
+                    "closeOnEscape"=>true,
+                    "width"=>"auto",
+                ],
+                "delOptions"=>[
+                    
+                ],
+            ],
         ],$options);
     }
 

@@ -25,9 +25,13 @@ $.extend($.jgrid.defaults, {
     /*вывод сообщений ошибок*/
     ajaxGridOptions:{
         error:function(xhr,status,error){
-            $.jgrid.info_dialog("Ошибка", 'HTTP status code: ' + xhr.status + '\n' +
-              'textStatus: ' + status + '\n' +
-              'errorThrown: ' + error+'\n\n\n HTTP body (jqXHR.responseText): ' + '\n' + xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left"})
+            if (xhr.status==406){
+                $.jgrid.info_dialog("Ошибка", xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left",top:30})
+            } else {
+                $.jgrid.info_dialog("Ошибка", 'HTTP status code: ' + xhr.status + '\n' +
+                                    'textStatus: ' + status + '\n' +
+                                    'errorThrown: ' + error+'\n\n\n HTTP body (jqXHR.responseText): ' + '\n' + xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left"})
+            }
     },
 
         }
