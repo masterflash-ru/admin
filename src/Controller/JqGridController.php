@@ -27,9 +27,6 @@ public function __construct ($connection,$cache,$config,$jqgrid)
 }
 
 
-
-
-
 /**
 * чтение данных для jqgrid
 */
@@ -40,7 +37,7 @@ public function readjqgridAction()
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка чтения. Доступ запрещен");
+            throw new  jqGridException\AccessDeniedException("Ошибка чтения. Доступ запрещен к interface/".$interface);
         }
 
         $options=include $this->config[$interface];
@@ -72,7 +69,7 @@ public function editjqgridAction()
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка записи. Доступ запрещен");
+            throw new  jqGridException\AccessDeniedException("Ошибка записи. Доступ запрещен к interface/".$interface);
         }
 
         $options=include $this->config[$interface];
@@ -102,7 +99,7 @@ public function pluginAction()
         $plugin_name=$this->params('name',"");
         $acl=$this->acl('jqgrid/plugin/'.$plugin_name);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка. Доступ к плагину {$plugin_name} запрещен");
+            throw new  jqGridException\AccessDeniedException("Ошибка. Доступ к плагину jqgrid/plugin/{$plugin_name} запрещен");
         }
 
         $plugin=$this->jqgrid->plugin($plugin_name,null);
