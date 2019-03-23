@@ -12,6 +12,7 @@ Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 $options=$this->options;
 
 //\Zend\Debug\Debug::dump($options["layout"]["colModel"]);
+
 //удалим всю информацию о плагинах, она не нужна
 foreach ($options["layout"]["colModel"] as $k=>$v){
     unset($options["layout"]["colModel"][$k]["plugins"]);
@@ -99,19 +100,24 @@ var jqgridnavGrid=$("#<?=$options["container"]?>").navGrid('#<?=$options["contai
             navgrid_del_options,  // delete instead that del:false we need this
             navgrid_search_options, //окно поиска
             navgrid_view_options); //опции при просмотре записи в окошке
-/*
-//доп.кнопки в панели
+
+<?php
+    if ($this->acl("Mf\Catalog\Controller\AdminController/createtovar")->isAllowed("p")){
+        ?>
+    //Добавим кнопку измнения доступа к интерфейсу, если есть доступ
 jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
                 {
                     caption:"",
                     buttonicon:"ui-icon-locked",
-                    onClickButton:null,
+                    onClickButton:function(){alert("В разработке");},
                     position: "last",
                     title:"Доступ к интерфейсу",
                     id : "",
                     cursor: "pointer"
                 });
-*/
+<?php
+    }
+?>
 });
 
 </script>
