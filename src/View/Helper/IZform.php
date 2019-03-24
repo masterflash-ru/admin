@@ -5,13 +5,13 @@ use Zend\View\Helper\AbstractHelper;
 use Zend\Stdlib\ArrayUtils;
 use Exception;
 use Zend\ServiceManager\ServiceManager;
-use Admin\Service\JqGrid\PluginManager;
+
 
 
 /**
- * помощник - универсальный для вывода интерфейса админки
+ * помощник - формы Zend для построения инетрфейсов
  */
-class IJqgrid extends AbstractHelper 
+class IZform extends AbstractHelper 
 {
     protected $config;
     protected $def_options=[
@@ -20,13 +20,12 @@ class IJqgrid extends AbstractHelper
         "podval" => "",
         "read"=>[],
         "write"=>[],
-        "layout"=>["colModel"=>[]]
     ];
 
-public function __construct ($config,$pluginManager)
+public function __construct ($config)
 {
 	$this->config=$config;
-    $this->setPluginManager($pluginManager);
+
 }
 
 /**
@@ -41,7 +40,7 @@ public function __invoke(string $interface)
     $options=ArrayUtils::merge($this->def_options,$options["options"]);
 
     //пройдем по всем моделям колонок и исполним там плагины, если они есть
-    foreach ($options["layout"]["colModel"] as &$colModel){
+    /*foreach ($options["layout"]["colModel"] as &$colModel){
         if (isset($colModel["plugins"]) && is_array($colModel["plugins"])){
             foreach ($colModel["plugins"] as $plugin_group=>$plugins){
                 if ($plugin_group=="colModel"){
@@ -55,9 +54,9 @@ public function __invoke(string $interface)
             
             
         }
-    }
+    }*/
     
-    return $this->getView()->partial("admin/jq-grid/index",["options"=>$options,"interface"=>$interface]);
+    return $this->getView()->partial("admin/zfrom/index",["options"=>$options,"interface"=>$interface]);
 }
     
     

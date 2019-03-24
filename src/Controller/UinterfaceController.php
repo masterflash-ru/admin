@@ -1,6 +1,9 @@
 <?php
 /**
 * новый универсальный интерфейс редактирования
+* вывод нужного интерфейса производится при помощи помощника view: iuniversal
+* этот помощник является диспетчером, считывает конфиг и вызывает уже нужный помощник для вывода уже конкретного
+* интерфейса
 */
 
 namespace Admin\Controller;
@@ -15,7 +18,11 @@ class UinterfaceController extends AbstractActionController
 public function indexAction()
 {
     $interface=$this->params('interface',"");
-    return new ViewModel(["interface"=>$interface]);
+    $view=new ViewModel(["interface"=>$interface]);
+    /*если у нас AJAX запрос, отключим вывод макета*/
+    $view->setTerminal($this->getRequest()->isXmlHttpRequest());
+
+    return $view;
 }
 
 }

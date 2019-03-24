@@ -259,6 +259,7 @@ return [
             View\Helper\IArray::class => View\Helper\Factory\IArrayFactory::class,
             View\Helper\IUniversal::class => View\Helper\Factory\IUniversalFactory::class,
             View\Helper\IJqgrid::class => View\Helper\Factory\IJqgridFactory::class,
+            View\Helper\IZform::class => View\Helper\Factory\IZformFactory::class,
         ],
         'aliases' => [
             'adminMenu' => View\Helper\Menu::class,
@@ -266,6 +267,8 @@ return [
             'iarray' => View\Helper\IArray::class,
             'iuniversal' => View\Helper\IUniversal::class,
             'ijqgrid' => View\Helper\IJqgrid::class,
+            'iZform' => View\Helper\IZform::class,
+            'izform' => View\Helper\IZform::class,
         ],
     ],
 	

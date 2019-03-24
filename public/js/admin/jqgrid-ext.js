@@ -1,4 +1,7 @@
 "use strict";
+/*
+* Расширение для сетки jqGrid
+*/
 $.jgrid.ext = 
 {/*прокси*/
 	ajaxFormProxy: function(opts, act)

@@ -69,7 +69,7 @@ if (isset($options["caption"])){
 ?>
 <table id="<?=$options["container"]?>"></table> 
 <div id="<?=$options["container"]?>_pager"></div>
-
+<div id="dialog_permission" title="Владелец и права доступа"></div>
 <script type="text/javascript">
 $(function () {
 "use strict";
@@ -109,7 +109,7 @@ jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
                 {
                     caption:"",
                     buttonicon:"ui-icon-locked",
-                    onClickButton:function(){alert("В разработке");},
+                    onClickButton:function(){$("#dialog_permission").dialog("open");},
                     position: "last",
                     title:"Доступ к интерфейсу",
                     id : "",
@@ -118,8 +118,36 @@ jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
 <?php
     }
 ?>
+
+$("#dialog_permission").dialog({
+    autoOpen:false,
+    modal:true,
+    position:{ my: "left top", at: "center top", of:$("#<?=$options["container"]?>") },
+    width: "auto",
+    buttons: [
+            {
+              text: "Применить",
+            icon: "ui-icon-disk",
+              click: function() {
+              }
+            },
+            {
+              text: "Отменить",
+              icon: "ui-icon-closethick",
+              click: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+      ],
+      open: function(ev, ui){
+          $(this).load("/adm/universal-interface/permissions_item")
+          }
+
 });
 
+
+
+});
 </script>
 <?php
 if (isset($options["podval"])){
