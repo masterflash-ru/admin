@@ -51,43 +51,44 @@ public function render()
             }
 			return $item_html;
     } else {
-        if ($this->properties['FlagNull']){
-            if (!isset($this->properties["nullValue"])){
-                $this->properties["nullValue"]=0;
+        if (!isset($this->properties["nullValue"])){
+            $this->properties["nullValue"]=0;
+        }
+		switch ($this->properties["nullValue"]){
+            case 0:{
+                $pusto="";
+                break;
             }
-			switch ($this->properties["nullValue"]){
-                case 0:{
-                    $pusto="";
-                    break;
-                }
-                case 1:{
-                    $pusto=0;
-                    break;
-                }
-                case 2:{
-                    $pusto="null";
-                    break;
-                }
+            case 1:{
+                $pusto=0;
+                break;
             }
-            $zs=$this->zselect;
-            $this->zselect=[$pusto=>"ПУСТО"];
-            foreach ($zs as $k=>$v) {
-                $this->zselect[$k]=$v;
-            }
-			//костыли для списка с опциями
-			foreach ($zs as $k=>$v) {
-                if (is_array($v)){
-                    $this->zselect[$k]=["options"=>$v,"label"=>$k];
-                } else {
-                    $this->zselect[$k]=$v;
-                }
+            case 2:{
+                $pusto="null";
+                break;
             }
         }
-				$select = new Element\Select($this->name[0]);
-				$select->setValueOptions($this->zselect);
-				$select->setValue($this->value);
-				$select->setAttributes($this->zatr);
-				return  $this->view->FormSelect($select);
+        $zs=$this->zselect;
+        if ($this->properties['FlagNull']){
+            $this->zselect=[$pusto=>"ПУСТО"];
+        }
+        foreach ($zs as $k=>$v) {
+            $this->zselect[$k]=$v;
+        }
+			//костыли для списка с опциями
+		foreach ($zs as $k=>$v) {
+            if (is_array($v)){
+                $this->zselect[$k]=["options"=>$v,"label"=>$k];
+            } else {
+                $this->zselect[$k]=$v;
+            }
+        }
+
+        $select = new Element\Select($this->name[0]);
+		$select->setValueOptions($this->zselect);
+		$select->setValue($this->value);
+		$select->setAttributes($this->zatr);
+		return  $this->view->FormSelect($select);
     }
 }
 
