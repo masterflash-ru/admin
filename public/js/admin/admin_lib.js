@@ -33,14 +33,14 @@ $.timepicker.regional['ru'] = {
 $.timepicker.setDefaults($.timepicker.regional['ru']);
 });
 
-function stripslashes( str ) 
+function stripslashes_old( str ) 
 {
  return (str+'').replace(/\0/g, '0').replace(/\\([\\'"])/g, '$1');
 }
 
 function unserialize(data)
 {
-    data=stripslashes( data );
+    data=stripslashes_old( data );
     if (!data) return new Array();
 	//определим кодировку
 	var charset_;
@@ -760,8 +760,8 @@ return out
 //*************************************************для поля 48
 function htmlspecialchars_decode(text)
 {//обратное преобразование специальных символов
-   var chars = Array("&amp;", "&lt;", "&gt;", "&quot;", "'");
-   var replacements = Array("&", "<", ">", '"', "'");
+   var chars = Array("&amp;", "&lt;", "&gt;");
+   var replacements = Array("&", "<", ">");
    for (var i=0; i<chars.length; i++)
    {
        var re = new RegExp(chars[i], "gi");
