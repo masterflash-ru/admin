@@ -17,7 +17,7 @@ return [
 	//маршруты
     'router' => [
         'routes' => [
-			
+
 			//форма входа
             'adm' => [
                 'type' => Literal::class,
@@ -55,7 +55,6 @@ return [
                                 'interface' => '[a-zA-Z0-9_-]+',
                                 'action'=>'[a-zA-Z0-9_-]+',
                             ],
-
                             'defaults' => [
                                 'controller' => Controller\JqGridController::class,
                             ],
@@ -69,9 +68,36 @@ return [
                             'constraints' => [
                                 'name' => '[a-zA-Z0-9_-]+',
                             ],
-
                             'defaults' => [
                                 'controller' => Controller\JqGridController::class,
+                                'action'     => 'plugin'
+                            ],
+                        ],
+                    ],
+                    /*ввод-вывод для Zform*/
+                    'io-zform' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/io-zform/:interface/:action',
+                            'constraints' => [
+                                'interface' => '[a-zA-Z0-9_-]+',
+                                'action'=>'[a-zA-Z0-9_-]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\ZformController::class,
+                            ],
+                        ],
+                    ],
+                    /*ввод-вывод для zform*/
+                    'io-zform-plugin' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/io-zform-plugin/:name',
+                            'constraints' => [
+                                'name' => '[a-zA-Z0-9_-]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\ZformController::class,
                                 'action'     => 'plugin'
                             ],
                         ],
@@ -231,7 +257,7 @@ return [
 			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
             Controller\JqGridController::class => Controller\Factory\JqGridControllerFactory::class,
-			
+			Controller\ZformController::class => Controller\Factory\ZformControllerFactory::class,
             
             /*устаревшее ПО*/
             Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
@@ -277,9 +303,11 @@ return [
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
             Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
             Service\JqGrid\PluginManager::class => Service\JqGrid\Factory\PluginManagerFactory::class,
+            Service\Zform\PluginManager::class => Service\Zform\Factory\PluginManagerFactory::class,
         ],
         'aliases' => [
             'JqGridManager' => Service\JqGrid\PluginManager::class,
+            'ZformManager' => Service\Zform\PluginManager::class,
         ],
     ],
     
@@ -298,6 +326,13 @@ return [
     
     /*плагины для сетки JqGrid*/
     "JqGridPlugin"=>[
+        'factories' => [
+        ],
+        'aliases' =>[
+        ],
+    ],
+    /*плагины для интерфейса типа ФОРМА*/
+    "ZformPlugin"=>[
         'factories' => [
         ],
         'aliases' =>[

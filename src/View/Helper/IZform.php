@@ -5,7 +5,7 @@ use Zend\View\Helper\AbstractHelper;
 use Zend\Stdlib\ArrayUtils;
 use Exception;
 use Zend\ServiceManager\ServiceManager;
-
+use Zend\Form\Factory as FormFactory;
 
 
 /**
@@ -55,8 +55,9 @@ public function __invoke(string $interface)
             
         }
     }*/
-    
-    return $this->getView()->partial("admin/zfrom/index",["options"=>$options,"interface"=>$interface]);
+    $factory=new FormFactory;
+    $form    = $factory->createForm($options["layout"]["rowModel"]);
+    return $this->getView()->partial("admin/zfrom/index",["options"=>$options,"interface"=>$interface,"form"=>$form]);
 }
     
     
