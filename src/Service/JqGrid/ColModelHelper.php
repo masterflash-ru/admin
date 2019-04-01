@@ -43,6 +43,30 @@ class ColModelHelper
     }
 
 
+    /**
+    * вывод ссылки для перехода
+    * 
+    */
+    public static function showLink(string $name, array $options=[])
+    {
+        return ArrayUtils::merge([
+            "name" => $name,
+            "formatter"=>'showlink',
+            "label"=>"Фотогалерея",
+            "formatoptions" =>[
+                "baseLinkUrl" => '/adm/universal-interface/',
+                "showAction" => '',
+                "addParam" => '',
+                "idName" => 'id',
+                "target" => '_blank'
+            ],
+        ],$options);
+    }
+    
+    
+    
+    
+    
 
     /**
     * вывод однострочного эл-та

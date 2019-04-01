@@ -402,7 +402,12 @@ public function create_interface($interface_name,$flag_out_form=true)
 {$this->flag_out_form=$flag_out_form;
 
 //смотрим внешние  переметры в этот интерфейс
-if (isset($_GET['get_interface_input'])) $this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));
+if (isset($_GET['get_interface_input'])) {
+    $this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));
+}
+if (isset($_GET["id"])) {
+    $this->get_interface_input=(int)$_GET["id"];
+}
 
 
 $this->interface_name=$interface_name; //имя интерфейса

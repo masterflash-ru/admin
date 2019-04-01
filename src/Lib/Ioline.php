@@ -442,7 +442,12 @@ public function create_interface($interface_name,$flag_out_form=true,View $view=
 	$this->line_table_obj->view=$view;
 //$flag_out_form - если ложь, тэг формы не выводить
 //смотрим внешние  переметры в этот интерфейс
-if (isset($_GET['get_interface_input'])) {$this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));}
+if (isset($_GET['get_interface_input'])) {
+    $this->get_interface_input=unserialize(base64_decode($_GET['get_interface_input']));
+}
+if (isset($_GET["id"])) {
+    $this->get_interface_input=(int)$_GET["id"];
+}
 /*
 можно использовать в запросах SQL, в виде $get_interface_input (пока это единичный вариант!!!!!!!!!!!!!!!!!!!)
 */
