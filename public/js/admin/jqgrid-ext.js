@@ -100,11 +100,7 @@ $.extend($.fn.fmatter , {
             return "";
     },
     seo : function(cellval, opts, rwd, act) {
-        var opColModel = $.extend({},opts.colModel),op={},users,groups;
         if(!$.fmatter.isEmpty(cellval)) {
-            if(!op.reformatAfterEdit && act === 'edit'){
-               // var seo=JSON.parse(cellval);
-            } 
             var seo=unserialize(cellval);
             var out=((seo.robots=="noindex")?"Запрет индексации,<br>\n":"")+
                   ((seo.canonical)?"Кан. стр.:<b>"+seo.canonical+"</b>,<br>\n":"");
@@ -113,6 +109,25 @@ $.extend($.fn.fmatter , {
         } 
         return "";
     },
+    interfaces : function(cellval, opts, rwd, act) {
+        var opColModel = $.extend({},opts.colModel),op={};
+        if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
+            op = $.extend({},op,opts.colModel.formatoptions);
+        }//console.log(op);
+
+        if(!$.fmatter.isEmpty(cellval)) {
+            var btn,iwrap=$("<div>");
+            $.map(op.items,function(val){
+                btn=$("<button>");
+                btn.text(val.text);
+                val.cellval=cellval;
+                btn.attr({onclick:"interfacesClick(this)","data-val":JSON.stringify(val)});
+                iwrap.append(btn);
+            });
+            return iwrap.html();
+        } 
+        return "";
+    }
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -285,6 +300,16 @@ if(operation === 'set'){
     $("#robots",elem).prop('checked',(seo.robots=="noindex")?true:false);
     $("#canonical",elem).val(seo.canonical);
 } 
+}
+
+/*обработка кликов на кнопки открытия нового интерфейса*/
+function interfacesClick(buttonItem)
+{
+    
+    //console.log(buttonItem);
+    //console.log(JSON.parse($(buttonItem).data("options")));
+    console.log($(buttonItem).data("val"));
+    return false;
 }
 
 function permissionToText($perms)

@@ -419,6 +419,7 @@ class ColModelHelper
         return ArrayUtils::merge($def,$options);
 
     }
+
     /**
     * вывод настроек SEO
     * 
@@ -434,6 +435,34 @@ class ColModelHelper
             "editoptions"=>[
                 "custom_element"=>new Expr('seoEdit'),
                 "custom_value"=>new Expr('seoSave'),
+            ],
+        ];
+        return ArrayUtils::merge($def,$options);
+
+    }
+    /**
+    * вывод кнопок для перехода к другому интерфейсу
+    * 
+    */
+    public static function interfaces(string $name, array $options=[])
+    {
+        $def=[
+            "name" => $name,
+            "width"=>250,
+            "formatter" => "interfaces",
+            "editable" => false,
+            "formatoptions" => [
+                "type"=>"buttons",
+                "items"=>[
+                    [
+                        "text"=>"Кнопка 1",
+                        "interface"=>"/adm/universal-interface/usergroups"
+                    ],
+                    [
+                        "text"=>"Кнопка 2",
+                        "interface"=>"/adm/universal-interface/stream"
+                    ],
+                ],
             ],
         ];
         return ArrayUtils::merge($def,$options);
