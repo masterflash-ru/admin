@@ -31,6 +31,9 @@ class PluginManager extends AbstractPluginManager
         "Images" => Plugin\Images::class,
         "images" => Plugin\Images::class,
         
+        "Files" => Plugin\Files::class,
+        "files" => Plugin\Files::class,
+        
         "Translit" => Plugin\Translit::class,
         "translit" => Plugin\Translit::class,
         
@@ -68,6 +71,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Datetime::class => InvokableFactory::class,
         Plugin\Date::class => InvokableFactory::class,
         Plugin\Images::class => Plugin\Factory\Images::class,
+        Plugin\Files::class => Plugin\Factory\Files::class,
         Plugin\Translit::class => InvokableFactory::class,
         Plugin\ClearContent::class => InvokableFactory::class,
         Plugin\LastMod::class => InvokableFactory::class,

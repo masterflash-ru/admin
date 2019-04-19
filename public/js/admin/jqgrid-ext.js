@@ -162,6 +162,19 @@ function imageSave(elem, operation, value)
        return $("img",elem).attr("src",value);
     }
 }
+/*расширение для редактирования file*/
+function fileEdit(value, options)
+{
+return $("<div data-value=\""+value+"\"><input type='file' name=\"file_"+options.name+"\" id=\"file_"+options.name+"\"></div>");
+}
+function fileSave(elem, operation, value)
+{
+ if(operation === 'get') {//запись на сервер
+     return $(elem).data("value");
+    } else if(operation === 'set') {
+       return $(elem).data("value");
+    }
+}
 
 /*расширение для редактирования SEO*/
 function permissionsEdit(value, options)

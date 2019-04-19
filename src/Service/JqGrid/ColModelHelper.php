@@ -247,6 +247,66 @@ class ColModelHelper
         return ArrayUtils::merge($def,$options);
     }
 
+    
+    /**
+    * вывод файла из хранилища по ID
+    * 
+    */
+    public static function files(string $name, array $options=[])
+    {
+        $def=[
+           "name" => $name,
+            "editable" => true,         
+            "edittype"=>"custom",
+            "editoptions"=>[
+                "custom_element"=>new Expr('fileEdit'),
+                "custom_value"=>new Expr('fileSave'),
+
+            ],
+            "plugins"=>[
+                "read"=>[
+                    "Files" =>[
+                        "file_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "storage_item_rule_name"=>""            //имя элемента из секции хранилища
+                    ],
+                ],
+                "edit"=>[
+                    "Files"=>[
+                        "file_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "storage_item_rule_name"=>""            //имя элемента из секции хранилища
+                    ],
+                ],
+                "add"=>[
+                    "Files"=>[
+                        "file_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "database_table_name"=>"",              //имя таблицы SQL куда вставляем новые записи (НЕ ФОТО)!, нужно для новых записей
+                        "storage_item_rule_name"=>""            //имя элемента из секции хранилища
+                    ],
+                ],
+                "del"=>[
+                    "Files"=>[
+                        "file_id"=>"id",                        //имя поля с ID
+                        "storage_item_name" => "",              //имя секции в хранилище
+                        "storage_item_rule_name"=>""            //имя элемента из секции хранилища
+                    ],
+                ],
+            ],
+           // "formatter"=>"file",
+            "classes"=>"jqgrid-img"
+        ];
+        foreach (["read","add","edit","del"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
+        }
+        return ArrayUtils::merge($def,$options);
+    }
+
+    
+    
     /**
     * вывод даты-времени + виджет выбора
     * 
