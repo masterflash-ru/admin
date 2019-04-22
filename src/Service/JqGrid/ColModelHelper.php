@@ -448,18 +448,31 @@ class ColModelHelper
     {
         $def=[
             "name" => $name,
-            "width"=>250,
+            "width"=>500,
             "formatter" => "interfaces",
             "editable" => false,
             "formatoptions" => [
-                "type"=>"buttons",
                 "items"=>[
                     [
-                        "text"=>"Кнопка 1",
-                        "interface"=>"/adm/universal-interface/usergroups"
+                        "label"=>"Кнопка 1",
+                        "interface"=>"/adm/universal-interface/usergroups",
+                        "icon"=> "ui-icon-heart",
+                        "dialog"=>[
+                            "modal"=>true,
+                            "resizable"=>true,
+                            "closeOnEscape"=>true,
+                            "title"=>"Заголовок окна",
+                            "width"=>"auto",
+                            "position"=>[
+                                "my"=>"left top",
+                                "at"=>"left top",
+                                "of"=>"#contant-container"
+                            ],
+
+                        ],
                     ],
                     [
-                        "text"=>"Кнопка 2",
+                        "label"=>"Кнопка 2",
                         "interface"=>"/adm/universal-interface/stream"
                     ],
                 ],

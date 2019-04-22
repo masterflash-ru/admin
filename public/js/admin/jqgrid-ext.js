@@ -122,7 +122,7 @@ $.extend($.fn.fmatter , {
             var btn,iwrap=$("<div>");
             $.map(op.items,function(val){
                 btn=$("<button>");
-                btn.text(val.text);
+                btn.button(val);
                 val.cellval=cellval;
                 btn.attr({onclick:"interfacesClick(this)","data-val":JSON.stringify(val)});
                 iwrap.append(btn);
@@ -308,10 +308,43 @@ if(operation === 'set'){
 /*обработка кликов на кнопки открытия нового интерфейса*/
 function interfacesClick(buttonItem)
 {
+    var opt=$(buttonItem).data("val"), interfacesDialog=$('<div id="interfacesDialog"></div>'),optdialog=opt.dialog;
+    optdialog.autoOpen=false;
+    optdialog.iconButtons=[
+            {
+                icon: "ui-icon-arrow-4-diag",
+                click: function( e ) {
+                    e.preventDefault;
+                    var dd=$( "#interfacesDialog" );
+                    if (dd.data("fill")>0){
+                            dd.dialog( "option", {
+                                height:parseInt(dd.data("height")),
+                                width:parseInt(dd.data("width")),
+                                position:dd.data("position")
+                            });
+                            dd.data("fill",0);
+                        } else{
+                            dd.data("fill",1);
+                            dd.data("width",dd.width()+25);
+                            dd.data("height",dd.height()+25);
+                            dd.data("position",dd.dialog( "option" ,"position"));  
+                            dd.dialog( "option", {
+                                height:$(window).height(),
+                                width:$(window).width(),
+                                position:{ my: "center", at: "center", of: window }
+                            });
+                        }
+                }
+            }
+    ];
+    if (!$("body").has("#interfacesDialog").length){
+        $("body").append(interfacesDialog);
+        $("#interfacesDialog").dialog({autoOpen:false});
+    }
+    $("#interfacesDialog").dialog("option",optdialog);
     
-    //console.log(buttonItem);
-    //console.log(JSON.parse($(buttonItem).data("options")));
-    console.log($(buttonItem).data("val"));
+    $("#interfacesDialog").dialog("open");
+    $("#interfacesDialog").load(opt.interface);
     return false;
 }
 
@@ -608,4 +641,288 @@ $.jgrid.extend({
 		return success;
 	}
 });
+$(document).ready(function() {
+    $.datepicker.regional['ru'] = {
+	closeText: 'Закрыть',
+	prevText: '&#x3c;Пред',
+	nextText: 'След&#x3e;',
+	currentText: 'Сегодня',
+	monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+	monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+	dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+	dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+	dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+	dateFormat: 'dd.mm.yy',
+	firstDay: 1,
+	isRTL: false
+}; 
+$.datepicker.setDefaults($.datepicker.regional['ru']); 
+
+$.timepicker.regional['ru'] = {
+	timeOnlyTitle: 'Выберите время',
+	timeText: 'Время',
+	hourText: 'Часы',
+	minuteText: 'Минуты',
+	secondText: 'Секунды',
+	millisecText: 'Миллисекунды',
+	timezoneText: 'Часовой пояс',
+	currentText: 'Сейчас',
+	closeText: 'Закрыть',
+	timeFormat: 'HH:mm:ss',
+	amNames: ['AM', 'A'],
+	pmNames: ['PM', 'P'],
+	isRTL: false
+};
+$.timepicker.setDefaults($.timepicker.regional['ru']);
+});
+
+
+function stripslashes_old( str ) 
+{
+ return (str+'').replace(/\0/g, '0').replace(/\\([\\'"])/g, '$1');
+}
+
+function unserialize(data)
+{
+    data=stripslashes_old( data );
+    if (!data) return new Array();
+	//определим кодировку
+	var charset_;
+	if (document.all) charset_=document.charset.toLowerCase(); else charset_=document.characterSet.toLowerCase();
+	
+	var error = function (type, msg, filename, line){throw new window[type](msg, filename, line);};
+    var read_until = function (data, offset, stopchr){//('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+        var buf = [];
+        var chr = data.slice(offset, offset + 1);
+        var i = 2;
+        while (chr != stopchr) {
+            if ((i+offset) > data.length) {
+                error('Error', 'Invalid');
+            }
+            buf.push(chr);
+            chr = data.slice(offset + (i - 1),offset + i);
+            i += 1;
+        }
+        return [buf.length, buf.join('')];
+    };
+    var read_chrs = function (data, offset, length){
+        var buf;
+        var i = 0;
+        buf = [];
+        while (i < length)
+			{
+    	        var chr = data.slice(offset + (i - 1),offset + i);
+        	    buf.push(chr);
+				i++;
+				
+				if (chr.search(/[а-яА-Я]/)>-1 && charset_=='utf-8') length--;//коррекция, в utf-8 русские буквы кодируются 2-мя символами в РНР, здесь - одним
+        	}
+        return [buf.length, buf.join('')];
+    };
+    var _unserialize = function (data, offset){
+        var readdata;
+        var readData;
+        var chrs = 0;
+        var ccount;
+        var stringlength;
+        var keyandchrs;
+        var keys;
+ 
+        if(!offset) offset = 0;
+        var dtype = (data.slice(offset, offset + 1)).toLowerCase();
+        
+        var dataoffset = offset + 2;
+        var typeconvert = new Function('x', 'return x');
+        
+        switch(dtype){
+            case "i":
+                typeconvert = new Function('x', 'return parseInt(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "b":
+                typeconvert = new Function('x', 'return (parseInt(x) == 1)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "d":
+                typeconvert = new Function('x', 'return parseFloat(x)');
+                readData = read_until(data, dataoffset, ';');
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 1;
+            break;
+            case "n":
+                readdata = null;
+            break;
+            case "s"://var aaa=unserialize('a:2:{i:0;s:6:"ааа";i:1;s:8:"бббб";}')
+                ccount = read_until(data, dataoffset, ':');
+                chrs = ccount[0];
+                stringlength = ccount[1];//длина строки которая, т.е. число которое есть в s:6
+                dataoffset += chrs + 2;
+                
+                readData = read_chrs(data, dataoffset+1, parseInt(stringlength));
+                chrs = readData[0];
+                readdata = readData[1];
+                dataoffset += chrs + 2;
+                if(chrs != parseInt(stringlength) && chrs != readdata.length){
+                    error('SyntaxError', 'String length mismatch');
+                }
+            break;
+            case "a":
+                readdata = {};
+                
+                keyandchrs = read_until(data, dataoffset, ':');
+                chrs = keyandchrs[0];
+                keys = keyandchrs[1];
+                dataoffset += chrs + 2;
+                
+                for(var i = 0;i < parseInt(keys);i++){
+                    var kprops = _unserialize(data, dataoffset);
+                    var kchrs = kprops[1];
+                    var key = kprops[2];
+                    dataoffset += kchrs;
+                    
+                    var vprops = _unserialize(data, dataoffset);
+                    var vchrs = vprops[1];
+                    var value = vprops[2];
+                    dataoffset += vchrs;
+                    
+                    readdata[key] = value;
+                }
+                
+                dataoffset += 1;
+            break;
+            default: alert(data);
+                error('SyntaxError', 'Unknown / Unhandled data type(s): ' + dtype+' strItem:'+dataoffset);
+            break;
+        }
+        return [dtype, dataoffset - offset, typeconvert(readdata)];
+    };
+    return _unserialize(data, 0)[2];
+}
+
+function serialize( mixed_val ) {
+    // 
+    // +   original by: Ates Goral (http://magnetiq.com)
+    // +   adapted for IE: Ilia Kantor (http://javascript.ru)
+ 
+    switch (typeof(mixed_val)){
+        case "number":
+            if (isNaN(mixed_val) || !isFinite(mixed_val)){
+                return false;
+            } else{
+                return (Math.floor(mixed_val) == mixed_val ? "i" : "d") + ":" + mixed_val + ";";
+            }
+        case "string":
+            return "s:" + mixed_val.length + ":\"" + mixed_val + "\";";
+        case "boolean":
+            return "b:" + (mixed_val ? "1" : "0") + ";";
+        case "object":
+            if (mixed_val == null) {
+                return "N;";
+            } else if (mixed_val instanceof Array) {
+                var idxobj = { idx: -1 };
+		var map = []
+		for(var i=0; i<mixed_val.length;i++) {
+			idxobj.idx++;
+            var ser = serialize(mixed_val[i]); 
+			if (ser) {
+                map.push(serialize(idxobj.idx) + ser)
+            }
+		}                                       
+        return "a:" + mixed_val.length + ":{" + map.join("") + "}"
+
+            } else {
+                var class_name = get_class(mixed_val);
+                 if (class_name == undefined){
+                    return false;
+                }
+                 var props = new Array();
+                for (var prop in mixed_val) {
+                    var ser = serialize(mixed_val[prop]);
+ 
+                    if (ser) {
+                        props.push(serialize(prop) + ser);
+                    }
+                }
+                return "O:" + class_name.length + ":\"" + class_name + "\":" + props.length + ":{" + props.join("") + "}";
+            }
+        case "undefined":
+            return "N;";
+    }
+    return false;
+}
+
+function stripslashes (str) {
+  return (str + '').replace(/\\(.?)/g, function (s, n1) {
+    switch (n1) {
+    case '\\':
+      return '\\';
+    case '0':
+      return '\u0000';
+    case '':
+      return '';
+    default:
+      return n1;
+    }
+  });
+}
+function get_class(obj) {	// Returns the name of the class of an object
+	// 
+	// +   original by: Ates Goral (http://magnetiq.com)
+	// +   improved by: David James
+
+	if (obj instanceof Object && !(obj instanceof Array) &&
+		!(obj instanceof Function) && obj.constructor) {
+		var arr = obj.constructor.toString().match(/function\s*(\w+)/);
+
+		if (arr && arr.length == 2) {
+			return arr[1];
+		}
+	}
+
+	return false;
+}
+
+function addslashes(str) {
+    str = str.replace(/\\/g, '\\\\');
+    str = str.replace(/\'/g, '\\\'');
+    str = str.replace(/\"/g, '\\"');
+    str = str.replace(/\0/g, '\\0');
+    return str;
+}
+
+/*добавление кнопок в диалоговое окно*/
+$.widget( "app.dialog", $.ui.dialog, {
+        options: {
+            iconButtons: [],
+            _flag:true
+        },
+         _setOptions: function( options ) {
+                this._super( options );
+             if (this.options._flag){
+                 this._create();
+                 this.options._flag=false;
+             }
+            },
+        _create: function() {
+            this._super();
+            var $titlebar = this.uiDialog.find( ".ui-dialog-titlebar" );
+            $.each( this.options.iconButtons, function( i, v ) {
+                var $button = $( "<button/>" ).text( this.text ),
+                    right = $titlebar.find( "button:last" ).css( "right" );
+                $button.button( { icons: { primary: this.icon }, text: false } )
+                       .addClass( "ui-dialog-titlebar-close" )
+                       .css( "right", ( parseInt( right ) + 38) + "px" )
+                       .click( this.click )
+                       .appendTo( $titlebar );
+            });
+    
+        }
+ });
 
