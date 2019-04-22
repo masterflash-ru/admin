@@ -2,13 +2,16 @@
 /*
 * Расширение для сетки jqGrid
 */
+var jq_overlay=$('<div class="ui-widget-overlay jqoverlay"><div class="row align-items-center w-100 h-100"><div class="col-12 align-self-center text-center">345345</div></div></div>');
 $.jgrid.ext = 
 {/*прокси*/
 	ajaxFormProxy: function(opts, act)
 	{
+        $("body").append(jq_overlay);
 		opts.url = $(this).getGridParam('editurl');
 		opts.iframe = false;
-        opts.error=function(xhr, status, error){$.jgrid.info_dialog("Ошибка", xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left"});}
+        opts.success=function(){$(".jqoverlay").remove();}
+        opts.error=function(xhr, status, error){$(".jqoverlay").remove();$.jgrid.info_dialog("Ошибка", xhr.responseText,"Закрыть",{width:"auto",modal:true,align:"left"});}
         var $form = $('#FrmGrid_' + $(this).getGridParam('id'));
         var ele = $form.find('INPUT,TEXTAREA,SELECT').not(':file');
          ele.each(function () {$(this).data('name', $(this).attr('name'));$(this).removeAttr('name');});
