@@ -453,10 +453,11 @@ class ColModelHelper
             "editable" => false,
             "formatoptions" => [
                 "items"=>[
-                    [
+                    "button1"=> [
                         "label"=>"Кнопка 1",
                         "interface"=>"/adm/universal-interface/usergroups",
                         "icon"=> "ui-icon-heart",
+                        "classes"=>[ "ui-button"=>""]
                         "dialog"=>[
                             "modal"=>true,
                             "resizable"=>true,
@@ -468,12 +469,7 @@ class ColModelHelper
                                 "at"=>"left top",
                                 "of"=>"#contant-container"
                             ],
-
                         ],
-                    ],
-                    [
-                        "label"=>"Кнопка 2",
-                        "interface"=>"/adm/universal-interface/stream"
                     ],
                 ],
             ],
