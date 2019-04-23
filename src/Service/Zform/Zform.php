@@ -66,11 +66,6 @@ class Zform
         
         $factory=new FormFactory();
         $form    = $factory->createForm($this->rowModel);
-        foreach ($form as $fieldName=>$item){
-            if (array_key_exists($fieldName,$rez)){
-                $item->setValue($rez[$fieldName]);
-            }
-        }
         //\Zend\Debug\Debug::dump($rez);
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
        /* foreach ($this->options["layout"]["rowModel"] as $rowModel ){
@@ -88,6 +83,13 @@ class Zform
                 }
             }
         }*/
+        //наполнение формы данными
+        foreach ($form as $fieldName=>$item){
+            if (array_key_exists($fieldName,$rez)){
+                $item->setValue($rez[$fieldName]);
+            }
+        }
+
         return $form;
     }
 

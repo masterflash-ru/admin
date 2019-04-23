@@ -22,30 +22,40 @@ class RowModelHelper
     */
     public static function text(string $name, array $options=[])
     {
-        return ArrayUtils::merge([
-            'spec' => [
-                'type' => Element\Text::class,
-                'name' => $name,
-                'options' => [
-                    'label' => '',
-                ]
-            ],
-        ],$options);
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Text::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+            ]
+        ],$options)];
     }
     /**
     * списка
     */
     public static function select(string $name, array $options=[])
     {
-        return ArrayUtils::merge([
-            'spec' => [
-                'type' => Element\Select::class,
-                'name' => $name,
-                'options' => [
-                    'label' => '',
-                ]
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Select::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
             ],
-        ],$options);
+        ],$options)];
+    }
+    /**
+    * вывод кнопки submit
+    */
+    public static function submit(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Submit::class,
+            'name' => $name,
+            'attributes' => [
+                'value' => 'Submit',
+                "class"=>"btn btn-primary btn-sm",
+            ],
+        ],$options)];
     }
 
 }
