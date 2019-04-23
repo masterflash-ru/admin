@@ -1,0 +1,54 @@
+<?php
+/*
+* генерирует zform
+* на входе:
+* $options - опции из соответсвующей секции конфига
+* $interface -  это имя глобальное имя интерфейса
+* $form - сама форма в виде данных формата Zend
+*/
+
+$options=$this->options;
+
+//\Zend\Debug\Debug::dump($options);
+?>
+<?php
+$form = $this->form;
+$form->prepare();
+$formLabel = $this->plugin('formLabel');
+
+echo $this->form()->openTag($form);
+foreach ($form as $k=>$item){
+    $i=$form->get($k);
+    $type=$item->getAttribute("type");
+    if ($type=="submit") {
+        //для кнопки не выводим группу
+        echo $this->formSubmit($form->get($k));
+    } else {
+        $a="form-control form-control-sm";
+        if ($i->hasAttribute("class")){
+            $a.=" ".$i->getAttribute("class");
+        }
+        $i->setAttribute("class",$a);
+        ?>
+        <div class="form-group">
+            <?=$formLabel->openTag($i) . $i->getOption('label').$formLabel->closeTag();?>
+        <?php
+        switch ($type){
+            case "select":{
+                echo $this->FormSelect($i);
+                break;
+            }
+            default:{
+                echo $this->FormInput($i);
+            }
+        }
+        ?>
+        <?=$this->formElementErrors($i)?>
+          </div>
+        <?php
+    }
+
+}
+?>
+
+<?= $this->form()->closeTag() ?>

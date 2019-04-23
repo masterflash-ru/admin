@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Service\Zform\Factory;
+namespace Admin\Service\Zform\Plugin\Factory;
 
 use Interop\Container\ContainerInterface;
 
@@ -7,13 +7,13 @@ use Interop\Container\ContainerInterface;
 
 */
 
-class ZformFactory
+class Db
 {
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 {
-    $pluginManager=$container->get('ZformManager');
-    return new $requestedName($pluginManager);
+	$connection=$container->get('DefaultSystemDb');
+    return new $requestedName($connection);
 }
 }
 

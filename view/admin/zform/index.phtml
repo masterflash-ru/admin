@@ -9,7 +9,12 @@
 
 $options=$this->options;
 
-//\Zend\Debug\Debug::dump($options);
+//\Zend\Debug\Debug::dump($_GET);
+$get="";
+if (isset($_GET)){
+    $get="?".http_build_query($_GET);
+}
+
 ?>
 <div id="<?=$options["container"]?>" class="zform-default" <?=$options["container-attr"]?>>
 <div><?=$options["caption"]?></div>
@@ -18,9 +23,11 @@ $options=$this->options;
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-$("#form_<?=$options["container"]?>").load("<?=$this->url("adm/io-zform",["interface"=>$this->interface,"action"=>"read"])?>",
+$("#form_<?=$options["container"]?>").load("<?=$this->url("adm/io-zform",["interface"=>$this->interface,"action"=>"read"]).$get?>",
     function(response, status, xhr){
-    console.log(response)
+    if (status!="success"){
+        $("#form_<?=$options["container"]?>").html(response)
+    }
 });
 });
 </script>

@@ -4,8 +4,8 @@ namespace Admin\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 use Zend\Stdlib\ArrayUtils;
 use Exception;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Form\Factory as FormFactory;
+//use Zend\ServiceManager\ServiceManager;
+//use Zend\Form\Factory as FormFactory;
 
 
 /**
@@ -55,9 +55,9 @@ public function __invoke(string $interface)
             
         }
     }*/
-    $factory=new FormFactory;
-    $form    = $factory->createForm($options["layout"]["rowModel"]);
-    return $this->getView()->partial("admin/zfrom/index",["options"=>$options,"interface"=>$interface,"form"=>$form]);
+   // $factory=new FormFactory;
+   // $form    = $factory->createForm($options["layout"]["rowModel"]);
+    return $this->getView()->partial("admin/zform/index",["options"=>$options,"interface"=>$interface]);
 }
     
     
@@ -65,7 +65,7 @@ public function __invoke(string $interface)
      * Get plugin manager instance
      *
      * @return PluginManager
-     */
+     * /
     public function getPluginManager()
     {
         if (! $this->plugins) {
@@ -79,7 +79,7 @@ public function __invoke(string $interface)
      *
      * @param  $plugins Plugin manager
      * @return 
-     */
+     * /
     public function setPluginManager(PluginManager $plugins)
     {
         $this->plugins = $plugins;
@@ -91,12 +91,12 @@ public function __invoke(string $interface)
      * @param  string     $name    Name of  to return
      * @param  null|array $options Options to pass to constructor (if not already instantiated)
      * @return 
-     */
+     * /
     public function plugin($name, array $options = null)
     {
         $plugins = $this->getPluginManager();
         return $plugins->get($name, $options);
     }
-
+*/
 
 }

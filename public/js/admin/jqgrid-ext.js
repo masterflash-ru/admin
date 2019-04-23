@@ -344,7 +344,7 @@ function interfacesClick(buttonItem)
     $("#interfacesDialog").dialog("option",optdialog);
     
     $("#interfacesDialog").dialog("open");
-    $("#interfacesDialog").load(opt.interface);
+    $("#interfacesDialog").load(opt.interface+"?id="+opt.cellval);
     return false;
 }
 

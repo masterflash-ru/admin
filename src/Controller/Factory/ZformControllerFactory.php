@@ -17,10 +17,10 @@ class ZformControllerFactory implements FactoryInterface
         $connection=$container->get('DefaultSystemDb');
        $config=$container->get("config");
 	   $cache = $container->get('DefaultSystemCache');
-        $jqgrid=$container->get(Zform::class);
+        $zform=$container->get(Zform::class);
         
 
-       return new $requestedName( $connection,$cache,$config["interface"],$jqgrid);
+       return new $requestedName( $connection,$cache,$config["interface"],$zform);
     }
 }
 

@@ -302,6 +302,7 @@ return [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
             Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
+            Service\Zform\Zform::class => Service\Zform\Factory\ZformFactory::class,
             Service\JqGrid\PluginManager::class => Service\JqGrid\Factory\PluginManagerFactory::class,
             Service\Zform\PluginManager::class => Service\Zform\Factory\PluginManagerFactory::class,
         ],

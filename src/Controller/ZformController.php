@@ -1,55 +1,56 @@
 <?php
 /**
-* ввод-вывод для jqGrid
+* ввод-вывод для Zform
 */
 
 namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 use Exception;
-use Admin\Service\JqGrid\Exception as jqGridException;
+use Admin\Service\Zform\Exception as ZformException;
+
 
 class ZformController extends AbstractActionController
 {
 	protected $connection;
     protected $cache;
     protected $config;
-    protected $jqgrid;
+    protected $zform;
 
 
-public function __construct ($connection,$cache,$config,$jqgrid)
+public function __construct ($connection,$cache,$config,$zform)
 {
 	$this->connection=$connection;
     $this->cache=$cache;
     $this->config=$config;
-    $this->jqgrid=$jqgrid;
+    $this->zform=$zform;
 }
 
 
 /**
-* чтение данных для jqgrid
+* чтение данных для zform
 */
-public function readjqgridAction()
+public function readAction()
 {
     try {
         
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка чтения. Доступ запрещен к interface/".$interface);
+            throw new  ZformException\AccessDeniedException("Ошибка чтения. Доступ запрещен к interface/".$interface);
         }
 
         $options=include $this->config[$interface];
+        $this->zform->setOptions($options["options"]);
+        $rez=["form"=>$this->zform->load($this->params()->fromQuery())];
 
-        $this->jqgrid->setOptions($options["options"]);
-
-        $rez=$this->jqgrid->load($this->params()->fromQuery());
-
-        $view=new JsonModel($rez);
+        $view=new ViewModel($rez);
+        $view->setTemplate("admin/zform/form-factory");
+        $view->setTerminal(true);
 
         return $view;
-    } catch (jqGridException\AccessDeniedException $e) {
+    } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');
     } catch (Exception $e) {

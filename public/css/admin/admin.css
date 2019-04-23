@@ -28,6 +28,8 @@ input[name*=create] {color:#000; background-color:#3CF}
 #actions_tree_out{width:1900px;}
 #actions_tree_out table {padding-top:5px; padding-bottom:5px;}
 #actions_tree_out table td{white-space:nowrap}
+.zform-default, .zform-default *{box-sizing: border-box}
+
 table{border-collapse:collapse}
 input[type=text] + button{
 	background-color: #535D94;

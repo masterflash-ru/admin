@@ -457,7 +457,7 @@ class ColModelHelper
                         "label"=>"Кнопка 1",
                         "interface"=>"/adm/universal-interface/usergroups",
                         "icon"=> "ui-icon-heart",
-                        "classes"=>[ "ui-button"=>""]
+                        "classes"=>[ "ui-button"=>""],
                         "dialog"=>[
                             "modal"=>true,
                             "resizable"=>true,
