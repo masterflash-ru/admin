@@ -47,7 +47,7 @@ class Zform
     {
         $this->options=$options;
         //смотрим описание колонок
-        $this->rowModel=$options["layout"]["rowModel"];
+        //$this->rowModel=$options["layout"]["rowModel"];
     }
 
 
@@ -64,14 +64,31 @@ class Zform
             $rez=$plugin->read($get);
         }
         
+
+        //пройдем по всем моделям колонок и исполним там плагины, если они есть
+        //ДО генерации формы, предназначено для формирования самих полей через их конфиг
+        foreach ($this->options["layout"]["rowModel"]['elements'] as &$rowModel){
+            if (isset($rowModel["spec"]["plugins"]) && is_array($rowModel["spec"]["plugins"])){
+                foreach ($rowModel["spec"]["plugins"] as $plugin_group=>$plugins){
+                    if ($plugin_group=="rowModel"){
+                        foreach ($plugins as $plugin=>$plugin_options){
+                            $plugin=$this->plugin($plugin);
+                            $plugin->setOptions($plugin_options);
+                            $rowModel["spec"]=$plugin->rowModel($rowModel["spec"]);
+                        }
+                    }
+                }
+            }
+        }
         $factory=new FormFactory();
-        $form    = $factory->createForm($this->rowModel);
-        //\Zend\Debug\Debug::dump($rez);
-        //пробежим по всем колонкам и проверим там наличие плагинов обработки
-       /* foreach ($this->options["layout"]["rowModel"] as $rowModel ){
-            if (isset($rowModel["plugins"]["read"])){
+        $form    = $factory->createForm($this->options["layout"]["rowModel"]);
+
+        //пробежим по всем строкам формы и проверим там наличие плагинов обработки ЗНАЧЕНИЙ
+        //которые будут переданы в элементы формы
+        foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
+            if (isset($rowModel["spec1"]["plugins"]["read"])){
                 //есть плагин/ны для обработки после чтения, применим его
-                foreach ($rowModel["plugins"]["read"] as $plugin_name=>$options){
+                foreach ($rowModel["spec"]["plugins"]["read"] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
                     //добавим в опции 
@@ -82,7 +99,7 @@ class Zform
                     }
                 }
             }
-        }*/
+        }
         //наполнение формы данными
         foreach ($form as $fieldName=>$item){
             if (array_key_exists($fieldName,$rez)){

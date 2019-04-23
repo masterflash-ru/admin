@@ -8,7 +8,6 @@
 namespace Admin\Service\Zform;
 
 use Zend\Stdlib\ArrayUtils;
-//use Zend\Json\Expr;
 //use Zend\Session\Container;
 use Zend\Form\Element;
 use Zend\Validator\Hostname;
@@ -16,7 +15,23 @@ use Zend\Validator\Hostname;
 
 class RowModelHelper
 {
+    /**
+    * вывод однострочного эл-та ввода даты и времени
+    */
+    public static function datetime(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Text::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+            ],
+            'attributes' => [
+                "class"=>"dtpicker",
+            ],
 
+        ],$options)];
+    }
     /**
     * вывод однострочного эл-та
     */
@@ -30,6 +45,7 @@ class RowModelHelper
             ]
         ],$options)];
     }
+
     /**
     * списка
     */
@@ -40,7 +56,10 @@ class RowModelHelper
             'name' => $name,
             'options' => [
                 'label' => '',
+                "value_options"=>[],
+               // "empty_option"=>"Выберите",
             ],
+            
         ],$options)];
     }
     /**

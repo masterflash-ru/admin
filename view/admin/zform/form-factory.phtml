@@ -32,10 +32,14 @@ foreach ($form as $k=>$item){
         ?>
         <div class="form-group">
             <?=$formLabel->openTag($i) . $i->getOption('label').$formLabel->closeTag();?>
-        <?php
+        <?php //echo $type.' ';
         switch ($type){
             case "select":{
                 echo $this->FormSelect($i);
+                break;
+            }
+            case "datetime":{
+                echo $this->FormDateTime($i);
                 break;
             }
             default:{
@@ -50,5 +54,7 @@ foreach ($form as $k=>$item){
 
 }
 ?>
-
 <?= $this->form()->closeTag() ?>
+<script>
+$(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
+</script>
