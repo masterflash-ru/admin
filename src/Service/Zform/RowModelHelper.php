@@ -29,6 +29,24 @@ class RowModelHelper
             'attributes' => [
                 "class"=>"dtpicker",
             ],
+            "plugins"=>[
+                "edit"=>[
+                    "datetime"=>[
+                        "toformat"=>"Y-m-d H:i:s",
+                    ],
+                ],
+                "add"=>[
+                    "datetime"=>[
+                        "toformat"=>"Y-m-d H:i:s",
+                    ],
+                ],
+                "read"=>[
+                    "datetime"=>[
+                        "toformat"=>"d.m.Y H:i:s",
+                    ],
+                ],
+            ],
+
 
         ],$options)];
     }
@@ -43,6 +61,16 @@ class RowModelHelper
             'options' => [
                 'label' => '',
             ]
+        ],$options)];
+    }
+    /**
+    * вывод скрытого эл-та
+    */
+    public static function hidden(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Hidden::class,
+            'name' => $name,
         ],$options)];
     }
 

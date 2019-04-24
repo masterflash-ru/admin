@@ -4,7 +4,7 @@ namespace Admin\Service\Zform;
 /*
 */
 use Zend\Stdlib\ArrayUtils;
-use Exception;
+//use Exception;
 use DateTime;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Form\Factory as FormFactory;
@@ -52,7 +52,7 @@ class Zform
 
 
     /**
-    * чтение массива данных
+    * чтение массива данных 
     */
     public function load(array $get=[])
     {
@@ -86,20 +86,24 @@ class Zform
         //пробежим по всем строкам формы и проверим там наличие плагинов обработки ЗНАЧЕНИЙ
         //которые будут переданы в элементы формы
         foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
-            if (isset($rowModel["spec1"]["plugins"]["read"])){
+            if (isset($rowModel["spec"]["plugins"]["read"])){
                 //есть плагин/ны для обработки после чтения, применим его
                 foreach ($rowModel["spec"]["plugins"]["read"] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
                     //добавим в опции 
-                    $options["rowModel"]=$rowModel;
+                    $options["rowModel"]=$rowModel["spec"];
                     $plugin->setOptions($options);
-                    foreach ($rez["rows"] as $index=>$value){
-                        $rez["rows"][$index][$rowModel["name"]]=$plugin->read($rez["rows"][$index][$rowModel["name"]],$index,$value);
-                    }
+                    $rez[$rowModel["spec"]["name"]]=$plugin->read($rez[$rowModel["spec"]["name"]]);
                 }
             }
         }
+        //проверим ключ на наличие
+        if (empty($rez[$rez["PrimaryKeyName"]])){
+            throw new Exception\PrimaryKeyEmptyException("Первичный ключ не найден или он пустой");
+        }
+        
+        
         //наполнение формы данными
         foreach ($form as $fieldName=>$item){
             if (array_key_exists($fieldName,$rez)){
@@ -120,7 +124,7 @@ class Zform
     [id] => 15197 - ID
 )
     */
-    public function edit(array $postParameters=[])
+    public function save(array $postParameters=[])
     {
         /*пробежим по полям и если нужно, конвертируем
         * надо или нет конвертировать проверяется из метаописаний rowModel

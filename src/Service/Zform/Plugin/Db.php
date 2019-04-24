@@ -15,9 +15,11 @@ class Db extends AbstractPlugin
 	protected $connection;
     protected $def_options_read=[
         "sql"=>"",
+         "PrimaryKey"=>null,
     ];
     protected $def_options_write=[
         "sql"=>"",
+         "PrimaryKey"=>null,
     ];
 
     
@@ -35,19 +37,39 @@ class Db extends AbstractPlugin
 * возвращает массив
 */
 public function read(array $get)
-{
+{//print_r($get);
     $options=ArrayUtils::merge($this->def_options_read,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
 
     $sql=$options["sql"];
 
+
+    preg_match_all("/[=<>]:([a-zA-Z0-9_]+)/iu",$sql,$mm);
+    $mm=array_unique($mm[1]);
+    foreach ($get as $n=>$g){
+        $sql=str_replace(":{$n}",$g,$sql);
+    }
+    
+    //\Zend\Debug\Debug::dump($sql);
+    
     $rs->Open($sql,$this->connection);
     $rez=[];
     foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
             $rez[$column_name]=$rs->Fields->Item[$column_name]->Value;
             
     }
+    if (!$options["PrimaryKey"]){
+        //ищем первичный ключ, если есть, в опциях он не задак конекретно
+        foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
+            if ($columninfo->PrimaryKey){
+                $options["PrimaryKey"]=$column_name;
+                break;
+            }
+        }
+    }
+    $rez["PrimaryKeyName"]=$options["PrimaryKey"];
+
     return $rez;    
 }
 

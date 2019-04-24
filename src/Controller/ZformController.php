@@ -43,9 +43,13 @@ public function readAction()
 
         $options=include $this->config[$interface];
         $this->zform->setOptions($options["options"]);
-        $rez=["form"=>$this->zform->load($this->params()->fromQuery())];
 
-        $view=new ViewModel($rez);
+
+        $view=new ViewModel([
+            "form"=>$this->zform->load($this->params()->fromQuery()),
+            "interface"=>$interface,
+            "options"=>$options
+            ]);
         $view->setTemplate("admin/zform/form-factory");
         $view->setTerminal(true);
 
@@ -62,23 +66,30 @@ public function readAction()
 }
 
 /**
-* редактирование строки таблицы
+* запись строки
 */
-public function editjqgridAction()
+public function saveAction()
 {
     try {
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка записи. Доступ запрещен к interface/".$interface);
+            throw new  ZformException\AccessDeniedException("Ошибка записи. Доступ запрещен к interface/".$interface);
         }
 
         $options=include $this->config[$interface];
-        $this->jqgrid->setOptions($options["options"]);
-        $rez=$this->jqgrid->edit($this->params()->fromPost());
-        $view=new JsonModel([]);
+        $this->zform->setOptions($options["options"]);
+
+        $view=new ViewModel([
+            "form"=>$this->zform->load($this->params()->fromPost()),
+            "interface"=>$interface,
+            "options"=>$options
+            ]);
+        $view->setTemplate("admin/zform/form-factory");
+        $view->setTerminal(true);
+
         return $view;
-    } catch (jqGridException\AccessDeniedException $e) {
+    } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');
     } catch (Exception $e) {
@@ -93,21 +104,21 @@ public function editjqgridAction()
 /**
 * работа с отдельными плагинами
 * возвращает json
-*/
+* /
 public function pluginAction()
 {
     try {
         $plugin_name=$this->params('name',"");
         $acl=$this->acl('jqgrid/plugin/'.$plugin_name);
         if (!$acl->isAllowed("r")){
-            throw new  jqGridException\AccessDeniedException("Ошибка. Доступ к плагину jqgrid/plugin/{$plugin_name} запрещен");
+            throw new  ZformException\AccessDeniedException("Ошибка. Доступ к плагину jqgrid/plugin/{$plugin_name} запрещен");
         }
 
-        $plugin=$this->jqgrid->plugin($plugin_name,null);
+        $plugin=$this->zform->plugin($plugin_name,null);
         $rez=$plugin->ajaxRead();
         $view=new JsonModel($rez);
         return $view;
-    } catch (jqGridException\AccessDeniedException $e) {
+    } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');
     } catch (Exception $e) {
@@ -117,5 +128,5 @@ public function pluginAction()
         return $this->getResponse()->setContent(nl2br($errors));
     }
 
-}
+}*/
 }

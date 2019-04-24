@@ -9,10 +9,14 @@
 
 $options=$this->options;
 
-//\Zend\Debug\Debug::dump($options);
+
 ?>
+<div id="server-response-text"></div>
+<div id="form_interface_<?=$interface?>">
 <?php
 $form = $this->form;
+$form->setAttribute('action', $this->url("adm/io-zform",["interface"=>$interface,"action"=>"save"]));
+$form->setAttribute("id","zform_".$interface);
 $form->prepare();
 $formLabel = $this->plugin('formLabel');
 
@@ -23,6 +27,8 @@ foreach ($form as $k=>$item){
     if ($type=="submit") {
         //для кнопки не выводим группу
         echo $this->formSubmit($form->get($k));
+    } elseif ($type=="hidden"){
+        echo $this->FormHidden($i);
     } else {
         $a="form-control form-control-sm";
         if ($i->hasAttribute("class")){
@@ -38,10 +44,6 @@ foreach ($form as $k=>$item){
                 echo $this->FormSelect($i);
                 break;
             }
-            case "datetime":{
-                echo $this->FormDateTime($i);
-                break;
-            }
             default:{
                 echo $this->FormInput($i);
             }
@@ -55,6 +57,20 @@ foreach ($form as $k=>$item){
 }
 ?>
 <?= $this->form()->closeTag() ?>
-<script>
-$(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
+  $('#zform_<?=$interface?>' ).on( 'submit', function (e) {
+  e.preventDefault();
+  $( this ).ajaxSubmit({
+      target:"#form_interface_<?=$interface?>",
+      error: function (e) {$("#server-response-text").html(e.responseText)
+          
+      }
+  });
+    return false;
+});
+
+});
 </script>
