@@ -92,6 +92,9 @@ class JqGrid
                     }
                     break;
                 }
+                default:{
+                    $v=$get_item;
+                }
             }
             $get[$key]=$v;
         }

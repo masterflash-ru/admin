@@ -64,10 +64,6 @@ class ColModelHelper
     }
     
     
-    
-    
-    
-
     /**
     * вывод однострочного эл-та
     * в сетке он скрыт
@@ -456,6 +452,7 @@ class ColModelHelper
                     "button1"=> [
                         "label"=>"Кнопка 1",
                         "interface"=>"/adm/universal-interface/usergroups",
+                        "get_parameter_name"=>"id",
                         "icon"=> "ui-icon-heart",
                         "classes"=>[ "ui-button"=>""],
                         "dialog"=>[

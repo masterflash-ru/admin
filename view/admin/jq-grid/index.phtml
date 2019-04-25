@@ -11,7 +11,7 @@ Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 
 $options=$this->options;
 
-//\Zend\Debug\Debug::dump($options["layout"]["colModel"]);
+//\Zend\Debug\Debug::dump($_GET);
 
 //удалим всю информацию о плагинах, она не нужна
 foreach ($options["layout"]["colModel"] as $k=>$v){
@@ -62,6 +62,9 @@ if (!isset($navgrid_options["button"])){
 /*все опции в грид*/
 $jqgrid= json::encode($options["layout"], false, ['enableJsonExprFinder' => true]);
 
+if (isset($_GET)){
+    $gets=$_GET;
+} else {$gets=[];}
 
 if (isset($options["caption"])){
     echo $options["caption"];
@@ -83,11 +86,11 @@ var jqgrid_options=<?=$jqgrid?>,
 jqgrid_options.dataProxy=$.jgrid.ext.ajaxFormProxy;
 jqgrid_options.useDataProxy=true;
 jqgrid_options.pager='#<?=$options["container"]?>_pager';
-/*jqgrid_options.ajaxRowOptions={
-    contentType:'multipart/form-data'
-}
-*/
-
+/*добавляется в POST сетки в момент создания записи из GET запроса открытия сетки*/  
+navgrid_add_options.editData=<?=json::encode($gets)?>;
+    
+/*GET параметры передаваемые в сетку*/
+jqgrid_options.postData=<?=json::encode($gets)?>;
 navgrid_edit_options.useDataProxy=true;
 navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
 navgrid_add_options.useDataProxy=true;
