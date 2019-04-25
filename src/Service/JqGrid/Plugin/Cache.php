@@ -33,5 +33,17 @@ public function edit(array $postParameters)
         $this->cache->clearByTags($this->options["tags"],true);
     }
 }
+/**
+* Очистка кеша
+*/
+public function add(array $postParameters)
+{
+    if (!empty($this->options["keys"])){
+        $this->cache->removeItems($this->options["keys"]);
+    }
+    if (!empty($this->options["tags"])){
+        $this->cache->clearByTags($this->options["tags"],true);
+    }
+}
 
 }
