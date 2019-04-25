@@ -48,7 +48,9 @@ public function read(array $get)
     preg_match_all("/[=<>]:([a-zA-Z0-9_]+)/iu",$sql,$mm);
     $mm=array_unique($mm[1]);
     foreach ($get as $n=>$g){
-        $sql=str_replace(":{$n}",$g,$sql);
+        if (in_array($n,$mm)){
+            $sql=str_replace(":{$n}",$g,$sql);
+        }
     }
     
     //\Zend\Debug\Debug::dump($sql);

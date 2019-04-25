@@ -53,6 +53,14 @@ public function read(array $get)
     $rs->PageSize=(int)$get["rows"];
 
     $sql=$options["sql"];
+    preg_match_all("/[=<>]:([a-zA-Z0-9_]+)/iu",$sql,$mm);
+    $mm=array_unique($mm[1]);
+    foreach ($get as $n=>$g){
+        if (in_array($n,$mm)){
+            $sql=str_replace(":{$n}",$g,$sql);
+        }
+    }
+
     $sql_sort=[];
     //добавим в SQL сортировку, что бы не грузить всю таблицу в память!
     foreach ($get["sidx"] as $k=>$field ){

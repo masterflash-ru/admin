@@ -27,7 +27,7 @@ class RowModelHelper
                 'label' => '',
             ],
             'attributes' => [
-                "class"=>"dtpicker",
+                "class"=>"dtpicker form-control form-control-sm",
             ],
             "plugins"=>[
                 "edit"=>[
@@ -60,7 +60,11 @@ class RowModelHelper
             'name' => $name,
             'options' => [
                 'label' => '',
-            ]
+            ],
+            'attributes' => [
+                "class"=>"form-control form-control-sm",
+            ],
+
         ],$options)];
     }
     /**
@@ -75,6 +79,23 @@ class RowModelHelper
     }
 
     /**
+    * MultiCheckbox
+    */
+    public static function MultiCheckbox(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\MultiCheckbox::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+                "value_options"=>[],
+            ],
+        
+        ],$options)];
+    }
+
+
+    /**
     * списка
     */
     public static function select(string $name, array $options=[])
@@ -87,6 +108,10 @@ class RowModelHelper
                 "value_options"=>[],
                // "empty_option"=>"Выберите",
             ],
+            'attributes' => [
+                "class"=>"form-control form-control-sm",
+            ],
+
             
         ],$options)];
     }

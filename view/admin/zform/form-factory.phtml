@@ -30,25 +30,28 @@ foreach ($form as $k=>$item){
     } elseif ($type=="hidden"){
         echo $this->FormHidden($i);
     } else {
-        $a="form-control form-control-sm";
-        if ($i->hasAttribute("class")){
-            $a.=" ".$i->getAttribute("class");
-        }
-        $i->setAttribute("class",$a);
+
         ?>
         <div class="form-group">
-            <?=$formLabel->openTag($i) . $i->getOption('label').$formLabel->closeTag();?>
+    <?=$this->formLabel($i)?>
         <?php //echo $type.' ';
         switch ($type){
             case "select":{
                 echo $this->FormSelect($i);
                 break;
             }
+            case "multi_checkbox":{
+                $m=$this->FormMultiCheckbox();
+                $m->setSeparator("<br/>");
+                echo '<div class="form-check pt-2">'.$m->Render($i).'</div>';
+                break;
+            }
             default:{
-                echo $this->FormInput($i);
+                echo $this->formElement($i);
             }
         }
         ?>
+        
         <?=$this->formElementErrors($i)?>
           </div>
         <?php
