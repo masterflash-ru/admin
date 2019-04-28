@@ -68,7 +68,7 @@ public function readAction()
 /**
 * запись строки
 */
-public function saveAction()
+public function editAction()
 {
     try {
         $interface=$this->params('interface',"");
@@ -79,16 +79,10 @@ public function saveAction()
 
         $options=include $this->config[$interface];
         $this->zform->setOptions($options["options"]);
+        $this->zform->edit($this->params()->fromPost(),$this->params()->fromQuery());
 
-        $view=new ViewModel([
-            "form"=>$this->zform->load($this->params()->fromPost()),
-            "interface"=>$interface,
-            "options"=>$options
-            ]);
-        $view->setTemplate("admin/zform/form-factory");
-        $view->setTerminal(true);
 
-        return $view;
+        return $this->readAction();
     } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');

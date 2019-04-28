@@ -22,33 +22,35 @@ class PluginManager extends AbstractPluginManager
         "cache" => Plugin\Cache::class,
         "Cache" => Plugin\Cache::class,
         
+        "StringToArray"=>Plugin\StringToArray::class,
+        "stringtoarray"=>Plugin\StringToArray::class,
         
         
         "Datetime"=>   Plugin\Datetime::class,
         "Date"=>   Plugin\Date::class,
         "datetime"=>   Plugin\Datetime::class,
         "date"=>   Plugin\Date::class,
-        "Images" => Plugin\Images::class,
-        "images" => Plugin\Images::class,
+       // "Images" => Plugin\Images::class,
+       // "images" => Plugin\Images::class,
         
         "Translit" => Plugin\Translit::class,
         "translit" => Plugin\Translit::class,
         
-        "Permissions" => Plugin\Permissions::class,
-        "permissions" => Plugin\Permissions::class,
+       // "Permissions" => Plugin\Permissions::class,
+       // "permissions" => Plugin\Permissions::class,
         
         "SelectFromDb" => Plugin\SelectFromDb::class,
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
         
-        "Locale" => Plugin\Locale::class,
-        "locale" => Plugin\Locale::class,
+      //  "Locale" => Plugin\Locale::class,
+      //  "locale" => Plugin\Locale::class,
         
-        "ClearContent" => Plugin\ClearContent::class,
-        "clearcontent" => Plugin\ClearContent::class,
-  
-        "LastMod" => Plugin\LastMod::class,
-        "lastmod" => Plugin\LastMod::class,
+      //  "ClearContent" => Plugin\ClearContent::class,
+      //  "clearcontent" => Plugin\ClearContent::class,
+
+       // "LastMod" => Plugin\LastMod::class,
+       // "lastmod" => Plugin\LastMod::class,
         
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
@@ -65,15 +67,16 @@ class PluginManager extends AbstractPluginManager
         Plugin\Cache::class => Plugin\Factory\Cache::class,
         
         /*поэлементная обработка*/
+        Plugin\StringToArray::class => InvokableFactory::class,
         Plugin\Datetime::class => InvokableFactory::class,
         Plugin\Date::class => InvokableFactory::class,
-        Plugin\Images::class => Plugin\Factory\Images::class,
+       // Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Translit::class => InvokableFactory::class,
-        Plugin\ClearContent::class => InvokableFactory::class,
-        Plugin\LastMod::class => InvokableFactory::class,
-        Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
-        Plugin\Permissions::class => Plugin\Factory\Permissions::class,
-        Plugin\Locale::class => Plugin\Factory\Locale::class,
+       // Plugin\ClearContent::class => InvokableFactory::class,
+        //Plugin\LastMod::class => InvokableFactory::class,
+       Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
+        //Plugin\Permissions::class => Plugin\Factory\Permissions::class,
+        //Plugin\Locale::class => Plugin\Factory\Locale::class,
        // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 

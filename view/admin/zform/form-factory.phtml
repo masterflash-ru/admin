@@ -8,6 +8,10 @@
 */
 
 $options=$this->options;
+$get="";
+if (isset($_GET)){
+    $get="?".http_build_query($_GET);
+}
 
 
 ?>
@@ -15,7 +19,7 @@ $options=$this->options;
 <div id="form_interface_<?=$interface?>">
 <?php
 $form = $this->form;
-$form->setAttribute('action', $this->url("adm/io-zform",["interface"=>$interface,"action"=>"save"]));
+$form->setAttribute('action', $this->url("adm/io-zform",["interface"=>$interface,"action"=>"edit"]).$get);
 $form->setAttribute("id","zform_".$interface);
 $form->prepare();
 $formLabel = $this->plugin('formLabel');
@@ -51,7 +55,6 @@ foreach ($form as $k=>$item){
             }
         }
         ?>
-        
         <?=$this->formElementErrors($i)?>
           </div>
         <?php
@@ -68,9 +71,8 @@ $(document).ready(function() {
   e.preventDefault();
   $( this ).ajaxSubmit({
       target:"#form_interface_<?=$interface?>",
-      error: function (e) {$("#server-response-text").html(e.responseText)
-          
-      }
+      error: function (e) {$("#server-response-text").html(e.responseText)},
+      success: function (e) {$("#usersall").trigger("reloadGrid");}
   });
     return false;
 });

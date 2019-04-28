@@ -117,51 +117,52 @@ class Zform
 
     /**
     * редактирование записей
-    Array
-(
-- массив самих данных
-    [oper] => edit - операция
-    [id] => 15197 - ID
-)
+    GET - параметры если есть:
+    array(1) {
+  ["id"] => string(2) "11"
+}
+POST параметры из формы
+array(6) {
+  ["login"] => string(5) "admin"
+  ["name"] => string(2) "11"
+  ["full_name"] => string(4) "2234"
+  ["status"] => string(1) "3"
+  ["date_registration"] => string(19) "18.04.2019 00:00:00"
+  ["gr"] => array(1) {
+    [0] => string(1) "2"
+  }
+}
+
     */
-    public function save(array $postParameters=[])
+    public function edit(array $postParameters=[], array $getParameters=[])
     {
         /*пробежим по полям и если нужно, конвертируем
         * надо или нет конвертировать проверяется из метаописаний rowModel
         **/
-
-        if (!(isset($postParameters["oper"]) && in_array($postParameters["oper"],["add","edit","del"]))){
-            return "";
-        }
-        //операция
-        $oper=$postParameters["oper"];
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
-        foreach ($this->options["layout"]["rowModel"] as $rowModel ){
-            if (isset($rowModel["plugins"][$oper])){
+        foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
+            if (isset($rowModel["spec"]["plugins"]["edit"])){
                 //есть плагин/ны для обработки после чтения, применим его
-                foreach ($rowModel["plugins"][$oper] as $plugin_name=>$options){
+                foreach ($rowModel["spec"]["plugins"]["edit"] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->plugin($plugin_name);
                     $options["rowModel"]=$rowModel;
                     $plugin->setOptions($options);
-                    if (isset($postParameters[$rowModel["name"]])){
-                        $postParameters[$rowModel["name"]]=$plugin->$oper($postParameters[$rowModel["name"]],$postParameters);
-                    }
-                    if ($oper=="del" && isset($postParameters["id"])){
-                        $plugin->del($postParameters);
+                    if (isset($postParameters[$rowModel["spec"]["name"]])){
+                        $postParameters[$rowModel["spec"]["name"]]=$plugin->edit($postParameters[$rowModel["spec"]["name"]],$postParameters,$getParameters);
                     }
                 }
             }
         }
         //при помощи плагина пишем содержимое
         $rez=[];
-        if (!isset($this->options[$oper])) {
-            throw new  Exception ("Операция $oper не описана в конфиге интерфейса");
+        if (!isset($this->options["edit"])) {
+            throw new  Exception ("Операция edit не описана в конфиге интерфейса");
         }
-        foreach ($this->options[$oper] as $plugin_name=>$options){
+        foreach ($this->options["edit"] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $r=$plugin->$oper($postParameters);
+            $r=$plugin->edit($postParameters,$getParameters);
             if (!empty($r)){
                 $rez[]=$r;
             }
