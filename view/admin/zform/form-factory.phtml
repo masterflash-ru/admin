@@ -8,6 +8,15 @@
 */
 
 $options=$this->options;
+
+if (!empty($options["options"]["actionsEvent"])){
+    $actionEvent=$options["options"]["actionsEvent"];
+} else {
+    $actionEvent=[];
+}
+//\Zend\Debug\Debug::dump($options);
+
+
 $get="";
 if (isset($_GET)){
     $get="?".http_build_query($_GET);
@@ -72,7 +81,10 @@ $(document).ready(function() {
   $( this ).ajaxSubmit({
       target:"#form_interface_<?=$interface?>",
       error: function (e) {$("#server-response-text").html(e.responseText)},
-      success: function (e) {$("#usersall").trigger("reloadGrid");}
+      success: function (e) {
+          <?=(!empty($actionEvent["FormAfterSubmitOkEvent"])) ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
+      setTimeout(function(){$("#interfacesDialog").dialog("close");},1000);
+      }
   });
     return false;
 });

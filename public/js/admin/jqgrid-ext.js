@@ -309,6 +309,9 @@ if(operation === 'set'){
 function interfacesClick(buttonItem)
 {
     var opt=$(buttonItem).data("val"), interfacesDialog=$('<div id="interfacesDialog"></div>'),optdialog=opt.dialog;
+    if(!opt.get_parameter_name){
+        opt.get_parameter_name="id";
+    }
     optdialog.autoOpen=false;
     optdialog.iconButtons=[
             {

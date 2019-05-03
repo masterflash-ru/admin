@@ -90,7 +90,7 @@ jqgrid_options.pager='#<?=$options["container"]?>_pager';
 navgrid_add_options.editData=<?=json::encode($gets)?>;
     
 /*GET параметры передаваемые в сетку*/
-jqgrid_options.postData=<?=json::encode($gets)?>;
+//jqgrid_options.postData=<?=json::encode($gets)?>;
 navgrid_edit_options.useDataProxy=true;
 navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
 navgrid_add_options.useDataProxy=true;

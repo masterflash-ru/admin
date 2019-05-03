@@ -58,10 +58,12 @@ class Zform
     {
         $rez=[];
         //при помощи плагина читаем содержимое
-        foreach ($this->options["read"] as $plugin_name=>$options){
-            $plugin=$this->plugin($plugin_name);
-            $plugin->setOptions($options);
-            $rez=$plugin->read($get);
+        if (!empty($this->options["read"])){
+            foreach ($this->options["read"] as $plugin_name=>$options){
+                $plugin=$this->plugin($plugin_name);
+                $plugin->setOptions($options);
+                $rez=$plugin->read($get);
+            }
         }
         
 
@@ -99,9 +101,9 @@ class Zform
             }
         }
         //проверим ключ на наличие
-        if (empty($rez[$rez["PrimaryKeyName"]])){
+       /* if (empty($rez[$rez["PrimaryKeyName"]])){
             throw new Exception\PrimaryKeyEmptyException("Первичный ключ не найден или он пустой");
-        }
+        }*/
         
         
         //наполнение формы данными
