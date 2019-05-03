@@ -29,10 +29,6 @@ public function __construct ($authManager, $authService,$sessionManager)
 */
 public function indexAction()
 {
-    if(!$this->Acl()->isAllowed("x",__METHOD__)  ){
-        //успешная авторизация, но доступ запрещен
-       // return $this->redirect()->toRoute('accessdenied');
-    }
     
 	$viewModel=new ViewModel();
   return $viewModel;

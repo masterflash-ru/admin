@@ -23,6 +23,7 @@ public function __construct ($config)
 /*вывод левой части фрейма с меню*/
 public function indexAction()
 {
+
   return new ViewModel(["config"=>$this->config]);
 	
 }
