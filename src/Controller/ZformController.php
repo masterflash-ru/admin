@@ -9,7 +9,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Exception;
 use Admin\Service\Zform\Exception as ZformException;
-
+use Zend\Form\Factory as FormFactory;
 
 class ZformController extends AbstractActionController
 {
@@ -43,10 +43,12 @@ public function readAction()
 
         $options=include $this->config[$interface];
         $this->zform->setOptions($options["options"]);
-
-
+        
+        $factory=new FormFactory();
+        $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
+        $this->zform->load($form,$this->params()->fromQuery());
         $view=new ViewModel([
-            "form"=>$this->zform->load($this->params()->fromQuery()),
+            "form"=>$form,
             "interface"=>$interface,
             "options"=>$options
             ]);
@@ -73,16 +75,31 @@ public function editAction()
     try {
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
-        if (!$acl->isAllowed("r")){
+        if (!$acl->isAllowed("w")){
             throw new  ZformException\AccessDeniedException("Ошибка записи. Доступ запрещен к interface/".$interface);
         }
 
         $options=include $this->config[$interface];
         $this->zform->setOptions($options["options"]);
-        $this->zform->edit($this->params()->fromPost(),$this->params()->fromQuery());
-
-
-        return $this->readAction();
+        /*
+        * формируем форму и пропускаем все через тамошние валидаторы и фильтры
+        **/
+        $factory=new FormFactory();
+        $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
+        $this->zform->initForm($form);
+        $form->setData($this->params()->fromPost());
+        if ($form->isValid()) {
+            //валидация прошла, обарбатываем запись
+            $this->zform->edit($form->getData(),$this->params()->fromQuery());
+        }
+        $view=new ViewModel([
+            "form"=>$form,
+            "interface"=>$interface,
+            "options"=>$options
+            ]);
+        $view->setTemplate("admin/zform/form-factory");
+        $view->setTerminal(true);
+        return $view;
     } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');

@@ -1,6 +1,6 @@
 <?php
 namespace Admin\Service\Zform\Plugin;
-
+use Zend\Form\FormInterface;
 /*
 */
 
@@ -30,7 +30,7 @@ class SelectFromDb extends AbstractPlugin
     * $rowModel - элемент $rowModel из конфигурации
     * возвращает тот же $rowModel, с внесенными изменениями
     */
-    public function rowModel(array $rowModel)
+    public function rowModel(array $rowModel,FormInterface $form)
     {
         if ($this->options["emptyFirstItem"]){
             $rez[$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
@@ -43,9 +43,7 @@ class SelectFromDb extends AbstractPlugin
             $rs->MoveNext();
         }
         
-        $rowModel['options']["value_options"]=$rez;
-        
-        return $rowModel;
+        $form->get($rowModel["name"])->setValueOptions($rez);
     }
 
 

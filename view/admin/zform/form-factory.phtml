@@ -32,11 +32,14 @@ $form->setAttribute('action', $this->url("adm/io-zform",["interface"=>$interface
 $form->setAttribute("id","zform_".$interface);
 $form->prepare();
 $formLabel = $this->plugin('formLabel');
-
+$flagError=false;
 echo $this->form()->openTag($form);
 foreach ($form as $k=>$item){
     $i=$form->get($k);
     $type=$item->getAttribute("type");
+
+    $error=$i->getMessages();
+    if (!empty($error)){$flagError=true;}
     if ($type=="submit") {
         //для кнопки не выводим группу
         echo $this->formSubmit($form->get($k));
@@ -64,7 +67,7 @@ foreach ($form as $k=>$item){
             }
         }
         ?>
-        <?=$this->formElementErrors($i)?>
+        <?=(!empty($error)) ? '<div class="alert alert-danger" role="alert">'.implode("<br>",$error).'</div>':"" ?>
           </div>
         <?php
     }
@@ -72,19 +75,18 @@ foreach ($form as $k=>$item){
 }
 ?>
 <?= $this->form()->closeTag() ?>
+
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
+<?=(!empty($actionEvent["FormAfterSubmitOkEvent"]) && !$flagError && $_SERVER['REQUEST_METHOD']=="POST") ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
     $(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
   $('#zform_<?=$interface?>' ).on( 'submit', function (e) {
   e.preventDefault();
   $( this ).ajaxSubmit({
       target:"#form_interface_<?=$interface?>",
       error: function (e) {$("#server-response-text").html(e.responseText)},
-      success: function (e) {
-          <?=(!empty($actionEvent["FormAfterSubmitOkEvent"])) ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
-      setTimeout(function(){$("#interfacesDialog").dialog("close");},1000);
-      }
+      success: function (e) {}
   });
     return false;
 });

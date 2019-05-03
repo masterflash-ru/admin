@@ -4,11 +4,11 @@ namespace Admin\Service\Zform;
 /*
 */
 use Zend\Stdlib\ArrayUtils;
-//use Exception;
-use DateTime;
+
 use Zend\ServiceManager\ServiceManager;
 use Zend\Form\Factory as FormFactory;
-
+use Zend\Form\FormInterface;
+use Zend\Validator\AbstractValidator;
 use Mf\Storage\Service\ImagesLib;
 
 class Zform
@@ -17,6 +17,7 @@ class Zform
     protected $plugins;
     protected $container;
     protected $options;
+    //protected $translator;
     /*описание колонок из конфига
     * нужно для обработки даты, т.к. присылаются они сюда в ru локали
     */
@@ -32,9 +33,12 @@ class Zform
     
 
     
-    public function __construct($pluginManager) 
+    public function __construct($pluginManager,$translator) 
     {
         $this->setPluginManager($pluginManager);
+       // $this->translator=$translator;
+        $translator->setLocale("ru");
+        AbstractValidator::setDefaultTranslator($translator);
     }
     
 
@@ -46,15 +50,15 @@ class Zform
     public function setOptions(array $options)
     {
         $this->options=$options;
-        //смотрим описание колонок
-        //$this->rowModel=$options["layout"]["rowModel"];
     }
 
 
     /**
     * чтение массива данных 
+    * $form - экземпляр созданной формы
+    * $get - GET данные
     */
-    public function load(array $get=[])
+    public function load(FormInterface $form,array $get=[])
     {
         $rez=[];
         //при помощи плагина читаем содержимое
@@ -66,26 +70,9 @@ class Zform
             }
         }
         
-
-        //пройдем по всем моделям колонок и исполним там плагины, если они есть
-        //ДО генерации формы, предназначено для формирования самих полей через их конфиг
-        foreach ($this->options["layout"]["rowModel"]['elements'] as &$rowModel){
-            if (isset($rowModel["spec"]["plugins"]) && is_array($rowModel["spec"]["plugins"])){
-                foreach ($rowModel["spec"]["plugins"] as $plugin_group=>$plugins){
-                    if ($plugin_group=="rowModel"){
-                        foreach ($plugins as $plugin=>$plugin_options){
-                            $plugin=$this->plugin($plugin);
-                            $plugin->setOptions($plugin_options);
-                            $rowModel["spec"]=$plugin->rowModel($rowModel["spec"]);
-                        }
-                    }
-                }
-            }
-        }
-        $factory=new FormFactory();
-        $form    = $factory->createForm($this->options["layout"]["rowModel"]);
-
-        //пробежим по всем строкам формы и проверим там наличие плагинов обработки ЗНАЧЕНИЙ
+        $this->initForm($form);
+        
+        //пробежим по всем строкам формы и проверим там наличие плагинов обработки НАЧАЛЬНЫХ ЗНАЧЕНИЙ
         //которые будут переданы в элементы формы
         foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
             if (isset($rowModel["spec"]["plugins"]["read"])){
@@ -138,9 +125,7 @@ array(6) {
     */
     public function edit(array $postParameters=[], array $getParameters=[])
     {
-        /*пробежим по полям и если нужно, конвертируем
-        * надо или нет конвертировать проверяется из метаописаний rowModel
-        **/
+
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
         foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
             if (isset($rowModel["spec"]["plugins"]["edit"])){
@@ -159,7 +144,7 @@ array(6) {
         //при помощи плагина пишем содержимое
         $rez=[];
         if (!isset($this->options["edit"])) {
-            throw new  Exception ("Операция edit не описана в конфиге интерфейса");
+            throw new  Exception\ConfigError ("Операция edit не описана в конфиге интерфейса");
         }
         foreach ($this->options["edit"] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
@@ -172,6 +157,32 @@ array(6) {
         return implode("",$rez);
     }
 
+
+/**
+* инициализация формы, наполнение ее выпадающих список и прочее, то что указано в конфиге
+* данные беруться из плагинов обработки, указанных в конфиге
+* ничего не возвращает
+* на входе $form - экземпляр формы
+*/
+    public function initForm(FormInterface $form)
+    {
+        //пройдем по всем моделям колонок и исполним там плагины, если они есть
+        // предназначено для формирования самих полей через их конфиг, например, наполнение выпадающих списков значениями
+        foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel){
+            if (isset($rowModel["spec"]["plugins"]) && is_array($rowModel["spec"]["plugins"])){
+                foreach ($rowModel["spec"]["plugins"] as $plugin_group=>$plugins){
+                    if ($plugin_group=="rowModel"){
+                        foreach ($plugins as $plugin=>$plugin_options){
+                            $plugin=$this->plugin($plugin);
+                            $plugin->setOptions($plugin_options);
+                            $plugin->rowModel($rowModel["spec"],$form);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 /**
 * для прямого обращения к плагинам
 */
