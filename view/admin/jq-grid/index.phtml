@@ -10,6 +10,10 @@ use Zend\Json\Json;
 Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 
 $options=$this->options;
+$get="";
+if (isset($_GET)){
+    $get="?".http_build_query($_GET);
+}
 
 //\Zend\Debug\Debug::dump($_GET);
 
@@ -26,14 +30,14 @@ $options["layout"]["url"]=$this->url("adm/io-jqgrid",
                                "interface"=>$interface,
                                "action" => "readjqgrid"
                            ]
-                           );
+                           ).$get;
 
 $options["layout"]["editurl"]=$this->url("adm/io-jqgrid",
                            [
                                "interface"=>$interface,
                                "action" => "editjqgrid"
                            ]
-                           );
+                           ).$get;
 
 $options["layout"]["pager"]="#".$options["container"]."_pager";
 
