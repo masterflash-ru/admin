@@ -102,7 +102,7 @@ public function editAction()
         return $view;
     } catch (ZformException\AccessDeniedException $e) {
         $this->getResponse()->setStatusCode(406);
-        return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');
+        return $this->getResponse()->setContent($e->getMessage());
     } catch (Exception $e) {
         $errors="Ошибка: ".$e->getMessage()."\nФайл:".$e->getFile()."\nСтрока:".$e->getLine()."\nТрассировка:".$e->getTraceAsString();
         //любое исключение - 404

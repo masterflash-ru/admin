@@ -85,8 +85,8 @@ $(document).ready(function() {
   e.preventDefault();
   $( this ).ajaxSubmit({
       target:"#form_interface_<?=$interface?>",
-      error: function (e) {$("#server-response-text").html(e.responseText)},
-      success: function (e) {}
+      error: function (e) {$("#server-response-text").html(e.responseText).addClass("alert alert-danger").removeClass("alert-success");},
+      success: function (e) {$("#server-response-text").text("Информация успешно записана").addClass("alert alert-success").removeClass("alert-danger");}
   });
     return false;
 });
