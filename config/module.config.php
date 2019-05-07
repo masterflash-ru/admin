@@ -341,6 +341,24 @@ return [
     ],
     /*описатели интерфейсов*/
     "interface"=>[
-    ]
+    ],
+    /*доступы к объектам по умолчанию*/
+    "permission"=>[
+        "objects" =>[
+            "Admin\Controller\LoginController/e403"  =>         [1,1,0711],
+            "Admin\Controller\LoginController/accessdenied" =>  [1,1,0711],
+            "Admin/Menu"  =>                                    [1,1,0750],
+            "Admin\Controller\LoginController/login" =>         [1,1,0711],
+            "Admin\Controller\BackupRestoreController/index" => [1,1,0710],
+            "Admin\Controller\TreeController/index" =>          [1,1,0710],
+            "Admin\Controller\LineController/index" =>          [1,1,0710],
+            "Admin\Controller\EntityController/index" =>        [1,1,0710],
+            "Admin\Controller\ConstructorLineController/index"=>[1,1,0710],
+            "Admin\Controller\ZformController/*" =>             [1,1,0770],
+            "Admin\Controller\UinterfaceController/index" =>    [1,1,0770],
+            "Admin\Controller\IndexController/index" =>         [1,1,0710],
+            "Admin\Controller\JqGridController/*" =>            [1,1,0770]
+        ],
+    ],
 
 ];
