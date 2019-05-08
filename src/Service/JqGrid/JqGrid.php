@@ -79,6 +79,7 @@ class JqGrid
                     break;
                 }
                 case "rows":
+                case "nodeid":
                 case "page":{
                     $v=(int)$get_item;
                     break;

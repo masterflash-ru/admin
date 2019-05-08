@@ -24,14 +24,20 @@ return [
                             from admin_menu as t where subid=:nodeid",
                 ],
             ],
-             "edit1"=>[
-                 "SaveUser"=>[]
+             "edit"=>[
+                "db"=>[//плагин выборки из базы
+                    "sql"=>"select * from admin_menu",
+                ],
              ],
-             "add1"=>[
-                 "SaveUser"=>[]
+             "add"=>[
+                "db"=>[//плагин выборки из базы
+                    "sql"=>"select * from admin_menu",
+                ],
              ],
-             "del1"=>[
-                 "SaveUser"=>[]
+             "del"=>[
+                "db"=>[//плагин выборки из базы
+                    "sql"=>"select * from admin_menu",
+                ],
              ],
 
             /*внешний вид*/
@@ -45,6 +51,8 @@ return [
                 "treeGrid"=>true,
                 "ExpandColumn"=>"name",
                 "ExpandColClick"=>true,
+                "treeGridModel"=>"adjacency",
+                "gridview"=>true,
                 "treeIcons"=>[
                     "plus"  =>"ui-icon-triangle-1-e",
                     "minus"=>"ui-icon-triangle-1-s",
@@ -52,7 +60,7 @@ return [
                 ],
                 "navgrid" => [
                     "button" => NavGridHelper::Button(["search"=>false,"add"=>true,"edit"=>true,"del"=>true]),
-                    "editOptions"=>NavGridHelper::editOptions(),
+                    "editOptions"=>NavGridHelper::editOptions(["reloadAfterSubmit"=>false]),
                     "addOptions"=>NavGridHelper::addOptions(),
                     "delOptions"=>NavGridHelper::delOptions(),
 
@@ -70,11 +78,10 @@ return [
                     ColModelHelper::select("url",["label"=>"Переход",
                                                   "width"=>"500",
                                                   "plugins"=>[
-                                                      "colModel"=>["GetAdminUrls"=>[]],
-                                                      "ajaxRead"=>["GetAdminUrls"=>[]],
+                                                      "colModel"=>["GetAdminUrls"=>[]], //вывод в форматтере select
+                                                      "ajaxRead"=>["GetAdminUrls"=>[]], //подгрузка при редактированиив форме
                                                       ],
                                                   ]),
-                    
                 ],
             ],
         ],
