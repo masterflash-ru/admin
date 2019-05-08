@@ -57,8 +57,8 @@ INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `locale`, `url`) VALUE
   (12, 'Группы пользователей', 2, 10, 'ru_RU', '/adm/universal-interface/usergroups'),
   (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/universal-interface/users'),
   (14, 'Доступы', 1, 1, 'ru_RU', ''),
-  (15, 'Системные доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions'),
-  (16, 'Пользоват. доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions_from_config');
+  (15, 'Пользоват. доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions'),
+  (16, 'Системные доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions_from_config');
   
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
