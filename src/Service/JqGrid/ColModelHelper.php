@@ -81,6 +81,22 @@ class ColModelHelper
             
         ],$options);
     }
+
+    /**
+    * вывод однострочного эл-та
+    * в сетке он скрыт
+    */
+    public static function hidden(string $name, array $options=[])
+    {
+        return ArrayUtils::merge([
+            "name" => $name,
+            "editable" => false,
+            "edittype" => "hidden",
+            "hidden"=>true,
+            
+        ],$options);
+    }
+
     
     /**
     * вывод многострочного эл-та
@@ -151,7 +167,7 @@ class ColModelHelper
             foreach ($options["plugins"]["ajaxRead"] as $plugin_alias=>$plugin_options){
                 $plugin_options=ArrayUtils::merge($def_editoptions,$plugin_options);
                 $plugin_options["dataUrl"]="/adm/io-jqgrid-plugin/".$plugin_alias;
-                $plugin_options["buildSelect"]=new Expr("buildSelect");
+                $plugin_options["buildSelect"]=new Expr("buildSelect"); //это функция в JS которая собирает вып.список
             }
             $options["editoptions"]=ArrayUtils::merge($options["editoptions"],$plugin_options);
             unset($options["plugins"]["ajaxRead"]);

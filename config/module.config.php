@@ -328,8 +328,10 @@ return [
     /*плагины для сетки JqGrid*/
     "JqGridPlugin"=>[
         'factories' => [
+            Service\Admin\JqGrid\Plugin\GetAdminUrls::class=>Service\Admin\JqGrid\Plugin\FactoryGetAdminUrls::class,
         ],
         'aliases' =>[
+            "GetAdminUrls"=>Service\Admin\JqGrid\Plugin\GetAdminUrls::class,
         ],
     ],
     /*плагины для интерфейса типа ФОРМА*/
@@ -341,6 +343,7 @@ return [
     ],
     /*описатели интерфейсов*/
     "interface"=>[
+        "admin_menu"=>__DIR__."/admin.admin_menu.php",
     ],
     /*доступы к объектам по умолчанию*/
     "permission"=>[

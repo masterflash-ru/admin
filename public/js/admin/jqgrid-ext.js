@@ -375,8 +375,16 @@ function buildSelect(data)
 {
     var ov="<select>";
     data=JSON.parse(data);
-    $.map(data,function (i,j){
-       ov+='<option value="'+j+'">'+i+'</option>';
+    $.map(data,function (i,j){//цикл по optgroup
+        if (typeof i === 'object'){//console.log(i)
+            ov+='<optgroup label="'+j+'">';
+            $.map(i,function (ii,jj){
+                ov+='<option value="'+jj+'">'+ii+'</option>';
+            });
+            ov+='</optgroup>';
+        } else {
+            ov+='<option value="'+j+'">'+i+'</option>';
+        }
     });
     return ov+"</select>";
 }

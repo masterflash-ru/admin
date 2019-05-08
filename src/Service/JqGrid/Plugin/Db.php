@@ -60,7 +60,11 @@ public function read(array $get)
             $sql=str_replace(":{$n}",$g,$sql);
         }
     }
-
+    //если нет соотвествуюего GET параметра, для строковых вставим пустою строку, для чисел 0
+    $sql=preg_replace('/[\'"]{1}:[a-zA-Z0-9_]+[\'"]{1}/ui','""',$sql);
+    $sql=preg_replace('/:[a-zA-Z0-9_]+/ui',0,$sql);
+    //$rez["sql"]=$sql;
+    //$rez["GET"]=$get;
     $sql_sort=[];
     //добавим в SQL сортировку, что бы не грузить всю таблицу в память!
     foreach ($get["sidx"] as $k=>$field ){
@@ -96,7 +100,10 @@ public function read(array $get)
         $r=[];
         foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
             $r[$column_name]=$rs->Fields->Item[$column_name]->Value;
-            
+            //для генерации стандартного дерева
+            if ($column_name=="isLeaf"){
+                $r["isLeaf"]=(boolean)$r["isLeaf"];
+            }
         }
         $rez["rows"][]=$r;
         $rs->MoveNext();
