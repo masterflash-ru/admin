@@ -52,7 +52,7 @@ class ColModelHelper
         return ArrayUtils::merge([
             "name" => $name,
             "formatter"=>'showlink',
-            "label"=>"Фотогалерея",
+            "label"=>$name,
             "formatoptions" =>[
                 "baseLinkUrl" => '/adm/universal-interface/',
                 "showAction" => '',
@@ -72,6 +72,7 @@ class ColModelHelper
     {
         return ArrayUtils::merge([
             "name" => $name,
+            "label"=>$name,
             //"width" => 200,
             "editable" => true,
             "edittype" => "text",
@@ -108,6 +109,7 @@ class ColModelHelper
             "name" => $name,
             //"width" => 200,
             "editable" => true,
+            "label"=>$name,
             "edittype" => "textarea",
             "editoptions" => [
                 "cols" => 120,
@@ -129,6 +131,7 @@ class ColModelHelper
         return ArrayUtils::merge([
            "name" => $name,
             "editable" => true,
+            "label"=>$name,
             "edittype" => "checkbox",
             "editoptions"=>[
                 "value"=>"1:0"/*значение флажка (установлен-сброшен)*/
@@ -148,6 +151,7 @@ class ColModelHelper
     {
         $def=[
             "name" => $name,
+            "label"=>$name,
             "editable" => true,
             "edittype" => "select",
             "editoptions"=>[
@@ -185,6 +189,7 @@ class ColModelHelper
         $def=[
             "name" => $name,
             "hidden" => true,
+            "label"=>$name,
             "editable" => true,
             "edittype" => "textarea",
             "editoptions" => [
@@ -213,6 +218,7 @@ class ColModelHelper
     {
         $def=[
            "name" => $name,
+            "label"=>$name,
             "editable" => true,         
             "edittype"=>"custom",
             "editoptions"=>[
@@ -268,6 +274,7 @@ class ColModelHelper
     {
         $def=[
            "name" => $name,
+            "label"=>$name,
             "editable" => true,         
             "edittype"=>"custom",
             "editoptions"=>[
@@ -327,6 +334,7 @@ class ColModelHelper
     {
         $def=[/*формат дата + выбор даты*/
             "name" => $name,
+            "label"=>$name,
             "editable" => true,
             "edittype" => "text",
             "formatter" => "datetime",
@@ -364,6 +372,7 @@ class ColModelHelper
     {
         $def=[/*формат дата + выбор даты*/
             "name" => $name,
+            "label"=>$name,
             "editable" => true,
             "edittype" => "text",
             "formatter" => "date",
@@ -400,7 +409,7 @@ class ColModelHelper
     public static function permissions(string $name, array $options=[])
     {
         $def=[
-            "name" => $name,
+            "name" => $name,"label"=>$name,
             "formatter" => "permissions",
             "plugins"=>[
                 "read"=>[
@@ -440,6 +449,7 @@ class ColModelHelper
     {
         $def=[
             "name" => $name,
+            "label"=>$name,
             "width"=>250,
             "formatter" => "seo",
             "editable" => true,
@@ -460,6 +470,7 @@ class ColModelHelper
     {
         $def=[
             "name" => $name,
+            "label"=>$name,
             "width"=>500,
             "formatter" => "interfaces",
             "editable" => false,

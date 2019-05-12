@@ -102,6 +102,18 @@ return [
                             ],
                         ],
                     ],
+                    
+                    'admin_menu' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/admin_menu',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action'     => 'amenu'
+                            ],
+                        ],
+                    ],
+
                     /*устаревшее*/
 							'line' => [
 								'type' => Segment::class,
@@ -280,7 +292,6 @@ return [
 	//помощник вывода меню админки
     'view_helpers' => [
         'factories' => [
-            View\Helper\Menu::class => View\Helper\Factory\MenuFactory::class,
             View\Helper\ITabs::class => View\Helper\Factory\ITabsFactory::class,
             View\Helper\IArray::class => View\Helper\Factory\IArrayFactory::class,
             View\Helper\IUniversal::class => View\Helper\Factory\IUniversalFactory::class,
@@ -288,7 +299,6 @@ return [
             View\Helper\IZform::class => View\Helper\Factory\IZformFactory::class,
         ],
         'aliases' => [
-            'adminMenu' => View\Helper\Menu::class,
             'itabs' => View\Helper\ITabs::class,
             'iarray' => View\Helper\IArray::class,
             'iuniversal' => View\Helper\IUniversal::class,
@@ -297,15 +307,6 @@ return [
             'izform' => View\Helper\IZform::class,
         ],
     ],
-
-    /*'filters'=>[
-        'factories' => [//сервисы-фабрики
-            Filter\TreeLevel::class => Filter\TreeLevelFactory::class,
-        ],
-        'aliases' => [
-            "TreeLevel"=>Filter\TreeLevel::class
-        ],
-    ],*/
     'service_manager' => [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,

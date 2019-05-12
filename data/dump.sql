@@ -42,7 +42,7 @@ LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
 INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `url`) VALUES 
   (1, 'Система управления', 0, 0, ''),
-  (2, 'Меню администраторов', 1, 1, '/adm/tree/admin_menu'),
+  (2, 'Меню администраторов', 1, 1, '/adm/universal-interface/admin_menu'),
   (3, 'Навигация/структура сайта', 0, 0, ''),
   (4, 'Резервир./восстановл. базы', 1, 1, '/adm/backuprestore'),
   (5, 'Меню сайта', 1, 3, '/adm/tree/menu'),

@@ -15,8 +15,6 @@ if (isset($_GET)){
     $get="?".http_build_query($_GET);
 }
 
-//\Zend\Debug\Debug::dump($_GET);
-
 //удалим всю информацию о плагинах, она не нужна
 foreach ($options["layout"]["colModel"] as $k=>$v){
     unset($options["layout"]["colModel"][$k]["plugins"]);
@@ -124,8 +122,14 @@ jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
                 });
 <?php
     }
+if (!empty($options["bind"]) && is_array($options["bind"])){
+    foreach ($options["bind"] as $name=>$fn){
 ?>
-
+    $("#<?=$options["container"]?>").bind("<?=$name?>", <?=$fn?>);
+<?php
+    }
+ }
+       ?>
 $("#dialog_permission").dialog({
     autoOpen:false,
     modal:true,
@@ -147,7 +151,7 @@ $("#dialog_permission").dialog({
             }
       ],
       open: function(ev, ui){
-          $(this).load("/adm/universal-interface/permissions_item")
+          //$(this).load("/adm/universal-interface/permissions_item")
           }
 
 });

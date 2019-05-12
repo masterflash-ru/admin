@@ -44,7 +44,7 @@ function add_item($text,$url='',$level=0,$link_prop='',$title='',$id=0)
 	$this->mnu['url'][$this->ss]=$url;
 	$this->mnu['level'][$this->ss]=$level;
 	$this->mnu['link_prop'][$this->ss]=$link_prop;
-	$this->mnu['title'][$this->ss]=$title;
+	//$this->mnu['title'][$this->ss]=$title;
 	$this->mnu['item_id'][$this->ss]=$id;
 	$this->ss++;
 }
@@ -67,63 +67,48 @@ function get_tree()
 //список идентификаторов меню либо список либо массив, все примести к массиву
 if (is_array($this->status_old_id)) $status_old_id=$this->status_old_id; else $status_old_id=explode(',',$this->status_old_id);
 
-if (strlen($this->status_old)!=count ($this->mnu['level']) && count($this->mnu['item_id'])>0)
-	{//проверить идентификаторы которые были, соответсвенно взять их состояние, если нет такого, тогда состояние элемента 0
-		for ($i=0;$i<count($this->mnu['item_id']);$i++)
-			{$b=array_search($this->mnu['item_id'][$i],$status_old_id);
-			if (false!==$b) $status.=substr($this->status_old,$b,1); else $status.='0';
-			}
-	}
+if (strlen($this->status_old)!=count ($this->mnu['level']) && count($this->mnu['item_id'])>0){
+    //проверить идентификаторы которые были, соответсвенно взять их состояние, если нет такого, тогда состояние элемента 0
+    for ($i=0;$i<count($this->mnu['item_id']);$i++)	{
+        $b=array_search($this->mnu['item_id'][$i],$status_old_id);
+        if (false!==$b) $status.=substr($this->status_old,$b,1); else $status.='0';
+    }
+} else  {
+    $status=$this->status_old;
+}
+if (count($this->mnu['item_id'])>0) {
+    $status_id=implode(',',$this->mnu['item_id']);//ничего не изменилось, вернуть старое все
+} else {
+    $status_id='';
+}
 
-else  $status=$this->status_old;
-if (count($this->mnu['item_id'])>0) $status_id=implode(',',$this->mnu['item_id']);//ничего не изменилось, вернуть старое все
-				else $status_id='';
-
-//echo "status=$status";//'<br>menu_item[item_id]=';print_r($this->mnu['item_id']);
 
 //определения
 $out= '<div id="'.$this->menu_name.'_out" '.$this->div_atr.'> <!--  сюда вставляется дерево меню, программно--></div>'."\n";
 $out.='<SCRIPT LANGUAGE="JavaScript">'."\n";
-//$out.= 'if (dbr==undefined) alert("Error loading tree.js ")'."\n";
-$out.= 'indentPixels["'.$this->menu_name.'"] =12;'."\n";
-$out.= 'collapsedWidget["'.$this->menu_name.'"] = "/img/plus.gif";'."\n";
-$out.= 'expandedWidget["'.$this->menu_name.'"] = "/img/minus.gif";'."\n";
-$out.= 'endpointWidget["'.$this->menu_name.'"] = "/img/end.gif";'."\n"; 
-$out.= 'fillerimg["'.$this->menu_name.'"]="/img/filler.gif";'."\n";
-$out.= 'widgetWidth["'.$this->menu_name.'"] =12;'."\n";
-$out.= 'widgetHeight["'.$this->menu_name.'"] =12;'."\n";
 
-$out.= 'collapsedImg["'.$this->menu_name.'"] = new Image(widgetWidth["'.$this->menu_name.'"],widgetHeight["'.$this->menu_name.'"]);'."\n";
-$out.= 'collapsedImg["'.$this->menu_name.'"].src = collapsedWidget["'.$this->menu_name.'"];'."\n";
-$out.= 'expandedImg["'.$this->menu_name.'"] = new Image(widgetWidth["'.$this->menu_name.'"],widgetHeight["'.$this->menu_name.'"]);'."\n";
-$out.= 'expandedImg["'.$this->menu_name.'"].src = expandedWidget["'.$this->menu_name.'"];'."\n";
-$out.= 'endpointImg["'.$this->menu_name.'"] = new Image(widgetWidth["'.$this->menu_name.'"],widgetHeight["'.$this->menu_name.'"]);'."\n";
-$out.= 'endpointImg["'.$this->menu_name.'"].src = endpointWidget["'.$this->menu_name.'"];'."\n";
-$out.= 'db["'.$this->menu_name.'"] = new Array();'."\n";
-$out.= 'target["'.$this->menu_name.'"] ="'.$this->target.'";'."\n";
-
+$out.= 'db["'.$this->menu_name.'"] = [];'."\n";
 //сам массив дерева
-for ($i=0;$i<count ($this->mnu['text']);$i++)
-	{
-//есть след подуровень?
-	if (isset($this->mnu['level'][$i+1]) && $this->mnu['level'][$i+1]>$this->mnu['level'][$i]) $fl='true'; else $fl='false';
-	
+for ($i=0;$i<count ($this->mnu['text']);$i++){
+    //есть след подуровень?
+    if (isset($this->mnu['level'][$i+1]) && $this->mnu['level'][$i+1]>$this->mnu['level'][$i]) $fl='true'; else $fl='false';
 	$out.='db["'.$this->menu_name.'"][db["'.$this->menu_name.'"].length] = new dbRecord('.$fl.",'".$this->mnu['text'][$i]."','".$this->mnu['url'][$i]."','".$this->mnu['level'][$i]."','' ,'');\n";
-	}	
-$out.='mycookie["'.$this->menu_name.'"] = document.cookie
+}	
+$out.='mycookie["'.$this->menu_name.'"] = document.cookie;
 //обнуление
 setCurrState("'.$status.'","'.$this->menu_name.'");// начальное состояние
 setCurrState("'.$status_id.'","'.$this->menu_name.'_id");// начальное состояние уникальные идентификаторы меню
-if (getCurrState("'.$this->menu_name.'") == "" || getCurrState("'.$this->menu_name.'").length != (db["'.$this->menu_name.'"].length)) 
-{initState = ""
-	for (i = 0; i < db["'.$this->menu_name.'"].length; i++) 
-	{initState += "0"}
+if (getCurrState("'.$this->menu_name.'") == "" || getCurrState("'.$this->menu_name.'").length != (db["'.$this->menu_name.'"].length)) {
+  initState = "";
+  for (i = 0; i < db["'.$this->menu_name.'"].length; i++){
+    initState += "0"
+    }
 	setCurrState(initState,"'.$this->menu_name.'")
 }';
 if (!$this->menu_type) $out.='out_intab("'.$this->menu_name.'");'; else $out.='out("'.$this->menu_name.'");';
 $out.="\n";
-	$out.= '</script>';
-	return $out;
+$out.= '</script>';
+return $out;
 	
 }
 }

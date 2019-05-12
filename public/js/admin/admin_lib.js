@@ -2,6 +2,7 @@
 
 $(document).ready(function() {
 	'use strict';
+    print_admin_menu();
 $('.dtpicker' ).datetimepicker({
 	timeInput: true,
 	timeFormat: "HH:mm:ss",
@@ -372,6 +373,103 @@ $('.dtpicker' ).datetimepicker({
         }
     })
 })(jQuery);
+
+//меню админки слева, переделанное старое
+/*визуализация дерева*/
+var admin_menu_cookie,Adb = [];
+function AdbRecord(mother,display,URL,indent){
+	this.mother = mother   
+	this.display =htmlspecialchars_decode(display)
+	this.URL = URL
+	this.indent = indent   
+	return this
+}
+function AsetCurrState(setting) {
+    $.cookie("admin_menu",setting,{ path: '/'});
+}
+function AgetCurrState() 
+{
+    return $.cookie("admin_menu");
+}
+
+function Atoggle(n) {
+	var newString = ""
+	var currState = AgetCurrState()
+	var expanded = currState.charAt(n) 
+	newString += currState.substring(0,n)
+	newString += expanded ^ 1 
+	newString += currState.substring(n+1,currState.length)
+	AsetCurrState(newString) 
+}
+
+function AgetGIF(n, currState) {
+	var mom = Adb[n].mother  
+	var expanded = currState.charAt(n) 
+	if (!mom) {
+		return '/img/end.gif'
+	} else {
+        if (expanded == 1) {
+            return "/img/minus.gif";
+        }
+	}
+    return "/img/plus.gif";
+}
+
+function print_admin_menu()
+{//читаем аинхронно и генерирцем
+  $.get("/adm/admin_menu",function(data){
+    var cc=AgetCurrState(),name;
+      Adb = [];
+      $.map( data , function(value){
+          if (value.level==0){
+              name="<span class=\"menu0\">"+value.name+"</span>";
+          } else {
+              name="<span class=\"menu\">"+value.name+"</span>";
+          }
+          Adb[Adb.length] = new AdbRecord(false,name,value.url,value.level);
+      });
+      for (var m = 0; m < Adb.length-1; m++){
+          if (Adb[m+1].indent > Adb[m].indent){
+              Adb[m].mother=true;
+          }
+      }
+      if (!cc || cc.length!=Adb.length) {
+        initState = "";
+        for (var i = 0; i < Adb.length; i++){
+            initState += "0";
+        }
+        AsetCurrState(initState);
+    }
+    _print_admin_menu();
+
+    }).fail(function(error) { $('#admin_menu_container').html('<div class="alert alert-danger" role="alert">'+error.responseText+'</div>')});
+}
+
+function _print_admin_menu()
+{
+var newOutline = ""
+var prevIndentDisplayed = 0
+var showMyDaughter = 0
+var currState = AgetCurrState()
+for (var i = 0; i < Adb.length; i++) {
+	var theGIF = AgetGIF(i, currState)		
+	var currIndent = Adb[i].indent	
+	var expanded = currState.charAt(i) 
+	if (currIndent == 0 || currIndent <= prevIndentDisplayed || (showMyDaughter == 1 && (currIndent - prevIndentDisplayed == 1))) {
+		newOutline += "<IMG vspace=\"8\" SRC=\"/img/filler.gif\" HEIGHT = 1 WIDTH =" + (12 * currIndent) + ">"
+		newOutline += "<A HREF=\"javascript:_print_admin_menu()\" onClick=\"Atoggle(" + i + ");return " + (theGIF != '/img/end.gif') + "\">"
+		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=\"12\" WIDTH=\"12\"></A>"		
+		if (Adb[i].URL == "" || Adb[i].URL == null) {
+            newOutline += " " + Adb[i].display + "<BR>";
+        } else {
+            newOutline += "<A HREF=\""+Adb[i].URL+"\">" + Adb[i].display + "</A><BR>";
+        }
+		prevIndentDisplayed = currIndent
+		showMyDaughter = expanded
+    }
+}
+$('#admin_menu_container').html(newOutline);
+}
 
 
 
@@ -851,10 +949,7 @@ if (document.getElementById('delete_selected_')!=null)
 }
 
 /*визуализация дерева*/
-var mycookie=[],db = [],target= [],indentPixels= [],collapsedWidget= [],expandedWidget=[],endpointWidget=[],
-fillerimg=[],widgetWidth=[],widgetHeight=[],collapsedImg=[], endpointImg=[],expandedImg=[];
-
-
+var mycookie=[],db = [];
 function dbRecord(mother,display,URL,indent,statusMsg,title){
 	this.mother = mother   
 	this.display =htmlspecialchars_decode(display)
@@ -873,17 +968,17 @@ var label = tree_name+"="
         var cLen = mycookie[tree_name].length
         var i = 0
         while (i < cLen) {
-                var j = i + labelLen
-                if (mycookie[tree_name].substring(i,j) == label) {
-                        var cEnd = mycookie[tree_name].indexOf(";",j)
-                        if (cEnd ==     -1) {
-                                cEnd = mycookie[tree_name].length
-                        }
-                        return unescape(mycookie[tree_name].substring(j,cEnd))
+            var j = i + labelLen
+            if (mycookie[tree_name].substring(i,j) == label) {
+                var cEnd = mycookie[tree_name].indexOf(";",j)
+                if (cEnd == -1) {
+                    cEnd = mycookie[tree_name].length
                 }
-                i++
+                return unescape(mycookie[tree_name].substring(j,cEnd));
+            }
+            i++;
         }
-        return ""
+    return ""
 }
 
 function toggle(n,tree_name) {
@@ -900,26 +995,15 @@ function getGIF(n, currState,tree_name) {
 	var mom = db[tree_name][n].mother  
 	var expanded = currState.charAt(n) 
 	if (!mom) {
-		return endpointWidget[tree_name]
+		return '/img/end.gif'
 	} else {
-		if (expanded == 1) {
-			return expandedWidget[tree_name]
-		}
+        if (expanded == 1) {
+            return "/img/minus.gif";
+        }
 	}
-	return collapsedWidget[tree_name]
+    return "/img/plus.gif";
 }
 
-function getGIFStatus(n, currState,tree_name)
- {
-	var mom = db[tree_name][n].mother  
-	var expanded = currState.charAt(n) 
-	if (!mom) {	return "No further items"} 
-		else {
-			if (expanded == 1) 
-				{return "Click to collapse nested items"	}
-			}
-		return "Click to expand nested item"
-}
 function out(tree_name)
 {
 var newOutline = ""
@@ -928,26 +1012,23 @@ var showMyDaughter = 0
 var currState = getCurrState(tree_name)
 for (var i = 0; i < db[tree_name].length; i++) {
 	var theGIF = getGIF(i, currState,tree_name)		
-	var theGIFStatus = getGIFStatus(i, currState,tree_name)  	
 	var currIndent = db[tree_name][i].indent	
 	var expanded = currState.charAt(i) 
 	if (currIndent == 0 || currIndent <= prevIndentDisplayed || (showMyDaughter == 1 && (currIndent - prevIndentDisplayed == 1))) {
-		newOutline += "<IMG vspace=\"8\" SRC=\""+fillerimg[tree_name]+"\" HEIGHT = 1 WIDTH =" + (indentPixels[tree_name] * currIndent) + ">"
-		newOutline += "<A HREF=\"javascript:out('"+tree_name+"')\" " + 	"onMouseOver=\"window.status=\'" + theGIFStatus +	"\';return true;\"  onClick=\"toggle(" + i + ",'"+tree_name+"');return " + 	(theGIF != endpointWidget[tree_name]) + "\">"
-		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=" + widgetHeight[tree_name] + " WIDTH=" + widgetWidth[tree_name] + " BORDER=0></A>"		
-		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) 
-		{
-			newOutline += " " + db[tree_name][i].display + "<BR>"	// no link	
-		} else {
-			newOutline += "<A HREF="+db[tree_name][i].URL+" title=\""+db[tree_name][i].title +"\" onMouseOver=\"window.status=\'" +	db[tree_name][i].statusMsg + "\';return true;\" target=\""+target[tree_name]+"\">" + db[tree_name][i].display + "</A><BR>"
-		}
+		newOutline += "<IMG vspace=\"8\" SRC=\"/img/filler.gif\" HEIGHT = 1 WIDTH =" + (12 * currIndent) + ">"
+		newOutline += "<A HREF=\"javascript:out('"+tree_name+"')\" onClick=\"toggle(" + i + ",'"+tree_name+"');return " + (theGIF != '/img/end.gif') + "\">"
+		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=\"12\" WIDTH=\"12\"></A>"		
+		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) {
+            newOutline += " " + db[tree_name][i].display + "<BR>";	// no link
+        } else {
+            newOutline += "<A HREF=\""+db[tree_name][i].URL+"\">" + db[tree_name][i].display + "</A><BR>";
+        }
 		prevIndentDisplayed = currIndent
 		showMyDaughter = expanded
-		if (db[tree_name].length > 10000) {document.getElementById(tree_name+'_out').innerHTML=newOutline;newOutline = ""}
-	}
+    }
 }
 document.getElementById(tree_name+'_out').innerHTML=newOutline;
-    f49();
+f49();
 }
 
 
@@ -957,28 +1038,23 @@ var newOutline = '';
 var prevIndentDisplayed = 0
 var showMyDaughter = 0
 var currState = getCurrState(tree_name) 
-for (var i = 0; i < db[tree_name].length; i++) 
-{newOutline +='<table  cellpadding="0" cellspacing="0" border="0"><tr>';
+for (var i = 0; i < db[tree_name].length; i++){
+    newOutline +='<table  cellpadding="0" cellspacing="0" border="0"><tr>';
 	var theGIF = getGIF(i, currState,tree_name)		
-	var theGIFStatus = getGIFStatus(i, currState,tree_name)  	
 	var currIndent = db[tree_name][i].indent	
 	var expanded = currState.charAt(i) 
 	if (currIndent == 0 || currIndent <= prevIndentDisplayed || (showMyDaughter == 1 && (currIndent - prevIndentDisplayed == 1)))
 	 {
-		newOutline += "<td><IMG SRC=\""+fillerimg[tree_name]+"\" HEIGHT = 1 WIDTH =" + (indentPixels[tree_name] * currIndent) + "></td>"
-		newOutline += "<td><A HREF=\"javascript:out_intab('"+tree_name+"')\" " + 	"onMouseOver=\"window.status=\'" + theGIFStatus +	"\';return true;\"  onClick=\"toggle(" + i + ",'"+tree_name+"');return " + 	(theGIF != endpointWidget[tree_name]) + "\">"
-		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=" + widgetHeight[tree_name] + " WIDTH=" + widgetWidth[tree_name] + " BORDER=0></A></td>"		
-		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) 
-			{
-				newOutline += "<td>" + db[tree_name][i].display + "</td></tr>"	// no link	
-			} 
-			else
-			 {
-				newOutline += "<td><A HREF="+db[tree_name][i].URL+" title=\""+db[tree_name][i].title +"\" onMouseOver=\"window.status=\'" +	db[tree_name][i].statusMsg + "\';return true;\" target=\""+target[tree_name]+"\">" + db[tree_name][i].display + "</A></td></tr>"
-			}
+		newOutline += "<td><IMG SRC=\"/img/filler.gif\" HEIGHT = 1 WIDTH =" + (12 * currIndent) + "></td>"
+		newOutline += "<td><A HREF=\"javascript:out_intab('"+tree_name+"')\" onClick=\"toggle(" + i + ",'"+tree_name+"');return " + 	(theGIF != '/img/end.gif') + "\">"
+		newOutline += "<IMG SRC=\"" + theGIF + "\" HEIGHT=\"12\" WIDTH=\"12\"></A></td>"		
+		if (db[tree_name][i].URL == "" || db[tree_name][i].URL == null) {
+            newOutline += "<td>" + db[tree_name][i].display + "</td></tr>";
+        } else {
+            newOutline += "<td><A HREF=\""+db[tree_name][i].URL+"\">" + db[tree_name][i].display + "</A></td></tr>";
+        }
 		prevIndentDisplayed = currIndent
 		showMyDaughter = expanded
-		if (db[tree_name].length > 10000) {document.getElementById(tree_name+'_out').innerHTML=newOutline;newOutline = ""}
 	}
 newOutline +='</table>';
 }

@@ -24,6 +24,8 @@ class PluginManager extends AbstractPluginManager
         
         
         
+        
+        
         "Datetime"=>   Plugin\Datetime::class,
         "Date"=>   Plugin\Date::class,
         "datetime"=>   Plugin\Datetime::class,
@@ -53,7 +55,7 @@ class PluginManager extends AbstractPluginManager
         "LastMod" => Plugin\LastMod::class,
         "lastmod" => Plugin\LastMod::class,
         
-        "TreeLevel" => Plugin\TreeLevel::class,
+        "TreeAdjacency" => Plugin\TreeAdjacency::class,
         
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
@@ -67,6 +69,7 @@ class PluginManager extends AbstractPluginManager
      */
     protected $factories = [
         Plugin\Db::class => Plugin\Factory\Db::class,
+        Plugin\TreeAdjacency::class => Plugin\Factory\TreeAdjacency::class,
         Plugin\Cache::class => Plugin\Factory\Cache::class,
         
         /*поэлементная обработка*/

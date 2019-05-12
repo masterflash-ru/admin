@@ -18,28 +18,51 @@ return [
             
             /*все что касается чтения в таблицу*/
             "read"=>[
-                "db"=>[//плагин выборки из базы
+                "TreeAdjacency"=>[//плагин выборки из базы
                     "sql"=>"select t.*,
                         (not EXISTS(select id from admin_menu as st where st.subid=t.id)) as isLeaf
                             from admin_menu as t where subid=:nodeid",
+                    "interface_name"=>"admin_menu",
                 ],
             ],
              "edit"=>[
-                "db"=>[//плагин выборки из базы
+                "TreeAdjacency"=>[//плагин выборки из базы
                     "sql"=>"select * from admin_menu",
+                    "interface_name"=>"admin_menu",
+                ],
+                "cache" =>[
+                    "tags"=>["admin_menu"],
+                    "keys"=>["admin_menu"],
                 ],
              ],
              "add"=>[
-                "db"=>[//плагин выборки из базы
+                "TreeAdjacency"=>[//плагин выборки из базы
                     "sql"=>"select * from admin_menu",
+                    "parent_id_field" => "subid",
+                    "interface_name"=>"admin_menu",
+                ],
+                "cache" =>[
+                    "tags"=>["admin_menu"],
+                    "keys"=>["admin_menu"],
                 ],
              ],
              "del"=>[
-                "db"=>[//плагин выборки из базы
+                "TreeAdjacency"=>[//плагин выборки из базы
                     "sql"=>"select * from admin_menu",
+                    "interface_name"=>"admin_menu",
+                ],
+                "cache" =>[
+                    "tags"=>["admin_menu"],
+                    "keys"=>["admin_menu"],
                 ],
              ],
             
+            /*события, создаются в виде 
+            $("#<?=$options["container"]?>").bind("jqGridAddEditAfterSubmit", function () {  });
+            */
+            "bind"=>[
+              "jqGridAddEditAfterSubmit"=>new Expr("function () {print_admin_menu()}"),
+            ],
             /*внешний вид*/
             "layout"=>[
                 "caption" => "Меню админ панели",
@@ -52,7 +75,7 @@ return [
                 "ExpandColumn"=>"name",
                 "ExpandColClick"=>true,
                "treeGridModel"=>"adjacency",
-                "gridview"=>true,
+                "gridview"=>false,
                 "treeIcons"=>[
                     "plus"  =>"ui-icon-triangle-1-e",
                     "minus"=>"ui-icon-triangle-1-s",
@@ -63,14 +86,12 @@ return [
                     "level_field" => "level",
                 ], 
                 "navgrid" => [
-                    "button" => NavGridHelper::Button(["search"=>false,"add"=>true,"edit"=>true,"del"=>true]),
-                    "editOptions"=>NavGridHelper::editOptions(["reloadAfterSubmit"=>false]),
-                    "addOptions"=>NavGridHelper::addOptions(),
+                    "button" => NavGridHelper::Button(["search"=>false,"add"=>true,"edit"=>true,"del"=>true,"refresh"=>true]),
+                    "editOptions"=>NavGridHelper::editOptions(["reloadAfterSubmit"=>false,]),
+                    "addOptions"=>NavGridHelper::addOptions(["reloadAfterSubmit"=>false,"closeAfterAdd"=>true]),
                     "delOptions"=>NavGridHelper::delOptions(),
-
                 ],
                 "colModel" => [
-                    ColModelHelper::hidden("id",["label"=>"ID"]),
                     ColModelHelper::text("name",
                                          [
                                              "label"=>"Имя",
@@ -86,6 +107,7 @@ return [
                                                       "ajaxRead"=>["GetAdminUrls"=>[]], //подгрузка при редактированиив форме
                                                       ],
                                                   ]),
+                    ColModelHelper::hidden("id"),
                 ],
             ],
         ],

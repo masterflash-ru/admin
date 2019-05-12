@@ -12,7 +12,8 @@ use Exception;
 
 class Db extends AbstractPlugin
 {
-	protected $connection;
+	protected $connection;          // соедитнение с базой
+    protected $last_insert_id=0;    //ID последней вставленной записи
     protected $def_options_read=[
         "sql"=>"",
         "PrimaryKey"=>null,
@@ -177,6 +178,7 @@ public function edit(array $postParameters)
                 }
             }
             $rs->Update();
+            $this->last_insert_id=$rs->Fields->Item[$options["PrimaryKey"]]->Value;
             break;
         }
         case "del":{/*редактирование, находим запись по ключу*/

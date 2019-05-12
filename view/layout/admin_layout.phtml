@@ -33,7 +33,8 @@ if (empty($_GET['get_interface_input']))
   <tbody>
     <tr>
       <td class="lmenu"><a target="_blank" href="https://www.masterflash.ru"><img src="/img/simba.jpg" alt="" /></a><br>
-<?=$this->adminMenu()->render();?></td>
+          <div id="admin_menu_container"></div>
+        </td>
       <td style="vertical-align:top" id="contant-container"><?= $this->content ?></td>
     </tr>
   </tbody>
