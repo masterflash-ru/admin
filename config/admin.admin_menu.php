@@ -39,7 +39,7 @@ return [
                     "sql"=>"select * from admin_menu",
                 ],
              ],
-
+            
             /*внешний вид*/
             "layout"=>[
                 "caption" => "Меню админ панели",
@@ -51,13 +51,17 @@ return [
                 "treeGrid"=>true,
                 "ExpandColumn"=>"name",
                 "ExpandColClick"=>true,
-                "treeGridModel"=>"adjacency",
+               "treeGridModel"=>"adjacency",
                 "gridview"=>true,
                 "treeIcons"=>[
                     "plus"  =>"ui-icon-triangle-1-e",
                     "minus"=>"ui-icon-triangle-1-s",
                     "leaf"=>"ui-icon-bullet",
                 ],
+                "treeReader"  =>[
+                    "parent_id_field" => "subid",
+                    "level_field" => "level",
+                ], 
                 "navgrid" => [
                     "button" => NavGridHelper::Button(["search"=>false,"add"=>true,"edit"=>true,"del"=>true]),
                     "editOptions"=>NavGridHelper::editOptions(["reloadAfterSubmit"=>false]),
@@ -66,7 +70,7 @@ return [
 
                 ],
                 "colModel" => [
-                    ColModelHelper::hidden("id"),
+                    ColModelHelper::hidden("id",["label"=>"ID"]),
                     ColModelHelper::text("name",
                                          [
                                              "label"=>"Имя",

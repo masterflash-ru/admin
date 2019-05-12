@@ -68,7 +68,7 @@ public function editjqgridAction()
     try {
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
-        if (!$acl->isAllowed("r")){
+        if (!$acl->isAllowed("w")){
             throw new  jqGridException\AccessDeniedException("Ошибка записи. Доступ запрещен к interface/".$interface);
         }
 
@@ -77,10 +77,13 @@ public function editjqgridAction()
         $rez=$this->jqgrid->edit($this->params()->fromPost());
         $view=new JsonModel([]);
         return $view;
-    } catch (jqGridException\AccessDeniedException $e) {
+    } catch (jqGridException\AccessDeniedException $e) {//ошибка доступа
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent('<h2 style="color:red">'.$e->getMessage().'<h2>');
-    } catch (Exception $e) {
+    } catch (jqGridException\InvalidValuesException $e) { //ошибка вхожных данных
+        $this->getResponse()->setStatusCode(415);
+        return $this->getResponse()->setContent('<p style="color:red">'.$e->getMessage().'<p>');
+    }catch (Exception $e) { //прочие ошибки, выводятся с трассировкой
         $errors="Ошибка: ".$e->getMessage()."\nФайл:".$e->getFile()."\nСтрока:".$e->getLine()."\nТрассировка:".$e->getTraceAsString();
         //любое исключение - 404
         $this->getResponse()->setStatusCode(404);

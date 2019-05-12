@@ -53,6 +53,8 @@ class PluginManager extends AbstractPluginManager
         "LastMod" => Plugin\LastMod::class,
         "lastmod" => Plugin\LastMod::class,
         
+        "TreeLevel" => Plugin\TreeLevel::class,
+        
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
     ];
@@ -78,6 +80,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
         Plugin\Locale::class => Plugin\Factory\Locale::class,
+        Plugin\TreeLevel::class => Plugin\Factory\TreeLevel::class,
        // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 

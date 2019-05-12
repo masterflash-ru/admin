@@ -7,8 +7,11 @@ use Zend\Stdlib\ArrayUtils;
 use Exception;
 use DateTime;
 use Zend\ServiceManager\ServiceManager;
+use Admin\Service\JqGrid\Exception as jqGridException;
+use Zend\InputFilter\Factory as FactoryInputFilter;
+use Zend\InputFilter\Input;
 
-use Mf\Storage\Service\ImagesLib;
+use Zend\Validator\AbstractValidator;
 
 class JqGrid
 {
@@ -39,9 +42,11 @@ class JqGrid
     /**/
 
     
-    public function __construct($pluginManager) 
+    public function __construct($pluginManager,$translator) 
     {
         $this->setPluginManager($pluginManager);
+        $translator->setLocale("ru");
+        AbstractValidator::setDefaultTranslator($translator);
     }
     
 
@@ -149,6 +154,48 @@ class JqGrid
         }
         //операция
         $oper=$postParameters["oper"];
+        
+        
+        /*исполним предписанные фильтры и валидаторы*/
+        if (!empty($this->options["input_filter"])){
+            $factory = new FactoryInputFilter();
+            $inputFilter = $factory->createInputFilter($this->options["input_filter"]);
+            if (method_exists($inputFilter, 'setFactory')) {
+                $inputFilter->setFactory($factory);
+            }
+            //добавим не объявленные, что бы они не удалились фильтром
+            foreach ($this->options["layout"]["colModel"] as $in){
+                if (!$inputFilter->has($in["name"])){
+                    $infield = new Input($in["name"]);
+                    $infield->setRequired(false);
+                    $inputFilter->add($infield);
+                }
+            }
+            $infield = new Input("oper");
+            $inputFilter->add($infield);
+
+            $inputFilter->setData($postParameters);
+            if (!$inputFilter->isValid()) {
+                $err="";
+                $name=[];
+                foreach ($this->options["layout"]["colModel"] as $col){
+                    if (!empty($col["label"])){
+                        $name[$col["name"]]=$col["label"];
+                    } else {
+                        $name[$col["name"]]=$col["name"];
+                    }
+                }
+                foreach ($inputFilter->getMessages() as $field=>$e){
+                    $field=$name[$field];
+                    $err.="<ul style=\"color:red\"><b>{$field}:</b><li>".implode("<li></li>",$e)."</li></ul>";
+                }
+                throw new  jqGridException\InvalidValuesException( $err);
+            }
+            $postParameters=$inputFilter->getValues();
+        }
+
+        
+        
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
         foreach ($this->options["layout"]["colModel"] as $colModel ){
             if (isset($colModel["plugins"][$oper])){

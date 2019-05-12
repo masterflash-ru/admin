@@ -27,12 +27,10 @@ CREATE TABLE `admin_menu` (
   `name` char(255) NOT NULL COMMENT 'Текст элемента меню',
   `level` int(11) NOT NULL DEFAULT '0' COMMENT 'Уровень в дереве',
   `subid` int(11) NOT NULL DEFAULT '0' COMMENT 'Ссылка на родителя (ключ)',
-  `locale` char(20) NOT NULL COMMENT 'ID языка',
   `url` char(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `level` (`level`),
-  KEY `subid` (`subid`),
-  KEY `locale` (`locale`)
+  KEY `subid` (`subid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,23 +40,23 @@ CREATE TABLE `admin_menu` (
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `locale`, `url`) VALUES 
-  (1, 'Система управления', 0, 0, 'ru_RU', ''),
-  (2, 'Меню администраторов', 1, 1, 'ru_RU', '/adm/tree/admin_menu'),
-  (3, 'Навигация/структура сайта', 0, 0, 'ru_RU', ''),
-  (4, 'Резервир./восстановл. базы', 1, 1, 'ru_RU', '/adm/backuprestore'),
-  (5, 'Меню сайта', 1, 3, 'ru_RU', '/adm/tree/menu'),
-  (6, 'Интерфейсы', 1, 1, 'ru_RU', ''),
-  (7, 'Линейные интерфейсы', 2, 6, 'ru_RU', '/adm/constructorline'),
-  (8, 'Древовидные интерфесы', 2, 6, 'ru_RU', '/adm/constructortree'),
-  (9, 'Генератор Entity', 1, 1, 'ru_RU', '/adm/entity'),
-  (10, 'Пользователи и группы', 1, 1, 'ru_RU', ''),
-  (11, 'Системные группы польз.', 2, 10, 'ru_RU', '/adm/universal-interface/systemgroups'),
-  (12, 'Группы пользователей', 2, 10, 'ru_RU', '/adm/universal-interface/usergroups'),
-  (13, 'Пользователи', 2, 10, 'ru_RU', '/adm/universal-interface/users'),
-  (14, 'Доступы', 1, 1, 'ru_RU', ''),
-  (15, 'Пользоват. доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions'),
-  (16, 'Системные доступы', 2, 14, 'ru_RU', '/adm/universal-interface/permissions_from_config');
+INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `url`) VALUES 
+  (1, 'Система управления', 0, 0, ''),
+  (2, 'Меню администраторов', 1, 1, '/adm/tree/admin_menu'),
+  (3, 'Навигация/структура сайта', 0, 0, ''),
+  (4, 'Резервир./восстановл. базы', 1, 1, '/adm/backuprestore'),
+  (5, 'Меню сайта', 1, 3, '/adm/tree/menu'),
+  (6, 'Интерфейсы (устарело)', 1, 1, ''),
+  (7, 'Линейные интерфейсы', 2, 6, '/adm/constructorline'),
+  (8, 'Древовидные интерфесы', 2, 6, '/adm/constructortree'),
+  (9, 'Генератор Entity', 1, 1,  '/adm/entity'),
+  (10, 'Пользователи и группы', 1, 1,  ''),
+  (11, 'Системные группы польз.', 2, 10,  '/adm/universal-interface/systemgroups'),
+  (12, 'Группы пользователей', 2, 10,  '/adm/universal-interface/usergroups'),
+  (13, 'Пользователи', 2, 10, '/adm/universal-interface/users'),
+  (14, 'Доступы', 1, 1, ''),
+  (15, 'Пользоват. доступы', 2, 14,  '/adm/universal-interface/permissions'),
+  (16, 'Системные доступы', 2, 14,  '/adm/universal-interface/permissions_from_config');
   
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -108,7 +106,7 @@ CREATE TABLE `design_tables` (
 LOCK TABLES `design_tables` WRITE;
 /*!40000 ALTER TABLE `design_tables` DISABLE KEYS */;
 INSERT INTO `design_tables` (`interface_name`, `table_name`, `table_type`, `col_name`, `caption_style`, `row_type`, `col_por`, `pole_spisok_sql`, `pole_global_const`, `pole_prop`, `pole_type`, `pole_style`, `pole_name`, `default_sql`, `functions_befo`, `functions_after`, `functions_befo_out`, `functions_befo_del`, `properties`, `value`, `validator`, `sort_item_flag`, `col_function_array`) VALUES 
-  ('admin_menu', 'admin_menu', 1, '1,1,1,1,1,0', 'a:3:{s:10:\"owner_user\";s:1:\"1\";s:11:\"owner_group\";s:1:\"1\";s:10:\"permission\";i:416;}', 0, 0, ' locale=''$pole_dop0''  order by id', '', 'id,subid,level', '', '', '', '', '', '', '', '', '', '', '', 0, NULL),
+  ('admin_menu', 'admin_menu', 1, '1,1,1,1,1,0', 'a:3:{s:10:\"owner_user\";s:1:\"1\";s:11:\"owner_group\";s:1:\"1\";s:10:\"permission\";i:416;}', 0, 0, 'id>0  order by id', '', 'id,subid,level', '', '', '', '', '', '', '', '', '', '', '', 0, NULL),
   ('admin_menu', 'admin_menu', 1, '', '', 1, 0, 'create temporary table sp1 (id char(11), name char(50)) ENGINE=MEMORY; insert into sp1 (id,name) values (\"ru_RU\",\"ru_RU\"); select * from sp1', '', 'onChange=\"this.form.submit()\"', '4', '', '', 'select id from sp1', '', '', '', '', 'a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}', '', '', 0, ''),
   ('admin_menu', 'admin_menu', 1, 'locale', '', 2, 0, '', '', '', '0', '', 'pole_dop0', '', '', '', '', '', '', '', 'N;', 0, ''),
   ('admin_menu', 'admin_menu', 1, 'name', '', 2, 1, '', '', 'size=\"50\"', '2', '', 'name', '', '', '', '', '', 'N;', '', 'N;', 0, ''),

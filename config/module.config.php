@@ -297,7 +297,15 @@ return [
             'izform' => View\Helper\IZform::class,
         ],
     ],
-	
+
+    /*'filters'=>[
+        'factories' => [//сервисы-фабрики
+            Filter\TreeLevel::class => Filter\TreeLevelFactory::class,
+        ],
+        'aliases' => [
+            "TreeLevel"=>Filter\TreeLevel::class
+        ],
+    ],*/
     'service_manager' => [
         'factories' => [//сервисы-фабрики
 			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
