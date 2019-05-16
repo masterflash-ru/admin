@@ -368,7 +368,7 @@ return [
             "Admin\Controller\ConstructorLineController/index"=>[1,1,0710],
             "Admin\Controller\ZformController/*" =>             [1,1,0770],
             "Admin\Controller\UinterfaceController/index" =>    [1,1,0770],
-            "Admin\Controller\IndexController/index" =>         [1,1,0710],
+            "Admin\Controller\IndexController/*" =>         [1,1,0710],
             "Admin\Controller\JqGridController/*" =>            [1,1,0770]
         ],
     ],
