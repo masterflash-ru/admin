@@ -270,14 +270,14 @@ return [
 			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
             Controller\JqGridController::class => Controller\Factory\JqGridControllerFactory::class,
 			Controller\ZformController::class => Controller\Factory\ZformControllerFactory::class,
+            Controller\EntityController::class => Controller\Factory\EntityControllerFactory::class,
+            Controller\BackupRestoreController::class => Controller\Factory\BackupRestoreControllerFactory::class,
             
             /*устаревшее ПО*/
             Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
 			Controller\ConstructorTreeController::class => Controller\Factory\ConstructorTreeControllerFactory::class,
 			Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
 			Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
-			Controller\BackupRestoreController::class => Controller\Factory\BackupRestoreControllerFactory::class,
-			Controller\EntityController::class => Controller\Factory\EntityControllerFactory::class,
             Controller\TovarController::class => Controller\Factory\TovarControllerFactory::class,
         ],
     	
