@@ -359,7 +359,6 @@ return [
         "objects" =>[
             "Admin\Controller\LoginController/e403"  =>         [1,1,0711],
             "Admin\Controller\LoginController/accessdenied" =>  [1,1,0711],
-            "Admin/Menu"  =>                                    [1,1,0750],
             "Admin\Controller\LoginController/login" =>         [1,1,0711],
             "Admin\Controller\BackupRestoreController/index" => [1,1,0710],
             "Admin\Controller\TreeController/index" =>          [1,1,0710],
@@ -368,7 +367,7 @@ return [
             "Admin\Controller\ConstructorLineController/index"=>[1,1,0710],
             "Admin\Controller\ZformController/*" =>             [1,1,0770],
             "Admin\Controller\UinterfaceController/index" =>    [1,1,0770],
-            "Admin\Controller\IndexController/*" =>         [1,1,0710],
+            "Admin\Controller\IndexController/*" =>             [1,1,0710],
             "Admin\Controller\JqGridController/*" =>            [1,1,0770]
         ],
     ],
