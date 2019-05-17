@@ -39,9 +39,6 @@ public function indexAction()
 public function amenuAction()
 {
     try {
-        if (!$this->acl("Admin/Menu")->isAllowed("r")) {
-            throw new  Exception("Ошибка чтения. Доступ запрещен");
-        }
         /*читаем доступы из таблицы и сохраним в кеш*/
         $key="admin_menu";
         //пытаемся считать из кеша
