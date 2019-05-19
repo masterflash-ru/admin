@@ -170,24 +170,24 @@ foreach ($parameters["field_type"] as $k=>$field){
     $list=explode("~",$parameters["list"][$k]);
     if ($field==4){
         //для выпадающего списка добавим пустое первое поле
-        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list,0,0,0,[0,1,2]);
+        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','style="width:100px"',$list,$list,0,0,0,[0,1,2]);
         
     } else {
-        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','',$list,$list);
+        $tb->row_start_type(false,$field,'parameter_'.$parameters["id"][$k].'[0]','style="width:100px"',$list,$list);
     }
 }
 $caption=$parameters["name"];
 
 
 //добавляем 
-$caption[]="Артикул";
-$caption[]="Остаток";
-$tb->row_start_type(false,2,'articul[0]','');
-$tb->row_start_type(false,2,'ostatok[0]','size=5');
+$caption[]="Арт";
+$caption[]="Ост";
+$tb->row_start_type(false,2,'articul[0]','size=1');
+$tb->row_start_type(false,2,'ostatok[0]','size=1');
 
 foreach ($money_type["sysname"] as $k=>$mt){
-    $caption[]=$money_type["name"][$k]."<br>в базовой валюте";
-    $tb->row_start_type(false,2,'money_'.$mt.'[0]','size=10');
+    $caption[]=$money_type["name"][$k];
+    $tb->row_start_type(false,2,'money_'.$mt.'[0]',($k>0)?"size=1":"size=7");
 }
 
 $caption[]="Операция";
@@ -224,10 +224,10 @@ foreach ($parameters["field_type"] as $k=>$field){
     
     if ($field==4){
         //для выпадающего списка добавим пустое первое поле
-        $tb->row_def_type(false,$field,$name,'',$list,$list,0,0,0,[0,1,2]);
+        $tb->row_def_type(false,$field,$name,'style="width:100px"',$list,$list,0,0,0,[0,1,2]);
         
     } else {
-        $tb->row_def_type(false,$field,$name,'',$list,$list);
+        $tb->row_def_type(false,$field,$name,'style="width:100px"',$list,$list);
     }
 
     
@@ -280,17 +280,17 @@ foreach ($rez["id"] as $combination){
     }
 }
 $name=$tb->create_array_names($rez["id"],'articul');
-$tb->row_def_type(false,2,$name);
+$tb->row_def_type(false,2,$name,'size=1');
 $tb->row_all_value (false,$val["articul"]);
 $name=$tb->create_array_names($rez["id"],'ostatok');
-$tb->row_def_type(false,2,$name,'size=5');
+$tb->row_def_type(false,2,$name,'size=1');
 $tb->row_all_value (false,$val["ostatok"]);
 
 //выборка цен
 $val=[];
 foreach ($money_type["sysname"] as $k=>$mt){
     $name=$tb->create_array_names($rez["id"],'money_'.$mt);
-    $tb->row_def_type(false,2,$name,'size=10');
+    $tb->row_def_type(false,2,$name,($k>0)?"size=1":"size=7");
     
     foreach ($rez["id"] as $combination){
         $arr=Simba::queryOneRecord("select price from tovar_catalog_price 
