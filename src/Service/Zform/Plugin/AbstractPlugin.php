@@ -4,7 +4,7 @@ namespace Admin\Service\Zform\Plugin;
 
 use Zend\Stdlib\ArrayUtils;
 
-abstract class AbstractPlugin
+abstract class AbstractPlugin implements ZformPluginInterface
 {
     protected $options=[];
     protected $def_options =[

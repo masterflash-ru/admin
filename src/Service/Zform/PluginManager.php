@@ -43,8 +43,8 @@ class PluginManager extends AbstractPluginManager
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
         
-      //  "Locale" => Plugin\Locale::class,
-      //  "locale" => Plugin\Locale::class,
+        "Locale" => Plugin\Locale::class,
+        "locale" => Plugin\Locale::class,
         
       //  "ClearContent" => Plugin\ClearContent::class,
       //  "clearcontent" => Plugin\ClearContent::class,
@@ -76,7 +76,7 @@ class PluginManager extends AbstractPluginManager
         //Plugin\LastMod::class => InvokableFactory::class,
        Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
         //Plugin\Permissions::class => Plugin\Factory\Permissions::class,
-        //Plugin\Locale::class => Plugin\Factory\Locale::class,
+        Plugin\Locale::class => Plugin\Factory\Locale::class,
        // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 
@@ -99,7 +99,7 @@ class PluginManager extends AbstractPluginManager
      *
      * @var string
      */
-    protected $instanceOf = null;
+    protected $instanceOf =Plugin\ZformPluginInterface::class;
 
     /**
      * Constructor

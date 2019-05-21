@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Service\JqGrid\Plugin;
 
+use Zend\Form\FormInterface;
 
 class Locale extends AbstractPlugin
 {
@@ -24,11 +25,9 @@ class Locale extends AbstractPlugin
             $rez[$l]=$l;
         }
         $colModel["editoptions"]["value"]=$rez;
-        
+
         return $colModel;
     }
-
-
 
 
 

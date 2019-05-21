@@ -4,7 +4,7 @@ namespace Admin\Service\JqGrid\Plugin;
 
 use Zend\Stdlib\ArrayUtils;
 
-abstract class AbstractPlugin
+abstract class AbstractPlugin implements JqGridPluginsInterface
 {
     protected $options=[];
     protected $def_options =[

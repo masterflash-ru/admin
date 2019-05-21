@@ -4,6 +4,7 @@
 * на входе:
 * $options - опции из соответсвующей секции конфига
 * $interface -  это имя глобальное имя интерфейса
+* $toolbarForm - форма Zend для вывода в области toolbar или null
 */
 use Zend\Json\Json;
 
@@ -71,6 +72,8 @@ if (isset($_GET)){
 if (isset($options["caption"])){
     echo $options["caption"];
 }
+
+
 ?>
 <table id="<?=$options["container"]?>"></table> 
 <div id="<?=$options["container"]?>_pager"></div>
@@ -93,6 +96,8 @@ navgrid_add_options.editData=<?=json::encode($gets)?>;
     
 /*GET параметры передаваемые в сетку*/
 //jqgrid_options.postData=<?=json::encode($gets)?>;
+
+
 navgrid_edit_options.useDataProxy=true;
 navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
 navgrid_add_options.useDataProxy=true;
@@ -106,6 +111,48 @@ var jqgridnavGrid=$("#<?=$options["container"]?>").navGrid('#<?=$options["contai
             navgrid_search_options, //окно поиска
             navgrid_view_options); //опции при просмотре записи в окошке
 
+    
+<?php
+//это toobar в начале
+if ($toolbarForm){
+$form = $toolbarForm;
+$form->setAttribute('action',"#");
+$form->setAttribute("id","toolbar_zform");
+$form->prepare();
+$formLabel = $this->plugin('formLabel');
+$toobar=$this->form()->openTag($form);
+    $toobar.='<table class="py-2 jqgrid_toolbar">';
+foreach ($form as $k=>$item){
+    $i=$form->get($k);
+    $type=$item->getAttribute("type");
+    
+    $toobar.='<tr><td>'.$this->formLabel($i).'</td>';
+    $toobar.='<td>';
+        switch ($type){
+            case "select":{
+                $toobar.= $this->FormSelect($i);
+                break;
+            }
+            case "multi_checkbox":{
+                $m=$this->FormMultiCheckbox();
+                $m->setSeparator("<br/>");
+                $toobar.= '<div class="form-check pt-2">'.$m->Render($i).'</div>';
+                break;
+            }
+            default:{
+                $toobar.= $this->formElement($i);
+            }
+        }
+      $toobar.='</td></tr>';
+}
+    $toobar.='</table>';
+    ?>
+
+$("#t_<?=$options["container"]?>").append("<?=$this->EscapeJs($toobar)?>"); 
+<?php
+}
+?>
+    
 <?php
     if ($this->acl("Mf\Catalog\Controller\AdminController/createtovar")->isAllowed("p")){
         ?>

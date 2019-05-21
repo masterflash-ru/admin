@@ -15,6 +15,7 @@ public function __invoke(ContainerInterface $container, $requestedName, array $o
 {
     $config=$container->get('config');
     $pluginManager=$container->get('JqGridManager');
-    return new $requestedName($config["interface"],$pluginManager);
+    $ZformpluginManager=$container->get('ZformManager');
+    return new $requestedName($config["interface"],$pluginManager,$ZformpluginManager);
 }
 }

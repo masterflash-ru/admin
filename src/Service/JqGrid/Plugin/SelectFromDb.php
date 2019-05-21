@@ -7,7 +7,7 @@ namespace Admin\Service\JqGrid\Plugin;
 
 
 
-class SelectFromDb extends AbstractPlugin
+class SelectFromDb extends AbstractPlugin 
 {
 	protected $connection;
     protected $def_options =[

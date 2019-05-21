@@ -106,7 +106,7 @@ class PluginManager extends AbstractPluginManager
      *
      * @var string
      */
-    protected $instanceOf = null;
+    protected $instanceOf = Plugin\JqGridPluginsInterface::class;
 
     /**
      * Constructor
