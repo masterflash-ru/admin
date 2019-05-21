@@ -94,8 +94,8 @@ jqgrid_options.pager='#<?=$options["container"]?>_pager';
 /*добавляется в POST сетки в момент создания записи из GET запроса открытия сетки*/  
 navgrid_add_options.editData=<?=json::encode($gets)?>;
     
-/*GET параметры передаваемые в сетку*/
-//jqgrid_options.postData=<?=json::encode($gets)?>;
+
+//jqgrid_options.postData={v:123};
 
 
 navgrid_edit_options.useDataProxy=true;
@@ -149,6 +149,7 @@ foreach ($form as $k=>$item){
     ?>
 
 $("#t_<?=$options["container"]?>").append("<?=$this->EscapeJs($toobar)?>"); 
+
 <?php
 }
 ?>
@@ -215,6 +216,15 @@ if (isset($options["podval"])){
 ?>
 
 <script>
+/*фиксирование изменений в toolbar и перезагрузка сетки*/
+function change_toolbar()
+{
+    var postData={};
+     $.map($("#toolbar_zform").serializeArray(),function(v){postData[v.name]=v.value;});
+   $("#<?=$options["container"]?>").jqGrid('setGridParam',{ postData: postData });
+    $("#<?=$options["container"]?>").trigger('reloadGrid');
+};
+
     //большой выбор путем autocomplite
         $("#question_tags").tagit({
         removeConfirmation: true,
