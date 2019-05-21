@@ -189,4 +189,4 @@ ul.tagit li.tagit-new input {
 .tagit-hidden-field {
     display: none
 }
-
+.ui-jqgrid .ui-userdata{height: auto; min-height: 27px}
