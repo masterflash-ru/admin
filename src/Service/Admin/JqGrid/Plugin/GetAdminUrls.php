@@ -18,16 +18,18 @@ class GetAdminUrls extends AbstractPlugin
 
     public function ajaxRead()
     {
-        $rez[""]="";
+        $rez[""]="";$locale="ru_RU";
         foreach ($this->controllers_descriptions as $name=>$desc){
             //внутри контроллера
             if (is_array($desc)) {
                 foreach ($desc as $meta) {
                     $r=[];
-                    foreach ($meta["urls"]["url"] as $k=>$item){
-                        $r[$item]=$meta["urls"]["name"][$k];
+                    if (isset($meta["urls"]["url"][$locale])){
+                        foreach ($meta["urls"]["url"][$locale] as $k=>$item){
+                            $r[$item]=$meta["urls"]["name"][$locale][$k];
+                        }
+                        $rez[$meta["description"]]=$r;
                     }
-                    $rez[$meta["description"]]=$r;
                 }
             }
         }
@@ -41,15 +43,17 @@ class GetAdminUrls extends AbstractPlugin
     */
     public function colModel(array $colModel,array $toolbarData=[])
     {
-        $rez[""]="";
+        $rez[""]="";$locale="ru_RU";
         foreach ($this->controllers_descriptions as $name=>$desc){//\Zend\Debug\Debug::dump($desc);
             //внутри контроллера
-            if (is_array($desc)) {
+            if (is_array($desc) && !empty($desc)) {
                 foreach ($desc as $meta) {
-                    foreach ($meta["urls"]["url"] as $k=>$item){
-                        $rez[$item]=$meta["description"].' -> '.$meta["urls"]["name"][$k];
+                    if (isset($meta["urls"]["url"][$locale])){
+                        foreach ($meta["urls"]["url"][$locale] as $k=>$item){
+                            $rez[$item]=$meta["description"].' -> '.$meta["urls"]["name"][$locale][$k];
+                        }
                     }
-                    
+
                 }
             }
         }
