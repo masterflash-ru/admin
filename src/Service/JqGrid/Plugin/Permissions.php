@@ -34,7 +34,7 @@ class Permissions extends AbstractPlugin
 * передача в сетку списка юзеров и групп (добавление в массив)
 * $colModel - массив параметров colModel для данной колонки
 */
-public function colModel(array $colModel)
+public function colModel(array $colModel, array $toolbarData=[])
 {
     $colModel["editoptions"]["users"]=serialize($this->users);
     $colModel["editoptions"]["groups"]=serialize($this->groups);

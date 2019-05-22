@@ -22,7 +22,7 @@ abstract class AbstractPlugin implements JqGridPluginsInterface
     /**
     * заглушка
     */
-    public function colModel(array $colModel)
+    public function colModel(array $colModel, array $toolbarData=[])
     {
         
     }

@@ -54,7 +54,7 @@ public function read(array $get)
     $rs->PageSize=(int)$get["rows"];
 
     $sql=$options["sql"];
-    preg_match_all("/[=<>]:([a-zA-Z0-9_]+)/iu",$sql,$mm);
+    preg_match_all("/[=<>]['\"]?:([a-zA-Z0-9_]+)['\"]?/iu",$sql,$mm);
     $mm=array_unique($mm[1]);
     foreach ($get as $n=>$g){
         if (in_array($n,$mm)){
@@ -64,8 +64,8 @@ public function read(array $get)
     //если нет соотвествуюего GET параметра, для строковых вставим пустою строку, для чисел 0
     $sql=preg_replace('/[\'"]{1}:[a-zA-Z0-9_]+[\'"]{1}/ui','""',$sql);
     $sql=preg_replace('/:[a-zA-Z0-9_]+/ui',0,$sql);
-    //$rez["sql"]=$sql;
-    //$rez["GET"]=$get;
+   // $rez["sql"]=$sql;
+   // $rez["GET"]=$get;
     $sql_sort=[];
     //добавим в SQL сортировку, что бы не грузить всю таблицу в память!
     foreach ($get["sidx"] as $k=>$field ){

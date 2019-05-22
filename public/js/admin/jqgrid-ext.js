@@ -15,7 +15,12 @@ $.jgrid.ext =
         var $form = $('#FrmGrid_' + $(this).getGridParam('id'));
         var ele = $form.find('INPUT,TEXTAREA,SELECT').not(':file');
          ele.each(function () {$(this).data('name', $(this).attr('name'));$(this).removeAttr('name');});
-		$form.ajaxSubmit(opts);
+        //добавим toolbar элементы, если есть
+        var toolbardata=$("#toolbar_zform").serializeArray();
+        toolbardata.map(function (tv){
+            opts.data[tv.name]=tv.value;
+        });
+        $form.ajaxSubmit(opts);
 		setTimeout(function()
 		{
 			ele.each(function()

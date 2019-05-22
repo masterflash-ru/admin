@@ -56,7 +56,7 @@ public function amenuAction()
         }
         return new JsonModel($mrez);
     } catch (Exception $e){
-        $this->getResponse()->setStatusCode(406);
+        $this->getResponse()->setStatusCode(404);
         return $this->getResponse()->setContent($e->getMessage());
     }
 }

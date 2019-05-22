@@ -45,31 +45,25 @@ public function __invoke(string $interface)
     $options=$this->config[$interface];
     $options=include $options;
     $options=ArrayUtils::merge($this->def_options,$options["options"]);
-
-    //пройдем по всем моделям колонок и исполним там плагины, если они есть
-    foreach ($options["layout"]["colModel"] as &$colModel){
-        if (isset($colModel["plugins"]) && is_array($colModel["plugins"])){
-            foreach ($colModel["plugins"] as $plugin_group=>$plugins){
-                if ($plugin_group=="colModel"){
-                    foreach ($plugins as $plugin=>$plugin_options){
-                        $plugin=$this->plugin($plugin);
-                        $plugin->setOptions($plugin_options);
-                        $colModel=$plugin->colModel($colModel);
-                    }
-                }
-            }
-            
-            
-        }
-    }
+    $toolbarData=[];
     //формируем toolbar из элементов формы Zend, если есть
-    if (isset($options["layout"]["rowModel"])){
+    if (isset($options["layout"]["toolbarModel"]["rowModel"])){
+        
+        //при помощи плагина читаем содержимое
+        if (!empty($options["layout"]["toolbarModel"]["read"])){
+            foreach ($options["layout"]["toolbarModel"]["read"] as $plugin_name=>$plugin_options){
+                $plugin=$this->Zplugin($plugin_name);
+                $plugin->setOptions($plugin_options);
+                $toolbarData=$plugin->read();
+            }
+        }
+
         $factory=new FormFactory();
-        $form  = $factory->createForm($options["layout"]["rowModel"]);
-        $rez=[];
+        $form  = $factory->createForm($options["layout"]["toolbarModel"]["rowModel"]);
+
         //пройдем по всем моделям колонок и исполним там плагины, если они есть
         // предназначено для формирования самих полей через их конфиг, например, наполнение выпадающих списков значениями
-        foreach ($options["layout"]["rowModel"]['elements'] as $rowModel){
+        foreach ($options["layout"]["toolbarModel"]["rowModel"]['elements'] as $rowModel){
             if (isset($rowModel["spec"]["plugins"]) && is_array($rowModel["spec"]["plugins"])){
                 foreach ($rowModel["spec"]["plugins"] as $plugin_group=>$plugins){
                     if ($plugin_group=="rowModel"){
@@ -84,23 +78,23 @@ public function __invoke(string $interface)
         }
         //пробежим по всем строкам формы и проверим там наличие плагинов обработки НАЧАЛЬНЫХ ЗНАЧЕНИЙ
         //которые будут переданы в элементы формы
-        foreach ($options["layout"]["rowModel"]['elements'] as $rowModel ){
+        foreach ($options["layout"]["toolbarModel"]["rowModel"]['elements'] as $rowModel ){
             if (isset($rowModel["spec"]["plugins"]["read"])){
                 //есть плагин/ны для обработки после чтения, применим его
-                foreach ($rowModel["spec"]["plugins"]["read"] as $plugin_name=>$options){
+                foreach ($rowModel["spec"]["plugins"]["read"] as $plugin_name=>$plugin_options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
                     $plugin=$this->Zplugin($plugin_name);
                     //добавим в опции 
                     $options["rowModel"]=$rowModel["spec"];
-                    $plugin->setOptions($options);
-                    $rez[$rowModel["spec"]["name"]]=$plugin->read($rez[$rowModel["spec"]["name"]]);
+                    $plugin->setOptions($plugin_options);
+                    $toolbarData[$rowModel["spec"]["name"]]=$plugin->read($toolbarData[$rowModel["spec"]["name"]]);
                 }
             }
         }
         //наполнение формы данными
         foreach ($form as $fieldName=>$item){
-            if (array_key_exists($fieldName,$rez)){
-                $item->setValue($rez[$fieldName]);
+            if (array_key_exists($fieldName,$toolbarData)){
+                $item->setValue($toolbarData[$fieldName]);
             }
         }
 
@@ -108,9 +102,23 @@ public function __invoke(string $interface)
         $form=null;
     }
 
-    
-    
-    
+    //пройдем по всем моделям колонок и исполним там плагины, если они есть
+    foreach ($options["layout"]["colModel"] as &$colModel){
+        if (isset($colModel["plugins"]) && is_array($colModel["plugins"])){
+            foreach ($colModel["plugins"] as $plugin_group=>$plugins){
+                if ($plugin_group=="colModel"){
+                    foreach ($plugins as $plugin=>$plugin_options){
+                        $plugin=$this->plugin($plugin);
+                        $plugin->setOptions($plugin_options);
+                        $colModel=$plugin->colModel($colModel,$toolbarData);
+                    }
+                }
+            }
+            
+            
+        }
+    }
+
     return $this->getView()->partial("admin/jq-grid/index",["options"=>$options,"interface"=>$interface,"toolbarForm"=>$form]);
 }
     

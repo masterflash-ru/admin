@@ -30,7 +30,7 @@ class SelectFromDb extends AbstractPlugin
     * $colModel - элемент $colModel из конфигурации
     * возвращает тот же $colModel, с внесенными изменениями
     */
-    public function colModel(array $colModel)
+    public function colModel(array $colModel, array $toolbarData=[])
     {
         if ($this->options["emptyFirstItem"]){
             $rez[$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
