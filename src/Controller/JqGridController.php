@@ -106,7 +106,7 @@ public function pluginAction()
         }
 
         $plugin=$this->jqgrid->plugin($plugin_name,null);
-        $rez=$plugin->ajaxRead();
+        $rez=$plugin->ajaxRead($this->params()->fromQuery());
         $view=new JsonModel($rez);
         return $view;
     } catch (jqGridException\AccessDeniedException $e) {

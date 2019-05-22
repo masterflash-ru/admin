@@ -22,13 +22,21 @@ public function getConfig()
 
 public function onBootstrap(MvcEvent $event)
 {
-    
+    $ServiceManager=$event->getApplication()-> getServiceManager();
 	$eventManager = $event->getApplication()->getEventManager();
     $sharedEventManager = $eventManager->getSharedManager();
     // объявление слушателя для изменения макета на админский + проверка авторизации root
     $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 1);
+    
+    //объявление слушателя для получения всех MVC адресов разбитых по языкам
+    $sharedEventManager->attach("simba.admin", "GetMvc", function($event) use ($ServiceManager){
+        $category=$event->getParam("category",NULL);
+        $service=$ServiceManager->build(GetControllersInfo::class,["category"=>$category]);
+        return $service->GetMvc();
+    });
 
-	//слушатель для получения списка описания контроллеров, методов для визуального создания меню
+
+	//УСТАРЕЛО! слушатель для получения списка описания контроллеров, методов для визуального создания меню
 	$sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
 }
 
@@ -72,6 +80,7 @@ public function onDispatch(MvcEvent $event)
 }
 
 /*
+Устарело
 слушает событие GetControllersInfoAdmin 
 для визуаллизации в админке маршрутов/путей в меню админки
 в параметрах передается:
