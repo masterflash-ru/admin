@@ -45,7 +45,7 @@ INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `url`) VALUES
   (2, 'Меню администраторов', 1, 1, '/adm/universal-interface/admin_menu'),
   (3, 'Навигация/структура сайта', 0, 0, ''),
   (4, 'Резервир./восстановл. базы', 1, 1, '/adm/backuprestore'),
-  (5, 'Меню сайта', 1, 3, '/adm/tree/menu'),
+  (5, 'Меню сайта', 1, 3, '/adm/universal-interface/menu'),
   (6, 'Интерфейсы (устарело)', 1, 1, ''),
   (7, 'Линейные интерфейсы', 2, 6, '/adm/constructorline'),
   (8, 'Древовидные интерфесы', 2, 6, '/adm/constructortree'),
