@@ -233,9 +233,21 @@ if (isset($options["podval"])){
 /*фиксирование изменений в toolbar и перезагрузка сетки*/
 function change_toolbar()
 {
-    var postData={};
-     $.map($("#toolbar_zform").serializeArray(),function(v){postData[v.name]=v.value;});
-   $("#<?=$options["container"]?>").jqGrid('setGridParam',{ postData: postData });
+    "use strict";
+    var postData={},get=document.location.href.split("?");
+    $.map($("#toolbar_zform").serializeArray(),function(v){postData[v.name]=v.value;});
+    $("#<?=$options["container"]?>").jqGrid('setGridParam',{ postData: postData });
+    //пройдем по всем колонкам и поищем dataUrl для выпадающего списка
+    //если есть подменим там GET параметры
+    var colModel=$("#<?=$options["container"]?>").jqGrid ('getGridParam','colModel');
+    $.map(colModel,function(c){
+        if (c.editoptions && c.editoptions.dataUrl){
+            var ColProp=$("#<?=$options["container"]?>").jqGrid ('getColProp',c.name);
+            var u=c.editoptions.dataUrl.split("?");
+            ColProp.editoptions.dataUrl=u[0]+"?"+$("#toolbar_zform").serialize()+((get[1]) ? "&"+get[1]: "");
+            $("#<?=$options["container"]?>").jqGrid ('setColProp',c.name,ColProp );
+        }
+    });
     $("#<?=$options["container"]?>").trigger('reloadGrid');
 };
 
