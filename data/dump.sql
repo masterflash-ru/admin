@@ -96,25 +96,8 @@ CREATE TABLE `design_tables` (
   PRIMARY KEY (`id`),
   KEY `table_name` (`table_name`),
   KEY `interface_name` (`interface_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `design_tables`
---
-
-LOCK TABLES `design_tables` WRITE;
-/*!40000 ALTER TABLE `design_tables` DISABLE KEYS */;
-INSERT INTO `design_tables` (`interface_name`, `table_name`, `table_type`, `col_name`, `caption_style`, `row_type`, `col_por`, `pole_spisok_sql`, `pole_global_const`, `pole_prop`, `pole_type`, `pole_style`, `pole_name`, `default_sql`, `functions_befo`, `functions_after`, `functions_befo_out`, `functions_befo_del`, `properties`, `value`, `validator`, `sort_item_flag`, `col_function_array`) VALUES 
-  ('admin_menu', 'admin_menu', 1, '1,1,1,1,1,0', 'a:3:{s:10:\"owner_user\";s:1:\"1\";s:11:\"owner_group\";s:1:\"1\";s:10:\"permission\";i:416;}', 0, 0, 'id>0  order by id', '', 'id,subid,level', '', '', '', '', '', '', '', '', '', '', '', 0, NULL),
-  ('admin_menu', 'admin_menu', 1, '', '', 1, 0, 'create temporary table sp1 (id char(11), name char(50)) ENGINE=MEMORY; insert into sp1 (id,name) values (\"ru_RU\",\"ru_RU\"); select * from sp1', '', 'onChange=\"this.form.submit()\"', '4', '', '', 'select id from sp1', '', '', '', '', 'a:2:{i:0;s:1:\"0\";i:1;s:1:\"0\";}', '', '', 0, ''),
-  ('admin_menu', 'admin_menu', 1, 'locale', '', 2, 0, '', '', '', '0', '', 'pole_dop0', '', '', '', '', '', '', '', 'N;', 0, ''),
-  ('admin_menu', 'admin_menu', 1, 'name', '', 2, 1, '', '', 'size=\"50\"', '2', '', 'name', '', '', '', '', '', 'N;', '', 'N;', 0, ''),
-  ('admin_menu', 'admin_menu', 1, 'url', '', 2, 2, '', '', '', '9', '', 'url', '', '', '', '\\Admin\\Lib\\Func\\AdminMenu', '', 'a:1:{i:0;s:1:\"1\";}', '', 'N;', 0, '');
-
-/*!40000 ALTER TABLE `design_tables` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 --
 -- Table structure for table `design_tables_text_interfase`
@@ -134,26 +117,8 @@ CREATE TABLE `design_tables_text_interfase` (
   KEY `language` (`language`),
   KEY `interface_name` (`interface_name`),
   KEY `item_name` (`item_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 PACK_KEYS=0 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0 ROW_FORMAT=FIXED;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `design_tables_text_interfase`
---
-
-LOCK TABLES `design_tables_text_interfase` WRITE;
-/*!40000 ALTER TABLE `design_tables_text_interfase` DISABLE KEYS */;
-
-INSERT INTO `design_tables_text_interfase` (`language`, `table_type`, `interface_name`, `item_name`, `text`) VALUES 
-  ('ru_RU', 1, 'admin_menu', 'caption_dop_', ''),
-  ('ru_RU', 1, 'admin_menu', 'caption_dop_1', 'Роль'),
-  ('ru_RU', 1, 'admin_menu', 'caption_col_roles', ''),
-  ('ru_RU', 1, 'admin_menu', 'caption_col_language', ''),
-  ('ru_RU', 1, 'admin_menu', 'caption_col_modul', 'Модуль'),
-  ('ru_RU', 1, 'admin_menu', 'caption_dop_0', 'Локаль:'),
-  ('ru_RU', 1, 'admin_menu', 'caption_col_url', 'URL');
-/*!40000 ALTER TABLE `design_tables_text_interfase` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
