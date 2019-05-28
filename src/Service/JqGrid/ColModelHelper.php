@@ -352,7 +352,7 @@ class ColModelHelper
             ],
             "editoptions" => [
                 "dataInit"=>new Expr('function (el){$(el).datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});}'),
-                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"});return formatter.format(new Date()).replace(",","");}'),
+                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru",{day:"numeric",year:"numeric",month:"numeric",hour: "numeric",minute: "numeric",second: "numeric"}); return formatter.format(new Date()).replace(",","").replace(/[^\x00-\x7F]/g, "");}'),
                 "size" => 50,
             ],
         ];
@@ -378,7 +378,7 @@ class ColModelHelper
             "formatter" => "date",
             "editoptions" => [
                 "dataInit"=>new Expr('function (el){$(el).datepicker({dateFormat:"dd.mm.yy"});}'),
-                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date());}'),
+                "defaultValue" =>new Expr('function(){var formatter = new Intl.DateTimeFormat("ru");return formatter.format(new Date()).replace(/[^\x00-\x7F]/g, "");}'),
                 "size" => 40,
             ],
             "plugins"=>[
