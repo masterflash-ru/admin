@@ -146,8 +146,11 @@ navgrid_add_options.editData=<?=json::encode($gets)?>;
     
 //добавим в пересылаемые данные значения из toolbar полей
 //при редактировании сетки, значения этих полей добавляются в прокси запросов к серверу!
-jqgrid_options.postData=<?=json::encode($postData)?>;
-
+<?php
+if (!empty($postData)){
+    echo 'jqgrid_options.postData='.json::encode($postData).";\n";
+}
+?>
 navgrid_edit_options.useDataProxy=true;
 navgrid_edit_options.onInitializeForm =function(formid){$(formid).attr('method','POST');$(formid).attr('action','');$(formid).attr('enctype','multipart/form-data');};
 navgrid_add_options.useDataProxy=true;
