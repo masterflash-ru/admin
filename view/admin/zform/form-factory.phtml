@@ -24,7 +24,7 @@ if (isset($_GET)){
 
 
 ?>
-<div id="server-response-text"></div>
+<div id="server-response-text_<?=$interface?>"></div>
 <div id="form_interface_<?=$interface?>">
 <?php
 $form = $this->form;
@@ -49,17 +49,21 @@ foreach ($form as $k=>$item){
 
         ?>
         <div class="form-group">
-    <?=$this->formLabel($i)?>
+
         <?php //echo $type.' ';
         switch ($type){
             case "select":{
-                echo $this->FormSelect($i);
+                echo $this->formLabel($i).$this->FormSelect($i);
                 break;
             }
             case "multi_checkbox":{
                 $m=$this->FormMultiCheckbox();
                 $m->setSeparator("<br/>");
-                echo '<div class="form-check pt-2">'.$m->Render($i).'</div>';
+                echo $this->formLabel($i).'<div class="form-check pt-2">'.$m->Render($i).'</div>';
+                break;
+            }
+            case "checkbox":{
+                echo $this->FormCheckbox($i).$this->formLabel($i);
                 break;
             }
             case "button":{
@@ -68,7 +72,7 @@ foreach ($form as $k=>$item){
             }
 
             default:{
-                echo $this->formElement($i);
+                echo $this->formLabel($i).$this->formElement($i);
             }
         }
         ?>
@@ -84,14 +88,15 @@ foreach ($form as $k=>$item){
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
+$(".ckeditor").ckeditor();
 <?=(!empty($actionEvent["FormAfterSubmitOkEvent"]) && !$flagError && $_SERVER['REQUEST_METHOD']=="POST") ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
     $(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
   $('#zform_<?=$interface?>' ).on( 'submit', function (e) {
   e.preventDefault();
   $( this ).ajaxSubmit({
       target:"#form_interface_<?=$interface?>",
-      error: function (e) {$("#server-response-text").html(e.responseText).addClass("alert alert-danger").removeClass("alert-success");},
-      success: function (e) {$("#server-response-text").text("Информация успешно записана").addClass("alert alert-success").removeClass("alert-danger");}
+      error: function (e) {$("#server-response-text_<?=$interface?>").html(e.responseText).addClass("alert alert-danger").removeClass("alert-success");},
+      success: function (e) {$("#server-response-text_<?=$interface?>").text("Информация успешно записана").addClass("alert alert-success").removeClass("alert-danger");}
   });
     return false;
 });

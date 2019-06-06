@@ -77,6 +77,7 @@ public function read(array $get)
 
 public function add(array $postParameters)
 {
+    $postParameters["oper"]="add";
     return $this->edit($postParameters);
 }
 
@@ -100,7 +101,10 @@ public function add(array $postParameters)
 * $options - опции из секции write секции конфига
 */
 public function edit(array $postParameters)
-{//print_r(array_keys($_POST));print_r($_FILES);print_r($_POST["img"]);
+{
+    if (!isset($postParameters["oper"])){
+        $postParameters["oper"]="edit";
+    }
     $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
@@ -139,16 +143,6 @@ public function edit(array $postParameters)
                     $rs->Fields->Item[$k]->Value=$v;
                 }
             }
-            $rs->Update();
-            break;
-        }
-        case "del":{/*редактирование, находим запись по ключу*/
-            //найдем нужную запись
-            $rs->Find($options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."'");
-            if ($rs->EOF) {
-                throw new  Exception("Запись ".$options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."' не найдена!");
-            }
-            $rs->Delete();
             $rs->Update();
             break;
         }

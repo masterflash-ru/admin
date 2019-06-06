@@ -8,7 +8,7 @@
 namespace Admin\Service\Zform;
 
 use Zend\Stdlib\ArrayUtils;
-//use Zend\Session\Container;
+use Zend\Session\Container;
 use Zend\Form\Element;
 use Zend\Validator\Hostname;
 
@@ -68,6 +68,29 @@ class RowModelHelper
 
         ],$options)];
     }
+    
+     /**
+    * вывод многострочного эл-та + ckeditor
+    */
+    public static function ckeditor(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Textarea::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+                
+            ],
+            'attributes' => [
+                "class"=>"ckeditor",
+            ],
+
+        ],$options)];
+    }
+   
+    
+    
+    
     /**
     * вывод скрытого эл-та
     */
@@ -95,6 +118,21 @@ class RowModelHelper
         ],$options)];
     }
 
+    /**
+    * Checkbox
+    */
+    public static function Checkbox(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Checkbox::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+                "value_options"=>[],
+            ],
+        
+        ],$options)];
+    }
 
     /**
     * списка

@@ -121,7 +121,7 @@ $.extend($.fn.fmatter , {
         var opColModel = $.extend({},opts.colModel),op={};
         if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
             op = $.extend({},op,opts.colModel.formatoptions);
-        }//console.log(op);
+        }
 
         if(!$.fmatter.isEmpty(cellval)) {
             var btn,iwrap=$("<div>");

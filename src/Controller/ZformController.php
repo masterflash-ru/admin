@@ -91,6 +91,7 @@ public function editAction()
         if ($form->isValid()) {
             //валидация прошла, обарбатываем запись
             $this->zform->edit($form->getData(),$this->params()->fromQuery());
+            $this->zform->load($form,$this->params()->fromQuery());
         }
         $view=new ViewModel([
             "form"=>$form,
