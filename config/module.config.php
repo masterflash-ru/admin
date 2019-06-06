@@ -330,7 +330,37 @@ return [
             'ViewJsonStrategy',
         ],
     ],
-	
+    'view_helper_config' => [
+        'asset' => [
+            'resource_map' => [
+                'backend'=>[
+                    'js'=>[
+                        "js/admin/jquery-3.1.0.min.js",
+                        "js/admin/jquery.cookie.js",
+                        "js/admin/jquery-ui.min.js",
+                        "js/admin/jquery.jqGrid.min.js",
+                        "js/admin/grid.locale-ru.js",
+                        "js/admin/jqgrid-ext.js?".date("d.Y"),
+                        "js/admin/jquery-ui-timepicker-addon.min.js",
+                        "js/admin/jquery.form.min.js",
+                        "js/admin/zform.js?".date("d.Y"),
+                        "htmledit/ckeditor.js",
+                        "htmledit/adapters/jquery.js",
+                        "js/admin/admin_lib.js?".date("d.Y"),
+                    ],
+                    'css'=>[
+                        "css/admin/jquery-ui-timepicker-addon.css",
+                        "css/admin/jquery-ui.min.css",
+                        "css/admin/jquery-ui.theme.min.css",
+                        "css/admin/jquery-ui-1.12.icon-font.min.css",
+                        "css/admin/bootstrap.css",
+                        "css/admin/ui.jqgrid.css",
+                        "css/admin/admin.css",
+                    ],
+                ],
+            ],
+        ],
+    ],
 	//конфигурация хранения дампов
 	'backup_folder'=>"data/backup",
     
