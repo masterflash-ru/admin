@@ -42,6 +42,28 @@ class ColModelHelper
         ],$options);
     }
 
+    /**
+    * посточные кнопки действия, вызывается только пользовтельская JS функция и все
+    */
+    public static function jscellActions(string $name="myactions", array $options=[])
+    {
+        return  ArrayUtils::merge([
+            "name" => $name,
+            "label"=>"Операция",
+            "width"=>80,
+            "formatter" => "jscellactions",
+            "sortable"=>false,
+            "formatoptions" => [
+                "keys" => true,
+                "editbutton"=>true,
+                "delbutton"=>true,
+                "editOptions"=>[
+                    "closeOnEscape"=>true,
+                    "width"=>"auto",
+                ],
+            ],
+        ],$options);
+    }
 
     /**
     * вывод ссылки для перехода

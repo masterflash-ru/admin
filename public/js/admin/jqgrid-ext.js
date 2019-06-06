@@ -135,7 +135,28 @@ $.extend($.fn.fmatter , {
             return iwrap.html();
         } 
         return "";
-    }
+    },
+    jscellactions: function(cellval,opts) {
+		var op={keys:false, editbutton:true, delbutton:true,onEdit:'console.log', onDel:'console.log'},
+			rowid=opts.rowId, str="",ocl,
+			nav = $.jgrid.getRegional(this, 'nav'),
+			classes = $.jgrid.styleUI[(opts.styleUI || 'jQueryUI')].fmatter,
+			common = $.jgrid.styleUI[(opts.styleUI || 'jQueryUI')].common;
+		if(opts.colModel.formatoptions !== undefined) {
+			op = $.extend(op,opts.colModel.formatoptions);
+		}
+		if(rowid === undefined || $.fmatter.isEmpty(rowid)) {return "";}
+		var hover = "onmouseover=jQuery(this).addClass('" + common.hover +"'); onmouseout=jQuery(this).removeClass('" + common.hover +"');  ";
+        if(op.editbutton){
+			ocl = "id='jEditButton_"+rowid+"' onclick="+op.onEdit+"(this,'edit'); " + hover;
+			str += "<div title='"+nav.edittitle+"' style='float:left;cursor:pointer;' class='ui-pg-div ui-inline-edit' "+ocl+"><span class='" + common.icon_base +" "+classes.icon_edit +"'></span></div>";
+		}
+		if(op.delbutton) {
+			ocl = "id='jDeleteButton_"+rowid+"' onclick="+op.onDel+"(this,'del'); " + hover;
+			str += "<div title='"+nav.deltitle+"' style='float:left;' class='ui-pg-div ui-inline-del' "+ocl+"><span class='" + common.icon_base +" "+classes.icon_del +"'></span></div>";
+		}
+		return "<div style='margin-left:8px;'>" + str + "</div>";
+	}
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -168,6 +189,12 @@ $.extend($.fn.fmatter.seo , {
            return $('div', cell).data("seo");
         }
         return  cellval;
+    }
+});
+
+$.extend($.fn.fmatter.jscellactions , {
+    unformat : function (cellval, opts,cell) {
+        return  "";
     }
 });
 
