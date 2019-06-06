@@ -13,6 +13,33 @@ use Zend\Json\Expr;
 
 class NavGridHelper
 {
+    /**
+    * кнопки пользователя в панель сетки
+    * вызывает функцию JS:
+jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
+                {
+                    caption:"",
+                    buttonicon:"ui-icon-locked",
+                    onClickButton:function(){$("#dialog_permission").dialog("open");},
+                    position: "last",
+                    title:"Доступ к интерфейсу",
+                    id : "",
+                    cursor: "pointer"
+                });
+
+    */
+    public static function ButtonAdd( array $options=[])
+    {
+        return  ArrayUtils::merge([
+            "caption" => "",
+            "buttonicon"=>"",
+            "onClickButton" =>"function(){}",
+            "position"=>"last",
+            "title" => "", 
+            "id"=>"",
+            "cursor" => "pointer",
+        ],$options);
+    }
 
     /**
     * кнопки действия

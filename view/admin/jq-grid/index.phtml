@@ -25,6 +25,15 @@ foreach ($options["layout"]["colModel"] as $k=>$v){
 }
 
 unset($options["layout"]["toolbarModel"]);
+//средство для добавления пользовательских кнопок в панель сетки
+if (!isset($options["layout"]["navButtonAdd"])){
+    $navButtonAdd=[];
+} else {
+    $navButtonAdd=$options["layout"]["navButtonAdd"];
+    //удалим, что бы не передавать в сетку не нужную информацию
+    unset ($options["layout"]["navButtonAdd"]);
+}
+
 
 $options["layout"]["datatype"]="json";
 $options["layout"]["mtype"]="GET";
@@ -67,7 +76,6 @@ if (!isset($navgrid_options["button"])){
 }
 
 
-
 if (isset($options["caption"])){
     echo $options["caption"];
 }
@@ -87,21 +95,27 @@ if ($toolbarForm){
         $type=$item->getAttribute("type");
         
         $postData[$k]=$i->getValue();
-
-        $toobar.='<tr><td>'.$this->formLabel($i).'</td>';
-        $toobar.='<td>';
             switch ($type){
                 case "select":{
+                    $toobar.='<tr><td>'.$this->formLabel($i).'</td><td>';
                     $toobar.= $this->FormSelect($i);
                     break;
                 }
                 case "multi_checkbox":{
                     $m=$this->FormMultiCheckbox();
                     $m->setSeparator("<br/>");
+                    $toobar.='<tr><td>'.$this->formLabel($i).'</td><td>';
                     $toobar.= '<div class="form-check pt-2">'.$m->Render($i).'</div>';
                     break;
                 }
+                case "button":{
+                    $toobar.='<tr><td> </td><td>';
+                    $toobar.=  $this->FormButton($i);
+                    break;
+                }
+
                 default:{
+                    $toobar.='<tr><td>'.$this->formLabel($i).'</td><td>';
                     $toobar.= $this->formElement($i);
                 }
             }
@@ -143,7 +157,7 @@ jqgrid_options.useDataProxy=true;
 jqgrid_options.pager='#<?=$options["container"]?>_pager';
 /*добавляется в POST сетки в момент создания записи из GET запроса открытия сетки*/  
 navgrid_add_options.editData=<?=json::encode($gets)?>;
-    
+
 //добавим в пересылаемые данные значения из toolbar полей
 //при редактировании сетки, значения этих полей добавляются в прокси запросов к серверу!
 <?php
@@ -172,7 +186,38 @@ if ($toolbarForm){
 $("#t_<?=$options["container"]?>").append("<?=$this->EscapeJs($toobar)?>"); 
 <?php
 }
-    if ($this->acl("Mf\Catalog\Controller\AdminController/createtovar")->isAllowed("p")){
+  //добавляем пользовательские кнопки в панель сетки
+  foreach ($navButtonAdd as $navButtonAddItem){
+      ?>
+jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
+                {
+                    caption:"<?=$this->EscapeHtmlAttr($navButtonAddItem["caption"])?>",
+                    buttonicon:"<?=$navButtonAddItem["buttonicon"]?>",
+                    onClickButton:<?=$navButtonAddItem["onClickButton"]?>,
+                    position: "<?=$navButtonAddItem["position"]?>",
+                    title:"<?=$this->EscapeHtmlAttr($navButtonAddItem["title"])?>",
+                    id : "<?=$navButtonAddItem["id"]?>",
+                    cursor: "<?=$navButtonAddItem["cursor"]?>",
+                });
+<?php
+          if ($options["layout"]["toppager"]){
+              //если есть опция toppager, то дублируем в верх
+            ?>
+jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_toppager',
+                {
+                    caption:"<?=$this->EscapeHtmlAttr($navButtonAddItem["caption"])?>",
+                    buttonicon:"<?=$navButtonAddItem["buttonicon"]?>",
+                    onClickButton:<?=$navButtonAddItem["onClickButton"]?>,
+                    position: "<?=$navButtonAddItem["position"]?>",
+                    title:"<?=$this->EscapeHtmlAttr($navButtonAddItem["title"])?>",
+                    id : "<?=$navButtonAddItem["id"]?>",
+                    cursor: "<?=$navButtonAddItem["cursor"]?>",
+                });
+    <?php
+          }
+  }
+  //доступ, пока отключен
+    if ($this->acl("Mf\Catalog\Controller\AdminController/createtovar")->isAllowed("p") && false){
         ?>
     //Добавим кнопку измнения доступа к интерфейсу, если есть доступ
 jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
@@ -195,6 +240,7 @@ if (!empty($options["bind"]) && is_array($options["bind"])){
     }
  }
        ?>
+
 $("#dialog_permission").dialog({
     autoOpen:false,
     modal:true,

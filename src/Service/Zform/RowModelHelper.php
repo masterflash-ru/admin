@@ -130,5 +130,19 @@ class RowModelHelper
             ],
         ],$options)];
     }
+    /**
+    * вывод кнопки button
+    */
+    public static function button(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Button::class,
+            'name' => $name,
+            'attributes' => [
+                'value' => 'button',
+                "class"=>"btn btn-primary btn-sm",
+            ],
+        ],$options)];
+    }
 
 }
