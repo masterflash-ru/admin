@@ -4,7 +4,7 @@
 
 для создания нужного типа интерфейса используется конфигурационный файл, в котором описан тип интерфейса и его параметры.
 
-##Сетка
+## Сетка
 
 Для генерации используется сетка JqGrid, ввод-вывод производится асинхронно
 пример для табличного интерфейса.
@@ -131,6 +131,7 @@ return [
                                 'options'=>[
                                     "label"=>"Имя меню: "
                                 ],
+                                    /*функция JS которая вызывается при изменении элемента*/
                                 "attributes"=>["onchange"=>"change_toolbar()"]
                             ]),
                         ],
@@ -141,7 +142,7 @@ return [
                 ],
 
                 
-                "colModel" => [                                //моедли-описание колонок таблицы
+                "colModel" => [                                //модели-описание колонок таблицы
                     ColModelHelper::text("id",["label"=>"ID","width"=>80]),
                     ColModelHelper::text("name",["label"=>"Название товара","width"=>300]),
                     ColModelHelper::text("url",["label"=>"URL карточки",
@@ -200,8 +201,98 @@ return [
 Плагины оформляются как обычные объекты в Zend, с фабриками и т.д.
 
 
-##Формы
+## Формы
+
+```php
+use Admin\Service\Zform\RowModelHelper;                     //помощник элементов
 
 
+return [
 
+        "type" => "izform",                                 //тип Zform
+        //"description"=>"",                                //если пусто, тогда не выводится в адмиинке в общем списке
+        "options" => [
+            "container" => "profile",                       //имя интерфейса
+            "podval" =>"",
+            "container-attr"=>"style='width:500px'",
+        
+            "read"=>[                                       //плагины загрузки начальных данных в форму
+                "db"=>[
+                    "sql"=>"select users.*, 
+                        (select group_concat(users_group) from users2group where users=users.id) as gr 
+                            from users where id=:id",  
+                ],
+            ],
+            "edit"=>[                                       //плагины для записи данных
+                "EditUserProfile"=>[],
+            ],
+            
+            "actionsEvent"=>[                               //события формы, FormAfterSubmitOkEvent - успешная запись
+                "FormAfterSubmitOkEvent"=>'$("#usersall").trigger("reloadGrid");setTimeout(function(){$("#interfacesDialog").dialog("close");},500);',
+            ],
+
+            "layout"=>[                                     //внешний вид, аналогично сетке
+                "caption" => "Базовый профиль",
+                "rowModel" => [                             //модели-описание элементов формы
+                    'elements' => [
+                        RowModelHelper::text("login",['options'=>["label"=>"Логин"]]),
+                        RowModelHelper::text("name",['options'=>["label"=>"Имя"]]),
+                        RowModelHelper::text("full_name",['options'=>["label"=>"Полное имя"]]),
+                        RowModelHelper::select("status",[
+                            "plugins"=>[
+                                "rowModel"=>[               //плагин срабатывает при генерации формы до ее вывода
+                                    "GetUserStatus"=>[],
+                                ],
+                            ],
+                            'options'=>[
+                                "label"=>"Статус"
+                            ],
+                        ]),
+                        RowModelHelper::datetime("date_registration",['options'=>["label"=>"Дата регистрации"]]),
+                        RowModelHelper::multicheckbox("gr",[
+                            "plugins"=>[
+                                "rowModel"=>[               //плагин срабатывает при генерации формы до ее вывода
+                                    "selectfromdb"=>[
+                                        "sql"=>"select id,name from users_group order by name",
+                                        "emptyFirstItem"=>false
+                                    ],
+                                ],
+                                "read"=>[                   //конвертирует строку со списком ID групп в массив
+                                    "StringToArray"=>[]
+                                ],
+                            ],
+                            'options'=>[
+                                "label"=>"Член групп",
+                                
+                            ],
+                        ]),
+                        RowModelHelper::submit("submit",[
+                            'attributes'=>['value' => 'Записать'],
+                        ]),
+                        //это ID юзера
+                        RowModelHelper::hidden("id"),
+                    ],
+
+                ],
+            ],
+        ],
+];
+```
+
+Аналогично сетке используются плагины для работы с данными, для добавления сових используется конфиг приложения:
+```php
+    /*плагины для Zform*/
+    "ZformPlugin"=>[
+        'factories' => [
+            Service\Admin\Zform\Plugin\GetUserStatus::class=>Service\Admin\Zform\Plugin\FactoryGetUserStatus::class,
+            Service\Admin\Zform\Plugin\EditUserProfile::class=>Service\Admin\Zform\Plugin\FactoryEditUserProfile::class,
+            Service\Admin\Zform\Plugin\EditUserPassword::class=>Service\Admin\Zform\Plugin\FactoryEditUserProfile::class,
+        ],
+        'aliases' =>[
+            "GetUserStatus" => Service\Admin\Zform\Plugin\GetUserStatus::class,
+            "EditUserProfile" => Service\Admin\Zform\Plugin\EditUserProfile::class,
+            "EditUserPassword" => Service\Admin\Zform\Plugin\EditUserPassword::class,
+        ],
+    ],
+```
 
