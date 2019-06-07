@@ -92,6 +92,9 @@ public function editAction()
             //валидация прошла, обарбатываем запись
             $this->zform->edit($form->getData(),$this->params()->fromQuery());
             $this->zform->load($form,$this->params()->fromQuery());
+        } else {
+            //ошибка валидатора, отдает 418 код
+            $this->getResponse()->setStatusCode(418);
         }
         $view=new ViewModel([
             "form"=>$form,
@@ -102,6 +105,7 @@ public function editAction()
         $view->setTerminal(true);
         return $view;
     } catch (ZformException\AccessDeniedException $e) {
+        //доступ запрещен
         $this->getResponse()->setStatusCode(406);
         return $this->getResponse()->setContent($e->getMessage());
     } catch (Exception $e) {
