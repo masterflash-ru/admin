@@ -12,23 +12,53 @@ use Zend\Session\Container;
 use Zend\Form\Element;
 use Zend\Validator\Hostname;
 
+//use Admin\Service\Zform\Element as myElement;
 
 class RowModelHelper
 {
      /**
     * вывод текущего изображения
     */
-    public static function image(string $name, array $options=[])
+    public static function uploadimage(string $name, array $options=[])
     {
         return [
             'spec' =>ArrayUtils::merge([
-                'type' => Element\Image::class,
+                'type' => 'uploadImg',
                 'name' => $name,
                 'options' => [
                     'label' => '',
                 ],
                 'attributes' => [
                 ],
+                "plugins1111"=>[
+                    "read"=>[
+                        "Images" =>[
+                            //"image_id"=>"id",                        //имя поля с ID
+                            "storage_item_name" => "",              //имя секции в хранилище
+                            "storage_item_rule_name"=>"admin_img"   //имя правила из хранилища
+                        ],
+                    ],
+                    "edit"=>[
+                        "Images"=>[
+                            "image_id"=>"id",                        //имя поля с ID
+                            "storage_item_name" => "",              //имя секции в хранилище
+                        ],
+                    ],
+                    "add"=>[
+                        "Images"=>[
+                            "image_id"=>"id",                        //имя поля с ID
+                            "storage_item_name" => "",              //имя секции в хранилище
+                            "database_table_name"=>""               //имя таблицы SQL куда вставляем новые записи (НЕ ФОТО)!, нужно для новых записей
+                        ],
+                    ],
+                    "del"=>[
+                        "Images"=>[
+                            "image_id"=>"id",                        //имя поля с ID
+                            "storage_item_name" => "",              //имя секции в хранилище
+                        ],
+                    ],
+                ],
+
             ],$options)
         ];
     }
@@ -92,17 +122,16 @@ class RowModelHelper
     */
     public static function text(string $name, array $options=[])
     {
-        return ['spec' =>ArrayUtils::merge([
-            'type' => Element\Text::class,
-            'name' => $name,
-            'options' => [
-                'label' => '',
-                
-            ],
-            'attributes' => [
-                "class"=>"form-control form-control-sm",
-            ],
-
+        return [
+            'spec' =>ArrayUtils::merge([
+                'type' => Element\Text::class,
+                'name' => $name,
+                'options' => [
+                    'label' => '',
+                ],
+                'attributes' => [
+                    "class"=>"form-control form-control-sm",
+                ],
         ],$options)];
     }
     

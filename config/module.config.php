@@ -11,7 +11,7 @@ use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\Cache\Storage\Plugin\Serializer;
 use Zend\Cache\Storage\Adapter\Filesystem;
-
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
 	//маршруты
@@ -297,6 +297,9 @@ return [
             View\Helper\IUniversal::class => View\Helper\Factory\IUniversalFactory::class,
             View\Helper\IJqgrid::class => View\Helper\Factory\IJqgridFactory::class,
             View\Helper\IZform::class => View\Helper\Factory\IZformFactory::class,
+            
+            //новые элементы формы, вид
+            Service\Zform\Element\View\uploadImg::class => InvokableFactory::class,
         ],
         'aliases' => [
             'itabs' => View\Helper\ITabs::class,
@@ -305,6 +308,8 @@ return [
             'ijqgrid' => View\Helper\IJqgrid::class,
             'iZform' => View\Helper\IZform::class,
             'izform' => View\Helper\IZform::class,
+            
+            'uploadImg'=>Service\Zform\Element\View\uploadImg::class,
         ],
     ],
     'service_manager' => [
@@ -321,6 +326,16 @@ return [
         ],
     ],
     
+    //расширенные элементы для генерации форм
+    'form_elements' => [
+        'factories' => [
+            Service\Zform\Element\uploadImg::class => InvokableFactory::class,
+        ],
+        'aliases' => [
+            'uploadImg'=>Service\Zform\Element\uploadImg::class,
+            'uploadimg'=>Service\Zform\Element\uploadImg::class
+        ],
+    ],
 
     'view_manager' => [
         'template_path_stack' => [

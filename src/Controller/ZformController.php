@@ -17,14 +17,17 @@ class ZformController extends AbstractActionController
     protected $cache;
     protected $config;
     protected $zform;
+    //менеджер эл-тов формы, он создается в фабрике, и берет из конфига наши элементы
+    protected $formManager;
 
 
-public function __construct ($connection,$cache,$config,$zform)
+public function __construct ($connection,$cache,$config,$zform,$formManager)
 {
 	$this->connection=$connection;
     $this->cache=$cache;
     $this->config=$config;
     $this->zform=$zform;
+    $this->formManager=$formManager;
 }
 
 
@@ -44,7 +47,7 @@ public function readAction()
         $options=include $this->config[$interface];
         $this->zform->setOptions($options["options"]);
         
-        $factory=new FormFactory();
+        $factory=new FormFactory($this->formManager);
         $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
         $this->zform->load($form,$this->params()->fromQuery());
         $view=new ViewModel([
@@ -84,7 +87,7 @@ public function editAction()
         /*
         * формируем форму и пропускаем все через тамошние валидаторы и фильтры
         **/
-        $factory=new FormFactory();
+        $factory=new FormFactory($this->formManager);
         $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
         $this->zform->initForm($form);
         $form->setData($this->params()->fromPost());
