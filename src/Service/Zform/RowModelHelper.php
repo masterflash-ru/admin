@@ -30,33 +30,31 @@ class RowModelHelper
                 ],
                 'attributes' => [
                 ],
-                "plugins1111"=>[
+                "plugins"=>[
                     "read"=>[
                         "Images" =>[
-                            //"image_id"=>"id",                        //имя поля с ID
                             "storage_item_name" => "",              //имя секции в хранилище
-                            "storage_item_rule_name"=>"admin_img"   //имя правила из хранилища
+                            "storage_item_rule_name"=>"admin_img",  //имя правила из хранилища
+                            "image_id"=>"id"                        //в этой операции не используется
                         ],
                     ],
                     "edit"=>[
                         "Images"=>[
-                            "image_id"=>"id",                        //имя поля с ID
                             "storage_item_name" => "",              //имя секции в хранилище
+                            "image_id"=>"id"                        //из какого поля брать ID записи для записи в хранилище
                         ],
                     ],
-                    "add"=>[
+                    /*"add"=>[
                         "Images"=>[
-                            "image_id"=>"id",                        //имя поля с ID
                             "storage_item_name" => "",              //имя секции в хранилище
                             "database_table_name"=>""               //имя таблицы SQL куда вставляем новые записи (НЕ ФОТО)!, нужно для новых записей
                         ],
                     ],
                     "del"=>[
                         "Images"=>[
-                            "image_id"=>"id",                        //имя поля с ID
                             "storage_item_name" => "",              //имя секции в хранилище
                         ],
-                    ],
+                    ],*/
                 ],
 
             ],$options)

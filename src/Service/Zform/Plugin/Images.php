@@ -13,7 +13,7 @@ class Images extends AbstractPlugin
     protected $ImagesLib;
     protected $connection;
     protected $def_options =[
-        //"image_id"=>"id",                        //имя поля с ID
+        "image_id"=>"id",                        //имя поля с ID
         "storage_item_name" => "",              //имя секции в хранилище
         "storage_item_rule_name"=>"admin_img",  //имя правила из хранилища
         "database_table_name" =>"",             //имя таблицы в которую добавляем записи, если напрямую в базу
@@ -54,26 +54,17 @@ public function add($value,&$postParameters)
 /**
 * обработка фото по правилам прописанных в парвилах хранилища
 * возвращает типа, если успешная обработка:
-array(3) {
-  ["admin_img"] => array(1) {
-    ["default"] => string(36) "7de2cb685d803170affb3d984ba8e937.jpg"
-  }
-  ["anons"] => array(1) {
-    ["default"] => string(36) "91cf9fcaa5e5d1540412013645dc6af6.jpg"
-  }
-  ["file_storage"] => string(7) "default"
-}
 если загрузки не было, возвращается пустой массив
 * если была ошибка - исключение
 */
-public function edit($value,&$postParameters)
+public function edit($value,&$postParameters,$getParameters)
 {
     if (empty($this->options["storage_item_name"])){
         throw new Exception("Не указано имя секции конфига с хранилищем, куда записывать файлы");
     }
-    $input_name=$this->options["colModel"]["name"];
+    $input_name=$this->options["rowModel"]["spec"]["name"];
     $data_folder='./data/datastorage';
-    $file = new FileInput('file_'.$input_name);
+    $file = new FileInput($input_name);
     $file->setRequired(false);
     $file ->getValidatorChain()->attach(new Validator\File\UploadFile());
     $file ->getValidatorChain()->attach(new Validator\File\IsImage());
@@ -96,7 +87,7 @@ public function edit($value,&$postParameters)
     if ($inputFilter->isValid()) {
         //успешная загрузка
         //Array ( [name] => _0006s_0020_роял ред делишес.jpg [type] => image/jpeg [tmp_name] => ./data/images/_0006s_0020_роял ред делишес.jpg [error] => 0 [size] => 348221 )
-        $data = $inputFilter->getValue('file_'.$input_name);
+        $data = $inputFilter->getValue($input_name);
         if (!empty($data)){
             //быда загрузка файла, заносим в хранилище
             $this->ImagesLib->selectStorageItem($this->options["storage_item_name"]);
@@ -117,12 +108,12 @@ public function edit($value,&$postParameters)
 * $postParameters - то что пришло от сетки, обычно 
 * id - ID записи
 * oper - равно "del"
-*/
+* /
 public function del(array $postParameters)
 {
     $id=(int)$postParameters["id"];
     $this->ImagesLib->deleteFile($this->options["storage_item_name"],$id);
 }
-
+*/
     
 }

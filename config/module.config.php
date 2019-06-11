@@ -329,11 +329,11 @@ return [
     //расширенные элементы для генерации форм
     'form_elements' => [
         'factories' => [
-            Service\Zform\Element\uploadImg::class => InvokableFactory::class,
+            Service\Zform\Element\Form\uploadImg::class => InvokableFactory::class,
         ],
         'aliases' => [
-            'uploadImg'=>Service\Zform\Element\uploadImg::class,
-            'uploadimg'=>Service\Zform\Element\uploadImg::class
+            'uploadImg'=>Service\Zform\Element\Form\uploadImg::class,
+            'uploadimg'=>Service\Zform\Element\Form\uploadImg::class
         ],
     ],
 

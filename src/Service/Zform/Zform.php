@@ -106,22 +106,6 @@ class Zform
 
     /**
     * редактирование записей
-    GET - параметры если есть:
-    array(1) {
-  ["id"] => string(2) "11"
-}
-POST параметры из формы
-array(6) {
-  ["login"] => string(5) "admin"
-  ["name"] => string(2) "11"
-  ["full_name"] => string(4) "2234"
-  ["status"] => string(1) "3"
-  ["date_registration"] => string(19) "18.04.2019 00:00:00"
-  ["gr"] => array(1) {
-    [0] => string(1) "2"
-  }
-}
-
     */
     public function edit(array $postParameters=[], array $getParameters=[])
     {

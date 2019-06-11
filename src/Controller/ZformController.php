@@ -90,7 +90,7 @@ public function editAction()
         $factory=new FormFactory($this->formManager);
         $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
         $this->zform->initForm($form);
-        $form->setData($this->params()->fromPost());
+        $form->setData(array_merge_recursive($this->params()->fromPost(),$this->params()->fromFiles()));
         if ($form->isValid()) {
             //валидация прошла, обарбатываем запись
             $this->zform->edit($form->getData(),$this->params()->fromQuery());
