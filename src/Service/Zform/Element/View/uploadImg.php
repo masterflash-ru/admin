@@ -17,12 +17,21 @@ class uploadImg extends FormInput
     public function render(ElementInterface $element)
     {
         $view=$this->getView();
+        $file=$this->getFileElementHelper();
+        if (is_array($element->getValue())){
+            //временно пока так, если ошибка не выводим картинку
+            return  "<div class='uploadimg-container'>".
+            '<div class="uploadimg-file">'.$file->render($element).'</div>'.
+           "</div>";
+        }
+        
+        
         $src=$view->basePath($element->getValue());
 
         $attributes = $element->getAttributes();
         unset ($attributes["name"]);
         
-        $file=$this->getFileElementHelper();
+        
 
         return "<div class='uploadimg-container'>".
             '<div class="uploadimg-file">'.$file->render($element).'</div>'.

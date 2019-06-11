@@ -60,24 +60,8 @@ class RowModelHelper
             ],$options)
         ];
     }
-     /**
-    * вывод элемента загрузки файла
-    */
-    public static function file(string $name, array $options=[])
-    {
-        return [
-            'spec' =>ArrayUtils::merge([
-                'type' => Element\File::class,
-                'name' => $name,
-                'options' => [
-                    'label' => '',
-                ],
-                'attributes' => [
-                ],
-            ],$options)
-        ];
-    }
 
+    
     
     
     /**

@@ -6,6 +6,8 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\FileInput;
 use Zend\Validator;
 use Exception;
+use Zend\Form\FormInterface;
+use \Zend\Filter\File\RenameUpload;
 
 
 class Images extends AbstractPlugin
@@ -32,7 +34,7 @@ class Images extends AbstractPlugin
 * операция чтения
 * возвращает строку пути к файлу+файл пригодную для тега IMG
 */
-public function read($value)
+public function read($value,FormInterface $form)
 {
     return $this->ImagesLib->loadImage($this->options["storage_item_name"],$value,$this->options["storage_item_rule_name"]);
 }
@@ -57,50 +59,47 @@ public function add($value,&$postParameters)
 если загрузки не было, возвращается пустой массив
 * если была ошибка - исключение
 */
-public function edit($value,&$postParameters,$getParameters)
+public function edit($value,&$postParameters,$getParameters,FormInterface $form)
 {
     if (empty($this->options["storage_item_name"])){
         throw new Exception("Не указано имя секции конфига с хранилищем, куда записывать файлы");
     }
+    
+    //имя поля с элементом file
     $input_name=$this->options["rowModel"]["spec"]["name"];
+    //цепочка фильтров
+    $FilterChain=$form->getInputFilter()->get($input_name)->getFilterChain();
+    //временная папка
     $data_folder='./data/datastorage';
-    $file = new FileInput($input_name);
-    $file->setRequired(false);
-    $file ->getValidatorChain()->attach(new Validator\File\UploadFile());
-    $file ->getValidatorChain()->attach(new Validator\File\IsImage());
-    $file ->getFilterChain() ->attach(new Filter\File\RenameUpload([
-        'target'    => $data_folder,
-        'use_upload_name' => true,
-        'overwrite' => true
-        ]));
-	
+    //ищем элемент фильтра RenameUpload::class и насильно туда ставим нашу временную папку
+    $f=false;
+    foreach ($FilterChain->getFilters() as $filter_name=>$f){
+        if ($filter_name==RenameUpload::class){
+            $f->setTarget('./data/datastorage');
+            $f=true;
+            break;
+        }
+    }
+    if (!$f){
+        throw new Exception("Не обнаружен обязательный фильтр ".RenameUpload::class." для обработки загрузки, смотрите секцию 'input_filter' вашего конфига формы");
+    }
+
+    //временная папка для загруженных файлов
     if (!is_readable($data_folder) || !is_dir($data_folder) || !is_writable($data_folder)) {
         if (!mkdir($data_folder)) {
             throw new Exception("Ошибка создания папки ".$data_folder." или в нее нельзя записать");
         };
     }
+    
+    if (!empty($value)){
+        //быда загрузка файла, заносим в хранилище
+        $this->ImagesLib->selectStorageItem($this->options["storage_item_name"]);
+        return $this->ImagesLib->saveImages($value["name"],$this->options["storage_item_name"],$postParameters[$this->options["image_id"]]);
+    }
 
-
-    $inputFilter = new InputFilter();
-    $inputFilter ->add($file) ->setData($_FILES);
-
-    if ($inputFilter->isValid()) {
-        //успешная загрузка
-        //Array ( [name] => _0006s_0020_роял ред делишес.jpg [type] => image/jpeg [tmp_name] => ./data/images/_0006s_0020_роял ред делишес.jpg [error] => 0 [size] => 348221 )
-        $data = $inputFilter->getValue($input_name);
-        if (!empty($data)){
-            //быда загрузка файла, заносим в хранилище
-            $this->ImagesLib->selectStorageItem($this->options["storage_item_name"]);
-            return $this->ImagesLib->saveImages($data["name"],$this->options["storage_item_name"],$postParameters[$this->options["image_id"]]);
-        }
-    } else {
-        $mess="";
-        foreach ($inputFilter->getMessages() as $m){
-            $mess.=implode("<br/>\n",$m)."<br/>\n";
-        }
-        throw new Exception("Ошибка загрузки/обработки файла: <b>{$mess}</b> ");
-    }    
     return [];
+    
+    
 }
 
 /**

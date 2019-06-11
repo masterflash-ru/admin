@@ -93,7 +93,7 @@ public function editAction()
         $form->setData(array_merge_recursive($this->params()->fromPost(),$this->params()->fromFiles()));
         if ($form->isValid()) {
             //валидация прошла, обарбатываем запись
-            $this->zform->edit($form->getData(),$this->params()->fromQuery());
+            $this->zform->edit($form,$form->getData(),$this->params()->fromQuery());
             $this->zform->load($form,$this->params()->fromQuery());
         } else {
             //ошибка валидатора, отдает 418 код

@@ -66,7 +66,7 @@ class Zform
             foreach ($this->options["read"] as $plugin_name=>$options){
                 $plugin=$this->plugin($plugin_name);
                 $plugin->setOptions($options);
-                $rez=$plugin->read($get);
+                $rez=$plugin->read($get,$form);
             }
         }
         
@@ -83,7 +83,7 @@ class Zform
                     //добавим в опции 
                     $options["rowModel"]=$rowModel["spec"];
                     $plugin->setOptions($options);
-                    $rez[$rowModel["spec"]["name"]]=$plugin->read($rez[$rowModel["spec"]["name"]]);
+                    $rez[$rowModel["spec"]["name"]]=$plugin->read($rez[$rowModel["spec"]["name"]],$form);
                 }
             }
         }
@@ -107,7 +107,7 @@ class Zform
     /**
     * редактирование записей
     */
-    public function edit(array $postParameters=[], array $getParameters=[])
+    public function edit(FormInterface $form,array $postParameters=[], array $getParameters=[])
     {
 
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
@@ -120,7 +120,7 @@ class Zform
                     $options["rowModel"]=$rowModel;
                     $plugin->setOptions($options);
                     if (isset($postParameters[$rowModel["spec"]["name"]])){
-                        $postParameters[$rowModel["spec"]["name"]]=$plugin->edit($postParameters[$rowModel["spec"]["name"]],$postParameters,$getParameters);
+                        $postParameters[$rowModel["spec"]["name"]]=$plugin->edit($postParameters[$rowModel["spec"]["name"]],$postParameters,$getParameters,$form);
                     }
                 }
             }
@@ -133,7 +133,7 @@ class Zform
         foreach ($this->options["edit"] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $r=$plugin->edit($postParameters,$getParameters);
+            $r=$plugin->edit($postParameters,$getParameters,$form);
             if (!empty($r)){
                 $rez[]=$r;
             }
