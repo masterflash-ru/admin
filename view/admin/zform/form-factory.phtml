@@ -92,23 +92,26 @@ $(".ckeditor").ckeditor();
 <?=(!empty($actionEvent["FormAfterSubmitOkEvent"]) && !$flagError && $_SERVER['REQUEST_METHOD']=="POST") ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
     $(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
   $('#zform_<?=$interface?>' ).on( 'submit', function (e) {
-  e.preventDefault();
-  $( this ).ajaxSubmit({
-      target:"#form_interface_<?=$interface?>",
-      error: function (e) {
-          if (e.status==418){
-              //ошибка валидатора формы, выводим ее с сообщениями
-              $("#server-response-text_<?=$interface?>").text("Ошибка").addClass("alert alert-danger").removeClass("alert-success");
-              $("#form_interface_<?=$interface?>").html(e.responseText);
-          } else {
-              //прояайя ошибка серии 4ХХ, выводим ответ сервера
-              $("#server-response-text_<?=$interface?>").html(e.responseText).addClass("alert alert-danger").removeClass("alert-success");
+      $("body").append(zform_overlay);
+      e.preventDefault();
+      $( this ).ajaxSubmit({
+          target:"#form_interface_<?=$interface?>",
+          error: function (e) {
+              $(".zformoverlay").remove();
+              if (e.status==418){
+                  //ошибка валидатора формы, выводим ее с сообщениями
+                  $("#server-response-text_<?=$interface?>").text("Ошибка").addClass("alert alert-danger").removeClass("alert-success");
+                  $("#form_interface_<?=$interface?>").html(e.responseText);
+              } else {
+                  //прояайя ошибка серии 4ХХ, выводим ответ сервера
+                  $("#server-response-text_<?=$interface?>").html(e.responseText).addClass("alert alert-danger").removeClass("alert-success");
+              }
+          },
+          success: function (e) {
+              //успех
+              $(".zformoverlay").remove();
+              $("#server-response-text_<?=$interface?>").text("Информация успешно записана").addClass("alert alert-success").removeClass("alert-danger");
           }
-      },
-      success: function (e) {
-          //успех
-          $("#server-response-text_<?=$interface?>").text("Информация успешно записана").addClass("alert alert-success").removeClass("alert-danger");
-      }
   });
     return false;
 });

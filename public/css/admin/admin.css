@@ -30,6 +30,7 @@ input[name*=create] {color:#000; background-color:#3CF}
 #actions_tree_out table td{white-space:nowrap}
 .zform-default, .zform-default *{box-sizing: border-box}
 .zform-default .form-group>label{font-weight: bold; color:red}
+.zformoverlay{z-index: 1000}
 table{border-collapse:collapse}
 input[type=text] + button{
 	background-color: #535D94;

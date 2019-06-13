@@ -33,6 +33,16 @@ class uploadImg extends FormInput
             $src=$view->basePath($src);
             $file_upload_element='<div class="uploadimg-file">'.$file->render($element).'</div>';
         }
+        if ($src=="/"){
+            //если пустое значение, тогда рисуем на картинку 1х1
+            $im = @imagecreate(1, 1) or die("Image empty");
+            imagecolorallocate($im, 255, 255, 255);
+            ob_start();
+            imagepng($im);
+            $image_data = ob_get_contents();
+            ob_end_clean();
+            $src="data:image/png;base64,".base64_encode($image_data);
+        }
         
 
         $attributes = $element->getAttributes();

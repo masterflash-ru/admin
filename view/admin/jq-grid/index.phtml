@@ -158,6 +158,35 @@ jqgrid_options.pager='#<?=$options["container"]?>_pager';
 /*добавляется в POST сетки в момент создания записи из GET запроса открытия сетки*/  
 navgrid_add_options.editData=<?=json::encode($gets)?>;
 
+<?php
+    if (isset($options["layout"]["treeGrid"]) && $options["layout"]["treeGrid"]){
+        //для дерева добавляем то что сохранит состяние узлов после перезагрузки 
+    ?>
+jqgrid_options.gridComplete=function(){
+    setTimeout(function (){
+        for (var id in idsOfExpandedRows) {
+            var record = $("#<?=$options["container"]?>").jqGrid('getRowData', idsOfExpandedRows[id], true);
+            if (record._id_) {$("#<?=$options["container"]?>").jqGrid('expandNode',record);}
+        }
+    },100);
+}
+
+$.jgrid.extend({
+                expandRow: function (rc) {
+                    updateIdsOfExpandedRows(rc._id_, true);
+                    return orgExpandRow.call(this, rc);
+                },
+                collapseRow: function (rc) {
+                    updateIdsOfExpandedRows(rc._id_, false);
+                    return orgCollapseRow.call(this, rc);
+                }
+            });
+<?php
+    }
+    ?>
+
+
+
 //добавим в пересылаемые данные значения из toolbar полей
 //при редактировании сетки, значения этих полей добавляются в прокси запросов к серверу!
 <?php
@@ -279,6 +308,42 @@ if (isset($options["podval"])){
 ?>
 
 <script>
+"use strict";
+//хранение состояние узлов дерева в локальном хранилище, для перезагрузки дерева
+ var $grid = $('#<?=$options["container"]?>'),
+                saveObjectInLocalStorage = function (storageItemName, object) {
+                    if (typeof window.localStorage !== 'undefined') {
+                        window.localStorage.setItem(storageItemName, JSON.stringify(object));
+                    }
+                },
+                removeObjectFromLocalStorage = function (storageItemName) {
+                    if (typeof window.localStorage !== 'undefined') {
+                        window.localStorage.removeItem(storageItemName);
+                    }
+                },
+                getObjectFromLocalStorage = function (storageItemName) {
+                    if (typeof window.localStorage !== 'undefined') {
+                        return JSON.parse(window.localStorage.getItem(storageItemName));
+                    }
+                },
+                myColumnStateName = function (grid) {
+                    return window.location.pathname + '#' + grid[0].id;
+                },
+                idsOfExpandedRows = [],
+                updateIdsOfExpandedRows = function (id, isExpanded) {
+                    var index = $.inArray(id, idsOfExpandedRows);
+                    if (!isExpanded && index >= 0) {
+                        idsOfExpandedRows.splice(index, 1); // remove id from the list
+                    } else if (index < 0) {
+                        idsOfExpandedRows.push(id);
+                    }
+                    saveObjectInLocalStorage(myColumnStateName($grid), idsOfExpandedRows);
+                },
+                orgExpandRow = $.fn.jqGrid.expandRow,
+                orgCollapseRow = $.fn.jqGrid.collapseRow;
+        
+            idsOfExpandedRows = getObjectFromLocalStorage(myColumnStateName($grid)) || [];
+
 /*фиксирование изменений в toolbar и перезагрузка сетки*/
 function change_toolbar()
 {

@@ -117,7 +117,25 @@ class RowModelHelper
         ],$options)];
     }
     
-     /**
+    /**
+    * вывод многострочного эл-та
+    */
+    public static function textarea(string $name, array $options=[])
+    {
+        return [
+            'spec' =>ArrayUtils::merge([
+                'type' => Element\Textarea::class,
+                'name' => $name,
+                'options' => [
+                    'label' => '',
+                ],
+                'attributes' => [
+                    "class"=>"form-control form-control-sm",
+                ],
+        ],$options)];
+    }
+
+    /**
     * вывод многострочного эл-та + ckeditor
     */
     public static function ckeditor(string $name, array $options=[])

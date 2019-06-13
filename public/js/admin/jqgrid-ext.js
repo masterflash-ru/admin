@@ -2,7 +2,7 @@
 /*
 * Расширение для сетки jqGrid
 */
-var jq_overlay=$('<div class="ui-widget-overlay jqoverlay"><div class="row align-items-center w-100 h-100"><div class="col-12 align-self-center text-center">345345</div></div></div>');
+var jq_overlay=$('<div class="ui-widget-overlay jqoverlay"><div class="row align-items-center w-100 h-100"><div class="col-12 align-self-center text-center"></div></div></div>');
 $.jgrid.ext = 
 {/*прокси*/
 	ajaxFormProxy: function(opts, act)
@@ -31,6 +31,7 @@ $.jgrid.ext =
 		}, 200);
 	}
 };
+
 
 $.extend($.jgrid.defaults, { 
     /*вывод сообщений ошибок*/
