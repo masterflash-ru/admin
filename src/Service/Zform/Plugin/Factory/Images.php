@@ -12,7 +12,11 @@ class Images
 
 public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 {
-	$ImagesLib=$container->get(ImagesLib::class);
+    if ($container->has(ImagesLib::class)){
+        $ImagesLib=$container->get(ImagesLib::class);
+    } else {
+        $ImagesLib=null;
+    }
     $connection=$container->get('DefaultSystemDb');
     return new $requestedName($ImagesLib,$connection);
 }

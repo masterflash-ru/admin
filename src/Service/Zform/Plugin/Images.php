@@ -36,7 +36,20 @@ class Images extends AbstractPlugin
 */
 public function read($value,FormInterface $form)
 {
-    return $this->ImagesLib->loadImage($this->options["storage_item_name"],$value,$this->options["storage_item_rule_name"]);
+    if ($this->ImagesLib){
+        return $this->ImagesLib->loadImage($this->options["storage_item_name"],$value,$this->options["storage_item_rule_name"]);
+    } else {
+        //нет masterflash-ru/storage - рисуем на изображении ошибку
+        $im = @imagecreate(410, 30) or die("Package masterflash-ru/storage not installed");
+        $background_color = imagecolorallocate($im, 255, 255, 255);
+        $text_color = imagecolorallocate($im, 255, 0, 0);
+        imagestring($im, 5, 5, 5,  "Package masterflash-ru/storage not installed", $text_color);
+        ob_start();
+        imagepng($im);
+        $image_data = ob_get_contents();
+        ob_end_clean();
+        return "data:image/png;base64,".base64_encode($image_data);
+    }
 }
 
 /**

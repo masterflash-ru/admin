@@ -25,8 +25,15 @@ class uploadImg extends FormInput
            "</div>";
         }
         
+        $src=$element->getValue();
+        $file_upload_element="";
+        //если нет masterflash-ru/storage тогда будет не имя файла, а строка в base64
+        if (stripos($src,"data")===false){
+            //пакет есть, поэтому все штатно
+            $src=$view->basePath($src);
+            $file_upload_element='<div class="uploadimg-file">'.$file->render($element).'</div>';
+        }
         
-        $src=$view->basePath($element->getValue());
 
         $attributes = $element->getAttributes();
         unset ($attributes["name"]);
@@ -34,7 +41,7 @@ class uploadImg extends FormInput
         
 
         return "<div class='uploadimg-container'>".
-            '<div class="uploadimg-file">'.$file->render($element).'</div>'.
+            $file_upload_element.
             sprintf(
             '<img %s src="%s" %s',
             $this->createAttributesString($attributes),
