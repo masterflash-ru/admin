@@ -48,7 +48,11 @@ public function render()
 /*обработчик записи, возвращает обработанное*/
 public function save()
 {
-    return implode(",",$this->infa);
+    if (is_array($this->infa)){
+        return implode(",",$this->infa);
+    } else {
+        return $this->infa;
+    }
 }
 
 
