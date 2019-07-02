@@ -15,11 +15,11 @@ class Db extends AbstractPlugin
 	protected $connection;
     protected $def_options_read=[
         "sql"=>"",
-         "PrimaryKey"=>null,
+         "PrimaryKey"=>[],
     ];
     protected $def_options_write=[
         "sql"=>"",
-         "PrimaryKey"=>null,
+         "PrimaryKey"=>[],
     ];
 
     
