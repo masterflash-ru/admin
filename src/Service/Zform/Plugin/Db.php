@@ -58,15 +58,14 @@ public function read(array $get)
     $rs->Open($sql,$this->connection);
     $rez=[];
     foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
-            $rez[$column_name]=$rs->Fields->Item[$column_name]->Value;
-            
+        $rez[$column_name]=$rs->Fields->Item[$column_name]->Value;            
     }
     if (!$options["PrimaryKey"]){
+        $options["PrimaryKey"]=[];
         //ищем первичный ключ, если есть, в опциях он не задак конекретно
         foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
             if ($columninfo->PrimaryKey){
-                $options["PrimaryKey"]=$column_name;
-                break;
+                $options["PrimaryKey"][]=$column_name;
             }
         }
     }
@@ -111,23 +110,43 @@ public function edit(array $postParameters)
     $sql=$options["sql"];
     $rs->Open($sql,$this->connection);
     if (!$options["PrimaryKey"]){
+        $options["PrimaryKey"]=[];
+        $keys=[];
         //ищем первичный ключ, если есть, в опциях он не задак конекретно
         foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
             if ($columninfo->PrimaryKey){
-                $options["PrimaryKey"]=$column_name;
-                break;
+                $options["PrimaryKey"][]=$column_name;
             }
+            if ($columninfo->Key){
+                //обычные ключи, на случай, если первичных не будет вовсе
+                $keys[]=$column_name;
+            }
+
+        }
+        if(empty($options["PrimaryKey"])){
+            //если первичного ключа нет, тогда массив обычных ключей и будет общим первичным
+            $options["PrimaryKey"]=$keys;
         }
     }
     switch ($postParameters["oper"]){
-        case "edit":{/*редактирование, находим запись по ключу*/
-            //найдем нужную запись
-            $rs->Find($options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."'");
-            if ($rs->EOF) {
-                throw new  Exception("Запись ".$options["PrimaryKey"]."='".$postParameters[$options["PrimaryKey"]]."' не найдена!");
+        case "edit":{
+            /*редактирование, находим запись по ключу*/
+            //найдем нужную запись КЛЮЧ МАССИВ, Т.К. может быть в ключе несколько полей
+            $rs_search=[];
+            foreach ($options["PrimaryKey"]  as $key_item){
+                if (isset($postParameters[$key_item])){
+                    $rs_search[]=$key_item."='".$postParameters[$key_item]."'";
+                }
             }
+
+            $rs->Find(implode(" and ",$rs_search));
+            if ($rs->EOF) {
+                throw new  Exception("Запись ".implode(" and ",$rs_search)."' не найдена!");
+            }
+            $skip=$options["PrimaryKey"];
+            $skip[]="oper";
             foreach ($postParameters as $k=>$v){
-                if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
+                if (in_array($k,$skip)){continue;}
                 if (array_key_exists($k,$rs->DataColumns->Item_text)){
                     $rs->Fields->Item[$k]->Value=$v;
                 }
@@ -137,8 +156,9 @@ public function edit(array $postParameters)
         }
         case "add":{
             $rs->AddNew();
+
             foreach ($postParameters as $k=>$v){
-                if (in_array($k,["oper",$options["PrimaryKey"]])){continue;}
+                if (in_array($k,["oper"])){continue;}
                 if (array_key_exists($k,$rs->DataColumns->Item_text)){
                     $rs->Fields->Item[$k]->Value=$v;
                 }
