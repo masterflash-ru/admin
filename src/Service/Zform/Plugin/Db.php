@@ -20,6 +20,7 @@ class Db extends AbstractPlugin
     protected $def_options_write=[
         "sql"=>"",
          "PrimaryKey"=>[],
+        "addIfNotFount"=>false,
     ];
 
     
@@ -74,7 +75,7 @@ public function read(array $get)
     return $rez;    
 }
 
-public function add(array $postParameters)
+public function add(array $postParameters,array $get=[])
 {
     $postParameters["oper"]="add";
     return $this->edit($postParameters);
@@ -99,12 +100,13 @@ public function add(array $postParameters)
     ];
 * $options - опции из секции write секции конфига
 */
-public function edit(array $postParameters)
+public function edit(array $postParameters,array $get=[])
 {
     if (!isset($postParameters["oper"])){
         $postParameters["oper"]="edit";
     }
-    $options=ArrayUtils::merge($this->def_options_write,$this->options);
+    $options=ArrayUtils::merge($this->def_options_write,$this->options); //получаем опции
+    $postParameters=ArrayUtils::merge($get,$postParameters);            //получаем данные, на GET накладываем POST
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
     $sql=$options["sql"];
@@ -141,9 +143,15 @@ public function edit(array $postParameters)
 
             $rs->Find(implode(" and ",$rs_search));
             if ($rs->EOF) {
-                throw new  Exception("Запись ".implode(" and ",$rs_search)."' не найдена!");
+                //запись не найдена
+                if ($options["addIfNotFount"]){
+                    //добавить новую, т.к. указывает на это флаг
+                    $rs->AddNew();
+                } else {
+                    throw new  Exception("Запись ".implode(" and ",$rs_search)."' не найдена!");
+                }
             }
-            $skip=$options["PrimaryKey"];
+            $skip=[];
             $skip[]="oper";
             foreach ($postParameters as $k=>$v){
                 if (in_array($k,$skip)){continue;}
