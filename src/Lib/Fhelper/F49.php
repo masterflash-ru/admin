@@ -54,6 +54,9 @@ public function render()
 	$interface_name=explode(",",$this->properties['interface_name']);
 	$default_text=explode(",",$this->default_text);
 	$default_value=explode(",",$this->default_value);
+    if (empty($this->properties['get_name'])){
+        $this->properties['get_name']="id";
+    }
 	for ($i=0;$i<count($interface_type);$i++){
         if ($interface_type[$i]==0) $_url="line/";
 		if ($interface_type[$i]==1) $_url="tree/";
