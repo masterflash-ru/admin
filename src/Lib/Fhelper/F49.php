@@ -10,19 +10,21 @@ class F49 extends Fhelperabstract
 {
 	protected $hname="Ссылка для открытия другого интерфейса";
 	protected $category=100;
-	protected $properties_keys=["interface_type","interface_name","window_properties","window_close_type","link_type"];
+	protected $properties_keys=["interface_type","interface_name","window_properties","window_close_type","link_type","get_name"];
 	protected $properties_text=["interface_type"=>"Типы интерфейсов (0-Линейный,1-Древовидный,2-Форма,3-модуль), ч/з)",
 								"interface_name"=>"Имена интерфейсов/имен файлов модулей, ч/з ",
 								"window_properties"=>"Параметры для метода window.open (через ,)",
 								"window_close_type"=>"Закрыть окно после сохранения",
-								"link_type"=>"Тип ссылки"
+								"link_type"=>"Тип ссылки",
+                                "get_name"=>"Имя GET параметра для нового интерфейса"
 								];
 	
 	protected $properties_item_type=["interface_type"=>0,
 								"interface_name"=>0,
 								"window_properties"=>0,
 								"window_close_type"=>1,
-								"link_type"=>1
+								"link_type"=>1,
+                                "get_name"=>0
 								];
 	
 	protected $itemcount=1;
@@ -58,11 +60,11 @@ public function render()
 		if ($interface_type[$i]==3) $_url="";
 		$jmp[$i]='onclick=\'window.open("/adm/'. $_url. $interface_name[$i].
 		
-		'?get_interface_input='.base64_encode(serialize($this->value)).'&id='.$this->value.
+		'?get_interface_input='.base64_encode(serialize($this->value)).'&'.$this->properties['get_name'].'='.$this->value.
 		'&window_close_type='.$this->properties['window_close_type'].
 		'","","'.str_replace(' ',',',$this->properties['window_properties']).'");return false;\'';
         
-        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'&id='.$this->value.
+        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'&'.$this->properties['get_name'].'='.$this->value.
 		'&window_close_type='.$this->properties['window_close_type'];
 
         switch ($this->properties['link_type']){
