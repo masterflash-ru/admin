@@ -58,11 +58,11 @@ public function render()
 		if ($interface_type[$i]==3) $_url="";
 		$jmp[$i]='onclick=\'window.open("/adm/'. $_url. $interface_name[$i].
 		
-		'?get_interface_input='.base64_encode(serialize($this->value)).
+		'?get_interface_input='.base64_encode(serialize($this->value)).'&id='.$this->value.
 		'&window_close_type='.$this->properties['window_close_type'].
 		'","","'.str_replace(' ',',',$this->properties['window_properties']).'");return false;\'';
         
-        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).
+        $m="/adm/". $_url. $interface_name[$i].'?get_interface_input='.base64_encode(serialize($this->value)).'&id='.$this->value.
 		'&window_close_type='.$this->properties['window_close_type'];
 
         switch ($this->properties['link_type']){

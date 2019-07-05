@@ -61,7 +61,7 @@ public function render()
 	}
 	for ($i=0;$i<$img_array;$i++)
 		{
-		
+
 			$out1.="<img {$atr} src='".$this->view->imagestorage($this->properties["config_section"],$id,$this->properties['admin_img_name'],$this->default_value)."' />";
 
 			$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
