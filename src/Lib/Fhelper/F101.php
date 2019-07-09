@@ -73,7 +73,7 @@ public function save()
 public function render()
 {//
     if (isset($_GET['get_interface_input'])) {
-        $tovar_category=(int)unserialize(base64_decode($_GET['get_interface_input']));
+        $tovar_category=(int)$_GET['id'];
     } else {
         return "Не верное обращение к элементу F101, нет категории товара";
     }

@@ -886,7 +886,7 @@ f100_ini();
 
 setInterval(function(){
 if ( $('iframe').is('#ff101')) {
-document.getElementById('ff101').height = document.getElementById('ff101').contentWindow.document.body.scrollHeight+10;}
+document.getElementById('ff101').height = document.getElementById('ff101').contentWindow.document.body.scrollHeight;}
 }
 ,2000);
 

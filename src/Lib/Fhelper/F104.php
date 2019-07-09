@@ -23,6 +23,15 @@ public function __construct($item_id)
 	
 public function render()
 {
+    
+    	$input = new Element\Text($this->name[0]);
+	$input->setValue($this->value);
+	$input->setAttributes($this->zatr);
+	return $this->view->FormElement($input);
+
+    
+    
+    
      	preg_match("/[0-9a-z]+\[([0-9]+)\][0-9-a-z\-_\[\]]?/ui",$this->name[0],$_id);
 	$id=(int)$_id[1];
 
@@ -42,7 +51,7 @@ public function render()
 }
 
 /*обработчик записи, возвращает обработанное*/
-public function save()
+public function save11()
 {
 	if ($this->properties['item_list'])
 		{
