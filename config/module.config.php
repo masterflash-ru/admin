@@ -355,6 +355,7 @@ return [
                         "js/admin/jquery-ui.min.js",
                         "js/admin/jquery.jqGrid.min.js",
                         "js/admin/grid.locale-ru.js",
+                        "js/admin/context-menu.js",
                         "js/admin/jqgrid-ext.js?".date("d.Y"),
                         "js/admin/jquery-ui-timepicker-addon.min.js",
                         "js/admin/jquery.form.min.js",

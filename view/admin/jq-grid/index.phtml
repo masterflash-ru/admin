@@ -163,6 +163,7 @@ navgrid_add_options.editData=<?=json::encode($gets)?>;
         //для дерева добавляем то что сохранит состяние узлов после перезагрузки 
     ?>
 jqgrid_options.gridComplete=function(){
+    fnContextMenu();
     setTimeout(function (){
         for (var id in idsOfExpandedRows) {
             var record = $("#<?=$options["container"]?>").jqGrid('getRowData', idsOfExpandedRows[id], true);
@@ -182,8 +183,15 @@ $.jgrid.extend({
                 }
             });
 <?php
-    }
+    } else {
+        //линейная таблица добавим контекстное меню
     ?>
+jqgrid_options.gridComplete=function(){
+    fnContextMenu();
+}
+<?php
+    }
+       ?>
 
 
 
@@ -299,7 +307,74 @@ $("#dialog_permission").dialog({
 
 
 });
+function fnContextMenu()
+    {
+$(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
+                bindings: {
+                    'edit': function (t) {
+                        editRow();
+                    },
+                    'add': function (t) {
+                        addRow();
+                    },
+                    'del': function (t) {
+                        delRow();
+                    }
+                },
+                onContextMenu: function (event, menu) {
+                    var rowId = $(event.target).parent("tr").attr("id")
+                    var grid = $("#<?=$options["container"]?>");
+                    grid.setSelection(rowId);
+
+                    return true;
+                }
+            });
+
+            function addRow() {
+                var grid = $("#<?=$options["container"]?>");
+                grid.editGridRow("new", { closeAfterAdd: true});
+            }
+
+            function editRow() {
+                var grid = $("#<?=$options["container"]?>");
+                var rowKey = grid.getGridParam("selrow");
+                if (rowKey) {
+                    grid.editGridRow(rowKey, {closeAfterEdit: true});
+                }
+                else {
+                    alert("No rows are selected");
+                }
+            }
+
+            function delRow() {
+                var grid = $("#<?=$options["container"]?>");
+                var rowKey = grid.getGridParam("selrow");
+                if (rowKey) {
+                    grid.delGridRow(rowKey);
+                }
+                else {
+                    alert("No rows are selected");
+                }
+            }
+
+}
 </script>
+<div class="contextMenu" id="contextMenu" style="width:500px;">
+        <ul style="width: 500px;">
+            <li id="add">
+                <span class="ui-icon ui-icon-plus" style="float:left"></span>
+                <span>Добавить</span>
+            </li>
+            <li id="edit">
+                <span class="ui-icon ui-icon-pencil" style="float:left"></span>
+                <span>Редактировать</span>
+            </li>                
+            <li id="del">
+                <span class="ui-icon ui-icon-trash" style="float:left"></span>
+                <span>Удалить</span>
+            </li>                
+        </ul>
+    </div>
 <?php
 if (isset($options["podval"])){
     echo $options["podval"];
