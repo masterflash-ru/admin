@@ -422,6 +422,7 @@ return [
         "objects" =>[
             "Admin\Controller\LoginController/e403"  =>         [1,1,0711],
             "Admin\Controller\LoginController/accessdenied" =>  [1,1,0711],
+            "Admin\Controller\AssetController/*" =>             [1,1,0711],
             "Admin\Controller\LoginController/login" =>         [1,1,0711],
             "Admin\Controller\BackupRestoreController/index" => [1,1,0710],
             "Admin\Controller\TreeController/index" =>          [1,1,0710],
