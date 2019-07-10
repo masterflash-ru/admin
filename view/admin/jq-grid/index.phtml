@@ -132,7 +132,7 @@ if ($toolbarForm){
 }
 
 
-//\Zend\Debug\Debug::dump($options["layout"]["colModel"]);
+\Zend\Debug\Debug::dump($navgrid_options["button"]);
 
 /*все опции в грид*/
 $jqgrid= json::encode($options["layout"], false, ['enableJsonExprFinder' => true]);
@@ -162,33 +162,33 @@ navgrid_add_options.editData=<?=json::encode($gets)?>;
     if (isset($options["layout"]["treeGrid"]) && $options["layout"]["treeGrid"]){
         //для дерева добавляем то что сохранит состяние узлов после перезагрузки 
     ?>
-jqgrid_options.gridComplete=function(){
-    fnContextMenu();
-    setTimeout(function (){
-        for (var id in idsOfExpandedRows) {
-            var record = $("#<?=$options["container"]?>").jqGrid('getRowData', idsOfExpandedRows[id], true);
-            if (record._id_) {$("#<?=$options["container"]?>").jqGrid('expandNode',record);}
-        }
-    },100);
-}
+    jqgrid_options.gridComplete=function(){
+        fnContextMenu();
+        setTimeout(function (){
+            for (var id in idsOfExpandedRows) {
+                var record = $("#<?=$options["container"]?>").jqGrid('getRowData', idsOfExpandedRows[id], true);
+                if (record._id_) {$("#<?=$options["container"]?>").jqGrid('expandNode',record);}
+            }
+        },100);
+    }
 
-$.jgrid.extend({
-                expandRow: function (rc) {
-                    updateIdsOfExpandedRows(rc._id_, true);
-                    return orgExpandRow.call(this, rc);
-                },
-                collapseRow: function (rc) {
-                    updateIdsOfExpandedRows(rc._id_, false);
-                    return orgCollapseRow.call(this, rc);
-                }
-            });
+    $.jgrid.extend({
+                    expandRow: function (rc) {
+                        updateIdsOfExpandedRows(rc._id_, true);
+                        return orgExpandRow.call(this, rc);
+                    },
+                    collapseRow: function (rc) {
+                        updateIdsOfExpandedRows(rc._id_, false);
+                        return orgCollapseRow.call(this, rc);
+                    }
+                });
 <?php
     } else {
         //линейная таблица добавим контекстное меню
     ?>
-jqgrid_options.gridComplete=function(){
-    fnContextMenu();
-}
+    jqgrid_options.gridComplete=function(){
+        fnContextMenu();
+    }
 <?php
     }
        ?>
@@ -220,7 +220,7 @@ var jqgridnavGrid=$("#<?=$options["container"]?>").navGrid('#<?=$options["contai
 //при редактировании сетки, значения этих полей добавляются в прокси запросов к серверу!
 if ($toolbarForm){
     ?>
-$("#t_<?=$options["container"]?>").append("<?=$this->EscapeJs($toobar)?>"); 
+    $("#t_<?=$options["container"]?>").append("<?=$this->EscapeJs($toobar)?>"); 
 <?php
 }
   //добавляем пользовательские кнопки в панель сетки
@@ -240,7 +240,7 @@ jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
           if ($options["layout"]["toppager"]){
               //если есть опция toppager, то дублируем в верх
             ?>
-jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_toppager',
+    jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_toppager',
                 {
                     caption:"<?=$this->EscapeHtmlAttr($navButtonAddItem["caption"])?>",
                     buttonicon:"<?=$navButtonAddItem["buttonicon"]?>",
@@ -361,18 +361,32 @@ $(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
 </script>
 <div class="contextMenu" id="contextMenu" style="width:500px;">
         <ul style="width: 500px;">
+            <?php
+    if ($navgrid_options["button"]["add"]){
+    ?>
             <li id="add">
                 <span class="ui-icon ui-icon-plus" style="float:left"></span>
                 <span>Добавить</span>
             </li>
+    <?php
+    }
+    if ($navgrid_options["button"]["edit"]){
+            ?>
             <li id="edit">
                 <span class="ui-icon ui-icon-pencil" style="float:left"></span>
                 <span>Редактировать</span>
-            </li>                
+            </li>
+    <?php
+    }
+    if ($navgrid_options["button"]["del"]){
+    ?>
             <li id="del">
                 <span class="ui-icon ui-icon-trash" style="float:left"></span>
                 <span>Удалить</span>
-            </li>                
+            </li> 
+    <?php
+    }
+   ?>
         </ul>
     </div>
 <?php
