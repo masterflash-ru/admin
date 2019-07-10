@@ -14,11 +14,11 @@ use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
-	//маршруты
+    //маршруты
     'router' => [
         'routes' => [
 
-			//форма входа
+            //форма входа
             'adm' => [
                 'type' => Literal::class,
                 'options' => [
@@ -28,8 +28,8 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-				'may_terminate' => true,
-				'child_routes' => [
+                'may_terminate' => true,
+                'child_routes' => [
                     /*общий интерфейс*/
                     'universal-interface' => [
                         'type' => Segment::class,
@@ -44,8 +44,7 @@ return [
                             ],
                         ],
                     ],
-                    
-                    
+
                     /*ввод-вывод для jqgrid*/
                     'io-jqgrid' => [
                         'type' => Segment::class,
@@ -102,7 +101,6 @@ return [
                             ],
                         ],
                     ],
-                    
                     'admin_menu' => [
                         'type' => Literal::class,
                         'options' => [
@@ -115,90 +113,89 @@ return [
                     ],
 
                     /*устаревшее*/
-							'line' => [
-								'type' => Segment::class,
-								'options' => [
-									'route'    => '/line/[:table]',
-									'constraints' => [
-                               			 'table' => '[a-zA-Z0-9_-]+',
-                           			 ],
-									'defaults' => [
-										'controller' => Controller\LineController::class,
-										'action'     => 'index',
-									],
-								],
-							],
-							'tree' => [
-								'type' => Segment::class,
-								'options' => [
-									'route'    => '/tree/[:table]',
-									'constraints' => [
-                               			 'table' => '[a-zA-Z0-9_-]+',
-                           			 ],
-									'defaults' => [
-										'controller' => Controller\TreeController::class,
-										'action'     => 'index',
-									],
-								],
-							],
+                    'line' => [
+                       'type' => Segment::class,
+                       'options' => [
+                          'route'    => '/line/[:table]',
+                          'constraints' => [
+                              'table' => '[a-zA-Z0-9_-]+',
+                              ],
+                              'defaults' => [
+                                  'controller' => Controller\LineController::class,
+                                  'action'     => 'index',
+                              ],
+                          ],
+                    ],
+                    'tree' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/tree/[:table]',
+                            'constraints' => [
+                                'table' => '[a-zA-Z0-9_-]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\TreeController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
 
-							'constructorline' => [
-								'type' => Literal::class,
-								'options' => [
-									'route'    => '/constructorline',
-									'defaults' => [
-										'controller' => Controller\ConstructorLineController::class,
-										'action'     => 'index',
-									],
-								],
-							],
-							'constructortree' => [
-								'type' => Literal::class,
-								'options' => [
-									'route'    => '/constructortree',
-									'defaults' => [
-										'controller' => Controller\ConstructorTreeController::class,
-										'action'     => 'index',
-									],
-								],
-							],
-							'backuprestore' => [
-								'type' => Literal::class,
-								'options' => [
-									'route'    => '/backuprestore',
-									'defaults' => [
-										'controller' => Controller\BackupRestoreController::class,
-										'action'     => 'index',
-									],
-								],
-							],
-							'entitygenerator' => [
-								'type' => Literal::class,
-								'options' => [
-									'route'    => '/entity',
-									'defaults' => [
-										'controller' => Controller\EntityController::class,
-										'action'     => 'index',
-									],
-								],
-							],
-                    
-							'tovar_category_parameters' => [
-								'type' => Literal::class,
-								'options' => [
-									'route'    => '/tovar_category_parameters',
-									'defaults' => [
-										'controller' => Controller\TovarController::class,
-										'action'     => 'index',
-									],
-								],
-							],
+                    'constructorline' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/constructorline',
+                            'defaults' => [
+                                'controller' => Controller\ConstructorLineController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'constructortree' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/constructortree',
+                            'defaults' => [
+                                'controller' => Controller\ConstructorTreeController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'backuprestore' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/backuprestore',
+                            'defaults' => [
+                                'controller' => Controller\BackupRestoreController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'entitygenerator' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/entity',
+                            'defaults' => [
+                                'controller' => Controller\EntityController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
 
-				],//'child_routes'
-			],
-			
-			
-			//форма входа
+                            'tovar_category_parameters' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/tovar_category_parameters',
+                                    'defaults' => [
+                                        'controller' => Controller\TovarController::class,
+                                        'action'     => 'index',
+                                    ],
+                                ],
+                            ],
+
+                ],//'child_routes'
+            ],
+
+            //форма входа
             'admin1' => [
                 'type' => Literal::class,
                 'options' => [
@@ -209,7 +206,7 @@ return [
                     ],
                 ],
             ],
-			//форма входа
+            //форма входа
             'admin' => [
                 'type' => Literal::class,
                 'options' => [
@@ -219,8 +216,8 @@ return [
                         'action'     => 'login',
                     ],
                 ],
-			],			
-			//ошибка 403
+            ],
+            //ошибка 403
             'admin403' => [
                 'type' => Literal::class,
                 'options' => [
@@ -230,9 +227,9 @@ return [
                         'action'     => 'e403',
                     ],
                 ],
-			],			
+            ],            
 
-			//доступ запрещен
+            //доступ запрещен
             'accessdenied' => [
                 'type' => Literal::class,
                 'options' => [
@@ -242,14 +239,14 @@ return [
                         'action'     => 'accessdenied',
                     ],
                 ],
-			],			
+            ],
 
-			//специально для F41 поля
+            //специально для F41 поля
             'ckeditorf41' => [
                 'type' => Segment::class,
                 'options' => [
                     'route'    => '/ckeditorf41/:field',
-					'constraints' => [
+                    'constraints' => [
                         'field' => '[a-zA-Z0-9_\-]+',
                     ],
 
@@ -258,38 +255,37 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-			],			
-   
-	    ],
+            ],
+        ],
     ],
-	//контроллеры
+    //контроллеры
     'controllers' => [
         'factories' => [
             //если мы используем нашу фабрику вызова, класс должен включать интерфейс FactoryInterface
-			Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,	
-			Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
+            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,    
+            Controller\LoginController::class => Controller\Factory\LoginControllerFactory::class,
             Controller\JqGridController::class => Controller\Factory\JqGridControllerFactory::class,
-			Controller\ZformController::class => Controller\Factory\ZformControllerFactory::class,
+            Controller\ZformController::class => Controller\Factory\ZformControllerFactory::class,
             Controller\EntityController::class => Controller\Factory\EntityControllerFactory::class,
             Controller\BackupRestoreController::class => Controller\Factory\BackupRestoreControllerFactory::class,
             
             /*устаревшее ПО*/
             Controller\ConstructorLineController::class => Controller\Factory\ConstructorLineControllerFactory::class,
-			Controller\ConstructorTreeController::class => Controller\Factory\ConstructorTreeControllerFactory::class,
-			Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
-			Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
+            Controller\ConstructorTreeController::class => Controller\Factory\ConstructorTreeControllerFactory::class,
+            Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
+            Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
             Controller\TovarController::class => Controller\Factory\TovarControllerFactory::class,
         ],
-    	
-		//если у контроллера нет коннструктора или он не нужен или пустой
+        
+        //если у контроллера нет коннструктора или он не нужен или пустой
         'invokables' => [
             Controller\CkeditorController::class => Controller\CkeditorController::class,
             Controller\UinterfaceController::class =>Controller\UinterfaceController::class,
         ],
-	],
+    ],
 
 
-	//помощник вывода меню админки
+    //помощник вывода меню админки
     'view_helpers' => [
         'factories' => [
             View\Helper\ITabs::class => View\Helper\Factory\ITabsFactory::class,
@@ -297,7 +293,7 @@ return [
             View\Helper\IUniversal::class => View\Helper\Factory\IUniversalFactory::class,
             View\Helper\IJqgrid::class => View\Helper\Factory\IJqgridFactory::class,
             View\Helper\IZform::class => View\Helper\Factory\IZformFactory::class,
-            
+
             //новые элементы формы, вид
             Service\Zform\Element\View\uploadImg::class => InvokableFactory::class,
         ],
@@ -308,13 +304,13 @@ return [
             'ijqgrid' => View\Helper\IJqgrid::class,
             'iZform' => View\Helper\IZform::class,
             'izform' => View\Helper\IZform::class,
-            
+
             'uploadImg'=>Service\Zform\Element\View\uploadImg::class,
         ],
     ],
     'service_manager' => [
         'factories' => [//сервисы-фабрики
-			Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
+            Service\GetControllersInfo::class => Service\Factory\GetControllersInfoFactory::class,
             Service\JqGrid\JqGrid::class => Service\JqGrid\Factory\JqGridFactory::class,
             Service\Zform\Zform::class => Service\Zform\Factory\ZformFactory::class,
             Service\JqGrid\PluginManager::class => Service\JqGrid\Factory\PluginManagerFactory::class,
@@ -377,8 +373,8 @@ return [
             ],
         ],
     ],
-	//конфигурация хранения дампов
-	'backup_folder'=>"data/backup",
+    //конфигурация хранения дампов
+    'backup_folder'=>"data/backup",
     
     /*плагины для сетки JqGrid*/
     "JqGridPlugin"=>[

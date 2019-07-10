@@ -13,7 +13,7 @@ use Zend\Form\Factory as FormFactory;
 
 class ZformController extends AbstractActionController
 {
-	protected $connection;
+    protected $connection;
     protected $cache;
     protected $config;
     protected $zform;

@@ -18,10 +18,10 @@ class IndexController extends AbstractActionController
     protected $mrez=[];
 
 public function __construct ($connection,$cache)
-	{
-		$this->connection=$connection;
-		$this->cache=$cache;
-	}
+{
+    $this->connection=$connection;
+    $this->cache=$cache;
+}
 
 /*
 сюда переходим при входе в админку после успешной авторизации
@@ -70,9 +70,9 @@ public function amenuAction()
 */
 protected function tree($subid)
 {
-	$rs=clone $this->rs;
-	$rs->Filter="subid=$subid";
-	while (!$rs->EOF){
+    $rs=clone $this->rs;
+    $rs->Filter="subid=$subid";
+    while (!$rs->EOF){
         $r["url"]=$rs->Fields->Item['url']->Value;
         $r["level"]=$rs->Fields->Item['level']->Value;
         $r["id"]=$rs->Fields->Item['id']->Value;

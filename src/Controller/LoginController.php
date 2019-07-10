@@ -18,14 +18,14 @@ use Zend\Authentication\Result;
 
 class LoginController extends AbstractActionController
 {
-	protected $authManager;
+    protected $authManager;
     protected $accessdenied;
 
 
 public function __construct ($authManager)
-	{
-		$this->authManager=$authManager; /*экземпляр Mf\Users\Service\AuthManager*/
-	}
+{
+   $this->authManager=$authManager; /*экземпляр Mf\Users\Service\AuthManager*/
+}
 
 
 /*
@@ -34,7 +34,7 @@ public function __construct ($authManager)
 */
 public function loginAction()
 {
-    
+
     $prg = $this->prg();
     if ($prg instanceof Response) {
         //сюда попадаем когда форма отправлена, производим редирект
@@ -74,14 +74,14 @@ public function loginAction()
 
 public function e403Action()
 {
-	$this->getResponse()->setStatusCode(403);
-	return new ViewModel();
+    $this->getResponse()->setStatusCode(403);
+    return new ViewModel();
 }
 
 public function accessdeniedAction()
 {
     $this->accessdenied="Доступ запрещен";
-	return $this->loginAction();
+    return $this->loginAction();
 }
 
 

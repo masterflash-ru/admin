@@ -12,7 +12,7 @@ use Admin\Service\JqGrid\Exception as jqGridException;
 
 class JqGridController extends AbstractActionController
 {
-	protected $connection;
+    protected $connection;
     protected $cache;
     protected $config;
     protected $jqgrid;
@@ -20,7 +20,7 @@ class JqGridController extends AbstractActionController
 
 public function __construct ($connection,$cache,$config,$jqgrid)
 {
-	$this->connection=$connection;
+    $this->connection=$connection;
     $this->cache=$cache;
     $this->config=$config;
     $this->jqgrid=$jqgrid;
@@ -33,7 +33,6 @@ public function __construct ($connection,$cache,$config,$jqgrid)
 public function readjqgridAction()
 {
     try {
-        
         $interface=$this->params('interface',"");
         $acl=$this->acl('interface/'.$interface);
         if (!$acl->isAllowed("r")){
