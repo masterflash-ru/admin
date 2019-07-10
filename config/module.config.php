@@ -250,11 +250,27 @@ return [
                 'options' => [
                     'route'    => '/ckeditorf41/:field',
 					'constraints' => [
-                             'field' => '[a-zA-Z0-9_\-]+',
+                        'field' => '[a-zA-Z0-9_\-]+',
                     ],
 
                     'defaults' => [
                         'controller' => Controller\CkeditorController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+			],			
+			//для JS и CSS
+            'asset' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/:type/admin/[:folder/]:file',
+					'constraints' => [
+                        'file' => '[a-zA-Z0-9_\-\.]+',
+                        'folder' => 'images|font',
+                        'type' => 'css|js',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AssetController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -285,6 +301,7 @@ return [
         'invokables' => [
             Controller\CkeditorController::class => Controller\CkeditorController::class,
             Controller\UinterfaceController::class =>Controller\UinterfaceController::class,
+            Controller\AssetController::class => Controller\AssetController::class,
         ],
 	],
 
