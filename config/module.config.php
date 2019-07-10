@@ -259,23 +259,7 @@ return [
                     ],
                 ],
 			],			
-			//для JS и CSS
-            'asset' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route'    => '/:type/admin/[:folder/]:file',
-					'constraints' => [
-                        'file' => '[a-zA-Z0-9_\-\.]+',
-                        'folder' => 'images|font',
-                        'type' => 'css|js',
-                    ],
-                    'defaults' => [
-                        'controller' => Controller\AssetController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-			],			
-       
+   
 	    ],
     ],
 	//контроллеры
@@ -301,7 +285,6 @@ return [
         'invokables' => [
             Controller\CkeditorController::class => Controller\CkeditorController::class,
             Controller\UinterfaceController::class =>Controller\UinterfaceController::class,
-            Controller\AssetController::class => Controller\AssetController::class,
         ],
 	],
 
@@ -422,7 +405,6 @@ return [
         "objects" =>[
             "Admin\Controller\LoginController/e403"  =>         [1,1,0711],
             "Admin\Controller\LoginController/accessdenied" =>  [1,1,0711],
-            "Admin\Controller\AssetController/*" =>             [1,1,0711],
             "Admin\Controller\LoginController/login" =>         [1,1,0711],
             "Admin\Controller\BackupRestoreController/index" => [1,1,0710],
             "Admin\Controller\TreeController/index" =>          [1,1,0710],
