@@ -225,9 +225,9 @@ class ColModelHelper
         ];
         $options=ArrayUtils::merge($def,$options);
         $fck_connector_config = new Container('fck_connector_config');
-		$fck_connector_config->Enabled=true;
-		$fck_connector_config->FileTypesPath_File=$options["editoptions"]["Path_File"];
-		$fck_connector_config->FileTypesPath_Image=$options["editoptions"]["Path_Image"];
+        $fck_connector_config->Enabled=true;
+        $fck_connector_config->FileTypesPath_File=$options["editoptions"]["Path_File"];
+        $fck_connector_config->FileTypesPath_Image=$options["editoptions"]["Path_Image"];
         return $options;
 
     }

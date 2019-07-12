@@ -86,18 +86,18 @@ public function accessdeniedAction()
 
 
 /*
-     * Мы переопределяем метод родительского класса onDispatch(),
-     * чтобы установить альтернативный лэйаут для всех действий в этом контроллере.
-     */
-    public function onDispatch(MvcEvent $e) 
-    {
-        // Вызываем метод базового класса onDispatch() и получаем ответ
-        $response = parent::onDispatch($e);        
-        // Устанавливаем admin лэйаут
-        $this->layout()->setTemplate('layout/login_layout');                
-        // Возвращаем ответ
-        return $response;
-    }
+ * Мы переопределяем метод родительского класса onDispatch(),
+ * чтобы установить альтернативный лэйаут для всех действий в этом контроллере.
+ */
+public function onDispatch(MvcEvent $e) 
+{
+    // Вызываем метод базового класса onDispatch() и получаем ответ
+    $response = parent::onDispatch($e);        
+    // Устанавливаем admin лэйаут
+    $this->layout()->setTemplate('layout/login_layout');                
+    // Возвращаем ответ
+    return $response;
+}
 
 
 }

@@ -17,36 +17,22 @@ use Zend\View\Model\ViewModel;
 
 class TreeController extends AbstractActionController
 {
-	protected $container;
+    protected $container;
 
 public function __construct($container)
 {
-	$this->container=$container;
-	
-	/*$this->cache=$cache;
-	$this->config=$config;
-	$EventManager=new EventManager($SharedEventManager);
-	$EventManager->addIdentifiers(["simba.admin"]);
-	
-	$this->EventManager=$EventManager;
-	//$r=$EventManager->trigger("GetControllersInfo");
-*/
+    $this->container=$container;
 }
-
-
 
 /*собственно вывод, через одно место*/
 public function indexAction()
-{//\Zend\Debug\Debug::dump(get_class_methods());
+{
+    $table=$this->params('table',"");
+    return new ViewModel(
+        ["table"=>$table,
+         "container"=>$this->container,
+        ]);
 
-		$table=$this->params('table',"");	
-  		return new ViewModel(
-			["table"=>$table,
-			"container"=>$this->container,
-			]);
-	
 }
-
-
 
 }

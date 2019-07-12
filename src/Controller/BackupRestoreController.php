@@ -11,21 +11,20 @@ use Zend\View\Model\ViewModel;
 
 class BackupRestoreController extends AbstractActionController
 {
-	protected $config;
+    protected $config;
 
 public function __construct ($config)
-	{
-		$this->config=$config;
-	}
+{
+    $this->config=$config;
+}
 
 
 
 /*вывод левой части фрейма с меню*/
 public function indexAction()
 {
-
   return new ViewModel(["config"=>$this->config]);
-	
+    
 }
 
 

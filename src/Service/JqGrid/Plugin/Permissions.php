@@ -16,7 +16,7 @@ class Permissions extends AbstractPlugin
 
     public function __construct($connection) 
     {
-		$this->connection=$connection;
+        $this->connection=$connection;
         $user_rs=$connection->Execute("select id,concat(ifnull(name,name),' (',login,')') as name from users");
         while (!$user_rs->EOF){
             $this->users[$user_rs->Fields->Item["id"]->Value]=$user_rs->Fields->Item["name"]->Value;

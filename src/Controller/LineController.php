@@ -12,11 +12,11 @@ use Zend\View\Model\ViewModel;
 
 class LineController extends AbstractActionController
 {
-	protected $container;
+    protected $container;
 
 public function __construct($container)
 {
-	$this->container=$container;
+    $this->container=$container;
 }
 
 
@@ -26,11 +26,11 @@ public function indexAction()
 {
     $table=$this->params('table',"");
     $view= new ViewModel(
-			["table"=>$table,
-			"container"=>$this->container,
-			]);
+            ["table"=>$table,
+            "container"=>$this->container,
+            ]);
     
-	return $view;
+    return $view;
 }
 
 

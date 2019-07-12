@@ -12,7 +12,7 @@ use Exception;
 
 class Db extends AbstractPlugin
 {
-	protected $connection;
+    protected $connection;
     protected $def_options_read=[
         "sql"=>"",
          "PrimaryKey"=>[],
@@ -24,10 +24,10 @@ class Db extends AbstractPlugin
     ];
 
     
-    public function __construct($connection) 
-    {
-		$this->connection=$connection;
-    }
+public function __construct($connection) 
+{
+    $this->connection=$connection;
+}
     
 
 

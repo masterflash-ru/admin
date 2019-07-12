@@ -33,7 +33,7 @@ protected function strip_only($str, $tags, $stripContent = false) {
         $tags = (strpos($str, '>') !== false ? explode('>', str_replace('<', '', $tags)) : array($tags));
         if(end($tags) == '') array_pop($tags);
     }
-	
+
     foreach($tags as $tag) {
         if ($stripContent)
              $content = '(.+</'.$tag.'[^>]*>|)';

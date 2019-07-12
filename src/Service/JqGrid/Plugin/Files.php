@@ -21,11 +21,11 @@ class Files extends AbstractPlugin
 
 
     
-    public function __construct($FilesLib,$connection) 
-    {
-		$this->FilesLib=$FilesLib;
-        $this->connection=$connection;
-    }
+public function __construct($FilesLib,$connection) 
+{
+    $this->FilesLib=$FilesLib;
+    $this->connection=$connection;
+}
     
 
 /**
@@ -72,7 +72,7 @@ public function edit($value,&$postParameters)
         'use_upload_name' => true,
         'overwrite' => true
         ]));
-	
+    
     if (!is_readable($data_folder) || !is_dir($data_folder) || !is_writable($data_folder)) {
         if (!mkdir($data_folder)) {
             throw new Exception("Ошибка создания папки ".$data_folder." или в нее нельзя записать");

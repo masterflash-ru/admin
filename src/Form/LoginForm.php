@@ -6,9 +6,6 @@ use Zend\InputFilter\InputFilter;
 
 class LoginForm extends Form
 {
-    /**
-     * Constructor.     
-     */
     public function __construct()
     {
         // Define form name
@@ -19,7 +16,7 @@ class LoginForm extends Form
         $this->setAttribute('action', '/admin');
        
         
-		$this->addElements();
+        $this->addElements();
        // $this->addInputFilter();          
     }
     

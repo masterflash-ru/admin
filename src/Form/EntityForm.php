@@ -18,7 +18,7 @@ class EntityForm extends Form
         $this->setAttribute('action', '/adm/entity');
        
         
-		$this->addElements();
+        $this->addElements();
     }
     
     protected function addElements() 
@@ -29,7 +29,7 @@ class EntityForm extends Form
             'attributes' => [                
                 'cols' => '100',
                 'rows' => '10',
-				'style'=>'font-size:1rem'
+                'style'=>'font-size:1rem'
             ],
 
             'options' => [

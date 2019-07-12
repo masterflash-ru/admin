@@ -5,17 +5,17 @@ namespace Admin\Service\JqGrid\Plugin;
 
 class Cache extends AbstractPlugin
 {
-	protected $cache;
+    protected $cache;
     protected $def_options =[
         "tags"=>[],             //теги поиска
         "keys" => [],           //ключи поиска
 
     ];
 
-    public function __construct($cache) 
-    {
-		$this->cache=$cache;
-    }
+public function __construct($cache) 
+{
+    $this->cache=$cache;
+}
     
 public function del(array $postParameters)
 {

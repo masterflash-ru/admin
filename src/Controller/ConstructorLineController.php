@@ -12,16 +12,16 @@ use Admin\Lib\Simba;
 
 class ConstructorLineController extends AbstractActionController
 {
-	protected $connection;
-	protected $sessionManager;
-	protected $config;
+    protected $connection;
+    protected $sessionManager;
+    protected $config;
 
 public function __construct ($connection,$sessionManager,$config)
-	{
-		$this->connection=$connection;
-		$this->sessionManager=$sessionManager;
-		$this->config=$config;
-	}
+{
+    $this->connection=$connection;
+    $this->sessionManager=$sessionManager;
+    $this->config=$config;
+}
 
 
 
@@ -34,9 +34,8 @@ public function indexAction()
         /*разрешение на запуск проверяется в файле module.php, там это делается оптом*/
         $view->setTemplate("admin/index/accessdenied");
     }
-	Simba::$connection=$this->connection;
-  return $view;
-	
+    Simba::$connection=$this->connection;
+    return $view;
 }
 
 

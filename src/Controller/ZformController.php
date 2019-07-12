@@ -23,7 +23,7 @@ class ZformController extends AbstractActionController
 
 public function __construct ($connection,$cache,$config,$zform,$formManager)
 {
-	$this->connection=$connection;
+    $this->connection=$connection;
     $this->cache=$cache;
     $this->config=$config;
     $this->zform=$zform;

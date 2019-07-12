@@ -12,14 +12,10 @@ class BackupRestoreControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-
-		//имя базы данных из конфига
-		$config = $container->get('Config');
-        
+        //имя базы данных из конфига
+        $config = $container->get('Config');
         $serviceListener = $container->get('ServiceListener');
-        
-        
-		return new BackupRestoreController($config);
+        return new $requestedName($config);
     }
 }
 

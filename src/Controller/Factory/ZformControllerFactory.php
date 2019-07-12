@@ -25,8 +25,6 @@ class ZformControllerFactory implements FactoryInterface
         $fe=$container->get('ViewHelperManager')->get(FormElement::class);
         $fe->addType('uploadimg', 'uploadImg');
 
-        
-
        return new $requestedName( $connection,$cache,$config["interface"],$zform,$formManager);
     }
 }

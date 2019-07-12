@@ -12,7 +12,7 @@ use Exception;
 
 class Db extends AbstractPlugin
 {
-	protected $connection;          // соедитнение с базой
+    protected $connection;          // соедитнение с базой
     protected $last_insert_id=0;    //ID последней вставленной записи
     protected $def_options_read=[
         "sql"=>"",
@@ -24,10 +24,10 @@ class Db extends AbstractPlugin
     ];
 
     
-    public function __construct($connection) 
-    {
-		$this->connection=$connection;
-    }
+public function __construct($connection) 
+{
+    $this->connection=$connection;
+}
     
 
 

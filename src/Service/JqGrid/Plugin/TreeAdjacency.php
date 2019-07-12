@@ -11,7 +11,7 @@ use Zend\Session\Container;
 
 class TreeAdjacency extends Db
 {
-	protected $connection;
+    protected $connection;
     protected $ids=[];
     protected $rs_tree;
     protected $def_options =[
@@ -22,10 +22,10 @@ class TreeAdjacency extends Db
         "interface_name"=>null
     ];
     
-    public function __construct($connection) 
-    {
-		$this->connection=$connection;
-    }
+public function __construct($connection) 
+{
+    $this->connection=$connection;
+}
 
     
 public function read(array $get)
