@@ -4,7 +4,6 @@ use Admin\Lib\Simba;
 
 simba::query("SET SESSION group_concat_max_len = 1000000");
 simba::$container=$this->container;
-$cache=simba::$container->get('DefaultSystemCache');
 
 
 $tb=new Tabadmin($this,$this->config);
@@ -31,10 +30,6 @@ if (isset($_POST["_save_all_"])){
     foreach (explode(",",$_POST["global_action_id_array"]) as $id){
         save_field((int)$id,$tovar_id,$tovar_category,$money_type,$parameters);
     }
-    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
-	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
-
-    
 }
 //массовое удаление
 if (isset($_POST["delete_selected_"])){
@@ -42,11 +37,7 @@ if (isset($_POST["delete_selected_"])){
     foreach (explode(",",$_POST["global_action_id_array"]) as $id){
         delete_row((int)$id,$tovar_id,$tovar_category);
     }
-    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
-	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
-
 }
-
 
 
 
@@ -60,9 +51,6 @@ if (isset($_POST["delete_selected_"])){
 //удаление
 if (is_array($d)){
     delete_row((int)$d[0],$tovar_id,$tovar_category);
-    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
-	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
-
 }
  
 
@@ -76,6 +64,9 @@ function delete_row($combination,$tovar_id,$tovar_category)
                         );
     Simba::query("delete from tovar_catalog_sklad where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
     Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
+	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
 
 }
 
@@ -83,15 +74,15 @@ function delete_row($combination,$tovar_id,$tovar_category)
 //запись /добавление
 if (is_array($s)){
     save_field((int)$s[0],$tovar_id,$tovar_category,$money_type,$parameters);
-    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
-	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
-
 }
     
 function save_field ($combination,$tovar_id,$tovar_category,$money_type,$parameters)
 {//одиночная запись
 
-
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"]);//ключи
+	$cache->clearByTags(["tovar_category","tovar_catalog","tovar_category_parameters","tovar_category_parameters_value"],true);//теги
+    
     $articul=$_POST["articul"][$combination];
     $ostatok=$_POST["ostatok"][$combination];
     
@@ -157,7 +148,6 @@ function save_field ($combination,$tovar_id,$tovar_category,$money_type,$paramet
                         ],"tovar_catalog_sklad");
         
         //цены
-    Simba::$connection->BeginTrans();
     Simba::query("delete from tovar_catalog_price where tovar_catalog=".(int)$tovar_id." and tovar_category_parameters_value=$combination");
     foreach ($money_type["sysname"] as $k=>$mt){
         Simba::ReplaceRecord([
@@ -169,14 +159,10 @@ function save_field ($combination,$tovar_id,$tovar_category,$money_type,$paramet
         ],"tovar_catalog_price");
         
     }
-    Simba::$connection->CommitTrans() ;
         
 
 }
 
-if ($_SERVER['REQUEST_METHOD']=="POST"){
-    echo "<h2>Операция выполнена</h2>";
-}
 
 
 //\Zend\Debug\Debug::dump($parameters);

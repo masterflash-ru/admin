@@ -9,7 +9,7 @@ use Zend\Form\FormInterface;
 
 class SelectFromDb extends AbstractPlugin
 {
-	protected $connection;
+    protected $connection;
     protected $def_options =[
         "sql"=>"",
         "field_id" =>"id",
@@ -21,7 +21,7 @@ class SelectFromDb extends AbstractPlugin
 
     public function __construct($connection) 
     {
-		$this->connection=$connection;
+        $this->connection=$connection;
     }
     
 

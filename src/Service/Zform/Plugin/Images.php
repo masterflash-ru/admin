@@ -23,11 +23,11 @@ class Images extends AbstractPlugin
 
 
     
-    public function __construct($ImagesLib,$connection) 
-    {
-		$this->ImagesLib=$ImagesLib;
-        $this->connection=$connection;
-    }
+public function __construct($ImagesLib,$connection) 
+{
+    $this->ImagesLib=$ImagesLib;
+    $this->connection=$connection;
+}
     
 
 /**

@@ -5,12 +5,12 @@ use Zend\Form\FormInterface;
 
 class Locale extends AbstractPlugin
 {
-	protected $config;
+    protected $config;
 
-    public function __construct($config) 
-    {
-		$this->config=$config;
-    }
+public function __construct($config) 
+{
+    $this->config=$config;
+}
     
 
 
