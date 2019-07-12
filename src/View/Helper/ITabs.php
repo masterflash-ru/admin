@@ -22,7 +22,7 @@ class ITabs extends AbstractHelper
 
 public function __construct ($config)
 {
-	$this->config=$config;
+    $this->config=$config;
 }
 
 

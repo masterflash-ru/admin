@@ -30,7 +30,7 @@ class IJqgrid extends AbstractHelper
 
 public function __construct ($config,$pluginManager,$ZformpluginManager)
 {
-	$this->config=$config;
+    $this->config=$config;
     $this->setPluginManager($pluginManager);
     $this->ZsetPluginManager($ZformpluginManager);
 }

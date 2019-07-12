@@ -23,7 +23,7 @@ public function getConfig()
 public function onBootstrap(MvcEvent $event)
 {
     $ServiceManager=$event->getApplication()-> getServiceManager();
-	$eventManager = $event->getApplication()->getEventManager();
+    $eventManager = $event->getApplication()->getEventManager();
     $sharedEventManager = $eventManager->getSharedManager();
     // объявление слушателя для изменения макета на админский + проверка авторизации root
     $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 1);
@@ -36,8 +36,8 @@ public function onBootstrap(MvcEvent $event)
     });
 
 
-	//УСТАРЕЛО! слушатель для получения списка описания контроллеров, методов для визуального создания меню
-	$sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
+    //УСТАРЕЛО! слушатель для получения списка описания контроллеров, методов для визуального создания меню
+    $sharedEventManager->attach("simba.admin", "GetControllersInfoAdmin", [$this, 'GetControllersInfoAdmin']);
 }
 
 /*слушатель для проверки авторизован ли админ*/
@@ -75,8 +75,8 @@ public function onDispatch(MvcEvent $event)
     }
     if ($controllerName!="Admin\Controller\LoginController") {
         /*для всех контроллеров меняем макет вывода*/
-		$viewModel->setTemplate('layout/admin_layout');
-	} 
+        $viewModel->setTemplate('layout/admin_layout');
+    } 
 }
 
 /*
@@ -89,12 +89,12 @@ container - объект с интерфейсом Interop\Container\ContainerIn
 */
 public function GetControllersInfoAdmin(Event $event)
 {
-	$name=$event->getParam("name",NULL);
-	$container=$event->getParam("container",NULL);
-	
-	//сервис который будет возвращать
-	$service=$container->build("Admin\Service\GetControllersInfo",["name"=>$name]);
-	return $service->GetDescriptors();
+    $name=$event->getParam("name",NULL);
+    $container=$event->getParam("container",NULL);
+    
+    //сервис который будет возвращать
+    $service=$container->build("Admin\Service\GetControllersInfo",["name"=>$name]);
+    return $service->GetDescriptors();
 }
 
 }
