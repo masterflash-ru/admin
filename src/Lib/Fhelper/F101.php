@@ -29,8 +29,8 @@ $this->id - ID записи основной таблицы (товара)
 */
 public function save()
 {
-    if (isset($_GET['get_interface_input'])) {
-        $tovar_category=(int)unserialize(base64_decode($_GET['get_interface_input']));
+    if (isset($_GET['get_interface_input']) || isset($_GET["id"])) {
+        $tovar_category=(int)$_GET["id"];
     } else {
         return "Не верное обращение к элементу F101, нет категории товара";
     }
@@ -39,11 +39,13 @@ public function save()
     //проход дерева до 0-го уровня, получим все ID
     $this->tree_ids[]=$tovar_category;
     $this->_un_tree($tovar_category);
+     
     $parameters=Simba::queryOneRecord("select count(*) as c
             from tovar_category_parameters as p
                 where p.tovar_category in(". implode(",",$this->tree_ids) .")");
 
     if ($parameters["c"]>0){return true;}
+    
    
    $values=$_POST[$this->col_name][$this->id];
 
@@ -85,10 +87,13 @@ public function render()
     //проход дерева до 0-го уровня, получим все ID
     $this->tree_ids[]=$tovar_category;
     $this->_un_tree($tovar_category);
+
+
     $parameters=Simba::queryOneRecord("select count(*) as c
             from tovar_category_parameters as p
                 where p.tovar_category in(". implode(",",$this->tree_ids) .")");
-        
+       
+    
     if ($parameters["c"]>0){
             return '<iframe frameborder="0" width="100%" id="ff101" src="/adm/tovar_category_parameters?get_interface_input=1&tovar='.$id.'&tovar_category='.$tovar_category.'"></iframe>';
     }
