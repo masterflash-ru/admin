@@ -305,18 +305,17 @@ $("#dialog_permission").dialog({
 
 
 
-});
 function fnContextMenu()
-    {
-$(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
+{
+$(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu<?=$options["container"]?>', {
                 bindings: {
-                    'edit': function (t) {
+                    'edit<?=$options["container"]?>': function (t) {
                         editRow();
                     },
-                    'add': function (t) {
+                    'add<?=$options["container"]?>': function (t) {
                         addRow();
                     },
-                    'del': function (t) {
+                    'del<?=$options["container"]?>': function (t) {
                         delRow();
                     }
                 },
@@ -324,21 +323,20 @@ $(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
                     var rowId = $(event.target).parent("tr").attr("id")
                     var grid = $("#<?=$options["container"]?>");
                     grid.setSelection(rowId);
-
                     return true;
                 }
             });
 
             function addRow() {
                 var grid = $("#<?=$options["container"]?>");
-                grid.editGridRow("new", { closeAfterAdd: true});
+                grid.editGridRow("new", navgrid_add_options);
             }
 
             function editRow() {
                 var grid = $("#<?=$options["container"]?>");
                 var rowKey = grid.getGridParam("selrow");
                 if (rowKey) {
-                    grid.editGridRow(rowKey, {closeAfterEdit: true});
+                    grid.editGridRow(rowKey, navgrid_edit_options);
                 }
                 else {
                     alert("No rows are selected");
@@ -357,13 +355,15 @@ $(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
             }
 
 }
+    });
 </script>
-<div class="contextMenu" id="contextMenu" style="width:500px;">
+<!--контекстное меню сетки-->
+<div class="contextMenu d-none" id="contextMenu<?=$options["container"]?>" style="width:500px;">
         <ul style="width: 500px;">
             <?php
     if ($navgrid_options["button"]["add"]){
     ?>
-            <li id="add">
+            <li id="add<?=$options["container"]?>">
                 <span class="ui-icon ui-icon-plus" style="float:left"></span>
                 <span>Добавить</span>
             </li>
@@ -371,7 +371,7 @@ $(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
     }
     if ($navgrid_options["button"]["edit"]){
             ?>
-            <li id="edit">
+            <li id="edit<?=$options["container"]?>">
                 <span class="ui-icon ui-icon-pencil" style="float:left"></span>
                 <span>Редактировать</span>
             </li>
@@ -379,7 +379,7 @@ $(".jqgrow", "#<?=$options["container"]?>").contextMenu('contextMenu', {
     }
     if ($navgrid_options["button"]["del"]){
     ?>
-            <li id="del">
+            <li id="del<?=$options["container"]?>">
                 <span class="ui-icon ui-icon-trash" style="float:left"></span>
                 <span>Удалить</span>
             </li> 

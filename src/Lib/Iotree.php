@@ -835,7 +835,7 @@ public function create_tree($subid,$lev)
 			}
 			$data2="";
 			//кнопки в текущей строке, если они выбраны
-			if ($this->but[0]) $b0="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"save[".$id  ."]\" value=\"запись\">"; else $b0='';
+			if ($this->but[0]) $b0="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"save[".$id  ."]\" value=\"запись ({$id})\">"; else $b0='';
 			if ($this->but[1]) $b1="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"create[".$id."]\" value=\"нов.подуров.\">"; else $b1='';
 			if ($this->but[2]) $b2="<input class=\"ui-button ui-widget ui-corner-all\" type=\"submit\" name=\"del[".$id."]\" value=\"удал\" class=\"del\">"; else $b2='';
 	

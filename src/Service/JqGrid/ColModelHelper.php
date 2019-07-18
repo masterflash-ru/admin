@@ -513,7 +513,7 @@ class ColModelHelper
                             "position"=>[
                                 "my"=>"left top",
                                 "at"=>"left top",
-                                "of"=>"#contant-container"
+                                "of"=>".fixed-top-item"
                             ],
                         ],
                     ],
