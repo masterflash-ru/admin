@@ -71,11 +71,11 @@ class Zform
         }
         
         $this->initForm($form);
-        
+
         //пробежим по всем строкам формы и проверим там наличие плагинов обработки НАЧАЛЬНЫХ ЗНАЧЕНИЙ
         //которые будут переданы в элементы формы
         foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
-            if (isset($rowModel["spec"]["plugins"]["read"])){
+            if (isset($rowModel["spec"]["plugins"]["read"]) && strtolower($rowModel["spec"]["type"])!=="dynamicarray"){
                 //есть плагин/ны для обработки после чтения, применим его
                 foreach ($rowModel["spec"]["plugins"]["read"] as $plugin_name=>$options){
                     //пробежим по всем элементам данных и передадим в плагин значение и опции
@@ -167,6 +167,39 @@ class Zform
         }
 
     }
+
+/*
+* обработчик динамических полей, подается конфигурация формы,
+* эта функция ищет объявления динамических полей и конвертирует в стандартную конфигурацию
+* для генерации штатной Zend фабрикой форм
+**/
+    public function handlingDynamicFields(array $rowModelArray)
+    {
+        //собираем элменты формы заново
+        $elements=[];
+        foreach ($rowModelArray["elements"] as $k=>$spec_item){
+            if (strtolower($spec_item["spec"]["type"])=="dynamicarray"){
+                //массив дин. полей найден
+                // в опциях есть элемент fields - в нем массив полей (статично), таких же как объявляются Admin\Service\Zform\RowModelHelper
+                //вместо элемента dynamicarray вставляем значения, т.е. массив других полей
+                foreach ($spec_item["spec"]["fields"] as $field_item){
+                    $elements[]=$field_item;
+                }
+                //выполним плагины, если они есть в ключе plugins
+                foreach ($spec_item["spec"]["plugins"]["read"] as $plugin=>$plugin_options){
+                    $plugin=$this->plugin($plugin);
+                    $plugin->setOptions($plugin_options);
+                    $elements=ArrayUtils::merge($elements,$plugin->ReadDynamicArray($spec_item["spec"]));
+                }
+            } else {
+                $elements[]=$spec_item;
+            }
+        }
+        $rowModelArray["elements"]=$elements;
+        return $rowModelArray;
+    }
+    
+
 /**
 * для прямого обращения к плагинам
 */

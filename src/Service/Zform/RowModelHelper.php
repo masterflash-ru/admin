@@ -16,6 +16,7 @@ use Zend\Validator\Hostname;
 
 class RowModelHelper
 {
+    protected static $DynamicArray=0;
      /**
     * вывод текущего изображения
     */
@@ -246,6 +247,31 @@ class RowModelHelper
                 'value' => 'button',
                 "class"=>"btn btn-primary btn-sm",
             ],
+        ],$options)];
+    }
+    
+    /**
+    * вывод массива динамических полей, вид из допустимых Zend
+    *  $name - имя группы, если пусто - внутреннее (пока нигде не используется)
+    */
+    public static function DynamicArray(string $name=null, array $options=[])
+    {
+        static::$DynamicArray++;
+        if (empty($name)){
+            $name="DynamicArray".static::$DynamicArray;
+        }
+        
+        return [
+            'spec' =>ArrayUtils::merge([
+                'type' => "DynamicArray",
+                'name' => $name,
+                'fields' => [
+                    //статичный массив, вроде такого:
+                    //RowModelHelper::text("xml_id",['options'=>["label"=>"xml_id"]]),
+                    //RowModelHelper::text("xml_id111",['options'=>["label"=>"xml_id111"]]),
+                ],
+                "plugins"=>[
+                ],
         ],$options)];
     }
 
