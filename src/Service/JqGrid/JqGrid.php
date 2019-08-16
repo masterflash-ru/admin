@@ -111,7 +111,7 @@ class JqGrid
         foreach ($this->options["read"] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $rez=$plugin->read($get);
+            $rez=$plugin->iread($get);
         }
 
         //пробежим по всем колонкам и проверим там наличие плагинов обработки
@@ -152,8 +152,10 @@ class JqGrid
         if (!(isset($postParameters["oper"]) && in_array($postParameters["oper"],["add","edit","del"]))){
             return "";
         }
-        //операция
+        //операция в плагинах
         $oper=$postParameters["oper"];
+        //операция глобально для интерфейса с префиксом i
+        $operi="i".$oper;
         
         
         /*исполним предписанные фильтры и валидаторы*/
@@ -219,10 +221,11 @@ class JqGrid
         if (!isset($this->options[$oper])) {
             throw new  Exception ("Операция $oper не описана в конфиге интерфейса");
         }
+        
         foreach ($this->options[$oper] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $r=$plugin->$oper($postParameters);
+            $r=$plugin->$operi($postParameters);
             if (!empty($r)){
                 $rez[]=$r;
             }

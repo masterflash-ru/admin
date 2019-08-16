@@ -119,6 +119,7 @@ $.extend($.fn.fmatter , {
         return "";
     },
     interfaces : function(cellval, opts, rwd, act) {
+        /*rwd - объект данных данной строки*/
         var opColModel = $.extend({},opts.colModel),op={};
         if(opts.colModel !== undefined && opts.colModel.formatoptions !== undefined) {
             op = $.extend({},op,opts.colModel.formatoptions);
@@ -130,6 +131,14 @@ $.extend($.fn.fmatter , {
                 btn=$("<button>");
                 btn.button(val);
                 val.cellval=cellval;
+                //дополнительные параметры в GET запрос, если есть
+                val.get_parameters="";
+                if (val.get_parameters_array){
+                    var add_get=val.get_parameters_array;
+                    $.map(add_get,function(g_item){
+                        val.get_parameters+="&"+g_item+"="+rwd[g_item];
+                    });
+                }
                 btn.attr({onclick:"interfacesClick(this)","data-val":JSON.stringify(val)});
                 iwrap.append(btn);
             });
@@ -345,6 +354,9 @@ function interfacesClick(buttonItem)
     if(!opt.get_parameter_name){
         opt.get_parameter_name="id";
     }
+    if(!opt.get_parameters){
+        opt.get_parameters="";
+    } 
     optdialog.autoOpen=false;
     optdialog.iconButtons=[
             {
@@ -380,7 +392,7 @@ function interfacesClick(buttonItem)
     $("#interfacesDialog").dialog("option",optdialog);
     
     $("#interfacesDialog").dialog("open");
-    $("#interfacesDialog").load(opt.interface+"?"+opt.get_parameter_name+"="+opt.cellval);
+    $("#interfacesDialog").load(opt.interface+"?"+opt.get_parameter_name+"="+opt.cellval+opt.get_parameters);
     return false;
 }
 

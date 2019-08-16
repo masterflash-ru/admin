@@ -46,7 +46,7 @@ public function __construct($connection)
     ];
 * возвращает массив формата грида, который к упаковке в json
 */
-public function read(array $get)
+public function iread(array $get)
 {
     $options=ArrayUtils::merge($this->def_options_read,$this->options);
     $rs=new RecordSet();
@@ -113,9 +113,9 @@ public function read(array $get)
     return $rez;    
 }
 
-public function add(array $postParameters)
+public function iadd(array $postParameters)
 {
-    return $this->edit($postParameters);
+    return $this->iedit($postParameters);
 }
 
 /**
@@ -137,7 +137,7 @@ public function add(array $postParameters)
     ];
 * $options - опции из секции write секции конфига
 */
-public function edit(array $postParameters)
+public function iedit(array $postParameters)
 {//print_r(array_keys($_POST));print_r($_FILES);print_r($_POST["img"]);
     $options=ArrayUtils::merge($this->def_options_write,$this->options);
     $rs=new RecordSet();
@@ -201,8 +201,8 @@ public function edit(array $postParameters)
 /**
 * удаление записи
 */
-public function del(array $postParameters)
+public function idel(array $postParameters)
 {
-    return $this->edit($postParameters);
+    return $this->iedit($postParameters);
 }
 }

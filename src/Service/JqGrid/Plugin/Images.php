@@ -29,7 +29,7 @@ class Images extends AbstractPlugin
     
 
 /**
-* операция чтения
+* операция чтения в контексте поля
 * возвращает строку пути к файлу+файл пригодную для тега IMG
 */
 public function read($value,$index,$row)
@@ -38,7 +38,7 @@ public function read($value,$index,$row)
 }
 
 /**
-* добвление новой записи, ID еще нет, выисляется следующий и под ним записывается в хранилище
+* добвление новой записи в контексте поля, ID еще нет, выисляется следующий и под ним записывается в хранилище
 */
 public function add($value,&$postParameters)
 {
@@ -113,7 +113,7 @@ public function edit($value,&$postParameters)
 }
 
 /**
-*удаление записи
+*удаление записи в контексте поля
 * $postParameters - то что пришло от сетки, обычно 
 * id - ID записи
 * oper - равно "del"
@@ -124,5 +124,4 @@ public function del(array $postParameters)
     $this->ImagesLib->deleteFile($this->options["storage_item_name"],$id);
 }
 
-    
 }

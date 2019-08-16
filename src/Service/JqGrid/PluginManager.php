@@ -45,6 +45,10 @@ class PluginManager extends AbstractPluginManager
         "SelectFromDb" => Plugin\SelectFromDb::class,
         "selectFromDb" => Plugin\SelectFromDb::class,
         "selectfromdb" => Plugin\SelectFromDb::class,
+       
+        "SelectConfigStorage" => Plugin\SelectConfigStorage::class,
+        "selectConfigStorage" => Plugin\SelectConfigStorage::class,
+        "selectconfigstorage" => Plugin\SelectConfigStorage::class,
         
         "Locale" => Plugin\Locale::class,
         "locale" => Plugin\Locale::class,
@@ -81,6 +85,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\ClearContent::class => InvokableFactory::class,
         Plugin\LastMod::class => InvokableFactory::class,
         Plugin\SelectFromDb::class => Plugin\Factory\SelectFromDb::class,
+        Plugin\SelectConfigStorage::class => Plugin\Factory\SelectConfigStorage::class,
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
         Plugin\Locale::class => Plugin\Factory\Locale::class,
         Plugin\TreeLevel::class => Plugin\Factory\TreeLevel::class,

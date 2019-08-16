@@ -28,7 +28,7 @@ public function __construct($connection)
 }
 
     
-public function read(array $get)
+public function iread(array $get)
 {
     if (empty($get["nodeid"])){
         //чистим сессию только когда перечитываем сетку
@@ -36,13 +36,13 @@ public function read(array $get)
         $tmpid->newIds=[];
         $tmpid->newLevels=[];
     }
-    return parent::read($get);
+    return parent::iread($get);
 }
     
 /**
 * $postParameters - весь массив POST данных из сетки
 */
-public function add(array $postParameters)
+public function iadd(array $postParameters)
 {
     $tmpid=new Container($this->options["interface_name"]);
     
@@ -63,7 +63,7 @@ public function add(array $postParameters)
         $postParameters[$this->options["level_field"]]=$tmpid->newLevels[$id]+1;
     }
     
-    $rez= parent::add($postParameters);
+    $rez= parent::iadd($postParameters);
     if (!count($tmpid->newIds)){
         $id=$this->getLastId();
         $tmpid->newIds[1]=$id;
@@ -80,20 +80,20 @@ public function add(array $postParameters)
 /**
 * $postParameters - весь массив POST данных из сетки
 */
-public function edit(array $postParameters)
+public function iedit(array $postParameters)
 {
      $tmpid=new Container($this->options["interface_name"]);
     if (false!==strpos($postParameters[$this->options["id_field"]],"jqg")) {
         $id=(int)str_replace("jqg","",$postParameters[$this->options["id_field"]]);
         $postParameters["id"]=$tmpid->newIds[$id];
     }
-    return parent::edit($postParameters);
+    return parent::iedit($postParameters);
 }
 
 /**
 * $postParameters - весь массив POST данных из сетки
 */
-public function del(array $postParameters)
+public function idel(array $postParameters)
 {
     $tmpid=new Container($this->options["interface_name"]);
     if (false!==strpos($postParameters[$this->options["id_field"]],"jqg")) {
@@ -109,7 +109,7 @@ public function del(array $postParameters)
     foreach ($this->ids as $id){
         //пройдем по всем узлам и удалим там записи
         $postParameters["id"]=$id;
-        parent::del($postParameters);
+        parent::idel($postParameters);
         if (isset($tmpid->newIds[$id])){
             $tmpid->newIds[$id]=null;
             $tmpid->newLevels[$id]=null;
