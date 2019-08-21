@@ -62,6 +62,12 @@ foreach ($form as $k=>$item){
                 echo $this->formLabel($i).'<div class="form-check pt-2">'.$m->Render($i).'</div>';
                 break;
             }
+            case "radio":{
+                $m=$this->FormRadio();
+                $m->setSeparator("<br/>");
+                echo $this->formLabel($i).'<div class="form-check pt-2">'.$m->Render($i).'</div>';
+                break;
+            }
             case "checkbox":{
                 echo $this->FormCheckbox($i).$this->formLabel($i);
                 break;

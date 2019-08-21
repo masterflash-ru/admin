@@ -37,7 +37,7 @@ public function __construct($connection)
 * $options - опции из секции чтения (read) конфига интерфейса
 * возвращает массив
 */
-public function read(array $get)
+public function iread(array $get)
 {//print_r($get);
     $options=ArrayUtils::merge($this->def_options_read,$this->options);
     $rs=new RecordSet();
@@ -75,7 +75,7 @@ public function read(array $get)
     return $rez;    
 }
 
-public function add(array $postParameters,array $get=[])
+public function iadd(array $postParameters,array $get=[])
 {
     $postParameters["oper"]="add";
     return $this->edit($postParameters);
@@ -100,7 +100,7 @@ public function add(array $postParameters,array $get=[])
     ];
 * $options - опции из секции write секции конфига
 */
-public function edit(array $postParameters,array $get=[])
+public function iedit(array $postParameters,array $get=[])
 {
     if (!isset($postParameters["oper"])){
         $postParameters["oper"]="edit";
@@ -184,8 +184,8 @@ public function edit(array $postParameters,array $get=[])
 /**
 * удаление записи
 */
-public function del(array $postParameters)
+public function idel(array $postParameters)
 {
-    return $this->edit($postParameters);
+    return $this->iedit($postParameters);
 }
 }

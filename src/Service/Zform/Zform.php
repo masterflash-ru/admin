@@ -66,7 +66,7 @@ class Zform
             foreach ($this->options["read"] as $plugin_name=>$options){
                 $plugin=$this->plugin($plugin_name);
                 $plugin->setOptions($options);
-                $rez=$plugin->read($get,$form);
+                $rez=$plugin->iread($get,$form);
             }
         }
         
@@ -133,7 +133,7 @@ class Zform
         foreach ($this->options["edit"] as $plugin_name=>$options){
             $plugin=$this->plugin($plugin_name);
             $plugin->setOptions($options);
-            $r=$plugin->edit($postParameters,$getParameters,$form);
+            $r=$plugin->iedit($postParameters,$getParameters,$form);
             if (!empty($r)){
                 $rez[]=$r;
             }

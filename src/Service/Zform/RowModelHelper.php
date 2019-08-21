@@ -164,7 +164,12 @@ class RowModelHelper
     public static function hidden(string $name, array $options=[])
     {
         return ['spec' =>ArrayUtils::merge([
-            'type' => Element\Hidden::class,
+            //'type' => Element\Hidden::class,
+            'type' => Element\Text::class,
+            'options' => [
+                    'label' => 'HIDDEN:',
+                ],
+
             'name' => $name,
         ],$options)];
     }
@@ -176,6 +181,22 @@ class RowModelHelper
     {
         return ['spec' =>ArrayUtils::merge([
             'type' => Element\MultiCheckbox::class,
+            'name' => $name,
+            'options' => [
+                'label' => '',
+                "value_options"=>[],
+            ],
+        
+        ],$options)];
+    }
+
+    /**
+    * Radio
+    */
+    public static function Radio(string $name, array $options=[])
+    {
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Radio::class,
             'name' => $name,
             'options' => [
                 'label' => '',

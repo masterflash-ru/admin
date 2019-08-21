@@ -17,14 +17,14 @@ public function __construct($cache)
     $this->cache=$cache;
 }
     
-public function del(array $postParameters)
+public function idel(array $postParameters)
 {
-    $this->edit($postParameters);
+    $this->iedit($postParameters);
 }
 /**
 * Очистка кеша
 */
-public function edit(array $postParameters)
+public function iedit(array $postParameters)
 {
     if (!empty($this->options["keys"])){
         $this->cache->removeItems($this->options["keys"]);
