@@ -164,11 +164,11 @@ class RowModelHelper
     public static function hidden(string $name, array $options=[])
     {
         return ['spec' =>ArrayUtils::merge([
-            //'type' => Element\Hidden::class,
-            'type' => Element\Text::class,
-            'options' => [
+            'type' => Element\Hidden::class,
+            //'type' => Element\Text::class,
+            /*'options' => [
                     'label' => 'HIDDEN:',
-                ],
+                ],*/
 
             'name' => $name,
         ],$options)];
