@@ -156,7 +156,11 @@ public function iedit(array $postParameters,array $get=[])
             foreach ($postParameters as $k=>$v){
                 if (in_array($k,$skip)){continue;}
                 if (array_key_exists($k,$rs->DataColumns->Item_text)){
-                    $rs->Fields->Item[$k]->Value=$v;
+                    if ($v=="null"){
+                        $rs->Fields->Item[$k]->Value=null;
+                    } else {
+                        $rs->Fields->Item[$k]->Value=$v;
+                    }
                 }
             }
             $rs->Update();

@@ -98,6 +98,7 @@ $(".ckeditor").ckeditor();
 <?=(!empty($actionEvent["FormAfterSubmitOkEvent"]) && !$flagError && $_SERVER['REQUEST_METHOD']=="POST") ? $actionEvent["FormAfterSubmitOkEvent"]:"" ?>
     $(".dtpicker").datetimepicker({timeInput: true,timeFormat: "HH:mm:ss",dateFormat:"dd.mm.yy"});
   $('#zform_<?=$interface?>' ).on( 'submit', function (e) {
+      <?=(!empty($actionEvent["FormBeforeSubmitOkEvent"])) ? $actionEvent["FormBeforeSubmitOkEvent"]:"" ?>
       $("body").append(zform_overlay);
       e.preventDefault();
       $( this ).ajaxSubmit({

@@ -214,6 +214,9 @@ class RowModelHelper
         return ['spec' =>ArrayUtils::merge([
             'type' => Element\Checkbox::class,
             'name' => $name,
+            'attributes' => [
+                'id' => $name,
+            ],
             'options' => [
                 'label' => '',
                 "value_options"=>[],
