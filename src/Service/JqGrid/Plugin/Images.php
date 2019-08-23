@@ -17,6 +17,7 @@ class Images extends AbstractPlugin
         "storage_item_name" => "",              //имя секции в хранилище
         "storage_item_rule_name"=>"admin_img",  //имя правила из хранилища
         "database_table_name" =>"",             //имя таблицы в которую добавляем записи, если напрямую в базу
+        "storage_items_array"=>[]               //массив хранилищ, для опраций в рамках всего интерфейса
     ];
 
 
@@ -122,6 +123,20 @@ public function del(array $postParameters)
 {
     $id=(int)$postParameters["id"];
     $this->ImagesLib->deleteFile($this->options["storage_item_name"],$id);
+}
+
+/**
+* удаление записи в рамках всего интерфейса
+*/
+public function idel(array $postParameters)
+{
+    $id=(int)$postParameters["id"];
+    if (!is_array($this->options["storage_items_array"])){
+        throw new Exception("Имена хранилищ для удаления должны быть в виде массива");
+    }
+    foreach ($this->options["storage_items_array"] as $name){
+        $this->ImagesLib->deleteFile($name,$id);
+    }
 }
 
 }
