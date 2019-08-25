@@ -44,7 +44,12 @@ foreach ($form as $k=>$item){
         //для кнопки не выводим группу
         echo $this->formSubmit($form->get($k));
     } elseif ($type=="hidden"){
-        echo $this->FormHidden($i);
+        //смотрим есть ли подменный элемент?
+        if ($item->getAttribute("change")=="caption"){
+            echo '<div class="alert alert-dark p-1" role="alert">'.$this->formLabel($i).'</div>';
+        } else {
+            echo $this->FormHidden($i);
+        }
     } else {
 
         ?>
@@ -76,7 +81,6 @@ foreach ($form as $k=>$item){
                 echo $this->FormButton($i);
                 break;
             }
-
             default:{
                 echo $this->formLabel($i).$this->formElement($i);
             }

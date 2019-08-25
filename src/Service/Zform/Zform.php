@@ -74,6 +74,7 @@ class Zform
 
         //пробежим по всем строкам формы и проверим там наличие плагинов обработки НАЧАЛЬНЫХ ЗНАЧЕНИЙ
         //которые будут переданы в элементы формы
+
         foreach ($this->options["layout"]["rowModel"]['elements'] as $rowModel ){
             if (isset($rowModel["spec"]["plugins"]["read"]) && strtolower($rowModel["spec"]["type"])!=="dynamicarray"){
                 //есть плагин/ны для обработки после чтения, применим его

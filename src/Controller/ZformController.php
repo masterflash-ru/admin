@@ -45,9 +45,10 @@ public function readAction()
         }
 
         $options=include $this->config[$interface];
-        $this->zform->setOptions($options["options"]);
+
         //обработаем динамические поля, если имеются
         $options["options"]["layout"]["rowModel"]=$this->zform->handlingDynamicFields($options["options"]["layout"]["rowModel"]);
+        $this->zform->setOptions($options["options"]);
         //создаем штатными средствами форму
         $factory=new FormFactory($this->formManager);
         $form    = $factory->createForm($options["options"]["layout"]["rowModel"]);
@@ -85,10 +86,10 @@ public function editAction()
         }
 
         $options=include $this->config[$interface];
-        $this->zform->setOptions($options["options"]);
+        
         //обработаем динамические поля, если имеются
         $options["options"]["layout"]["rowModel"]=$this->zform->handlingDynamicFields($options["options"]["layout"]["rowModel"]);
-
+        $this->zform->setOptions($options["options"]);
         /*
         * формируем форму и пропускаем все через тамошние валидаторы и фильтры
         **/

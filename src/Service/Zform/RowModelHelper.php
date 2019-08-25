@@ -17,6 +17,7 @@ use Zend\Validator\Hostname;
 class RowModelHelper
 {
     protected static $DynamicArray=0;
+    protected static $Caption=0;
      /**
     * вывод текущего изображения
     */
@@ -155,6 +156,26 @@ class RowModelHelper
         ],$options)];
     }
    
+    /**
+    * вывод разделительного заголовка, посредством hiden
+    * при генерации формы идет подмена
+    */
+    public static function caption(string $name=null, array $options=[])
+    {
+        static::$Caption++;
+        if (empty($name)){
+            $name="Caption".static::$Caption;
+        }
+
+        return ['spec' =>ArrayUtils::merge([
+            'type' => Element\Hidden::class,
+            'name' => $name,
+            'attributes' => [
+                "change"=>"caption",
+            ],
+
+        ],$options)];
+    }
     
     
     
