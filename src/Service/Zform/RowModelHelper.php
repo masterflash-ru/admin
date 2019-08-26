@@ -158,7 +158,7 @@ class RowModelHelper
    
     /**
     * вывод разделительного заголовка, посредством hiden
-    * при генерации формы идет подмена
+    * при генерации формы идет подмена, сам hiden элемент не выводится
     */
     public static function caption(string $name=null, array $options=[])
     {
@@ -172,6 +172,7 @@ class RowModelHelper
             'name' => $name,
             'attributes' => [
                 "change"=>"caption",
+                "class"=>"alert alert-dark p-1"
             ],
 
         ],$options)];

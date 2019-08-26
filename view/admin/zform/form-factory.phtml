@@ -46,7 +46,7 @@ foreach ($form as $k=>$item){
     } elseif ($type=="hidden"){
         //смотрим есть ли подменный элемент?
         if ($item->getAttribute("change")=="caption"){
-            echo '<div class="alert alert-dark p-1" role="alert">'.$this->formLabel($i).'</div>';
+            echo '<div class="'.$item->getAttribute("class").'" role="alert">'.$this->formLabel($i).'</div>';
         } else {
             echo $this->FormHidden($i);
         }

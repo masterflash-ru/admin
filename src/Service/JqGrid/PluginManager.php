@@ -19,6 +19,10 @@ class PluginManager extends AbstractPluginManager
     protected $aliases = [
         "db" => Plugin\Db::class,
         "Db" => Plugin\Db::class,
+        "db1" => Plugin\Db::class,
+        "Db1" => Plugin\Db::class,
+        "db2" => Plugin\Db::class,
+        "Db2" => Plugin\Db::class,
         "cache" => Plugin\Cache::class,
         "Cache" => Plugin\Cache::class,
         

@@ -19,8 +19,9 @@ class Db extends AbstractPlugin
         "PrimaryKey"=>null,
     ];
     protected $def_options_write=[
-        "sql"=>"",
-        "PrimaryKey"=>null,
+        "sql"=>"",                      //SQL запрос для выборки
+        "PrimaryKey"=>null,             //имя первичного ключа, не обязательно
+        "NotCreateRecordSet"=>false,    //при записи ничего не делать, только выполнить указанный SQL
     ];
 
     
@@ -144,6 +145,9 @@ public function iedit(array $postParameters)
     $rs->CursorType =adOpenKeyset;
     $sql=$options["sql"];
     $rs->Open($sql,$this->connection);
+    if ($options["NotCreateRecordSet"]){
+        return;
+    }
     if (!$options["PrimaryKey"]){
         //ищем первичный ключ, если есть, в опциях он не задак конекретно
         foreach ($rs->DataColumns->Item_text as $column_name=>$columninfo) {
