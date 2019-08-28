@@ -316,7 +316,29 @@ class RowModelHelper
                     //RowModelHelper::text("xml_id",['options'=>["label"=>"xml_id"]]),
                     //RowModelHelper::text("xml_id111",['options'=>["label"=>"xml_id111"]]),
                 ],
+                'input_filter'=>[
+                    /*статический массив фильтров и валидаторов для динамических полей, все как в ZF формах*/
+                    /* пример:
+                    "elementName" => [
+                        'required' => false,
+                        'filters' => [
+                            [ 'name' => 'StringTrim' ],
+                            [ 'name' => 'StripTags' ],
+                        ],
+                        'validators' => [
+                            [
+                                'name' => Validator\StringLength::class,
+                                'options' => [
+                                'min' => 3,
+                                'max' => 256
+                                ],
+                            ],
+                        ],
+                    ],
+                    */
+                ],
                 "plugins"=>[
+                    /*плагин, который генерирует элементы, фильтры и валидаторы к ним*/
                 ],
         ],$options)];
     }

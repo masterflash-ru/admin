@@ -178,6 +178,7 @@ class Zform
     {
         //собираем элменты формы заново
         $elements=[];
+        $input_filter=[];
         foreach ($rowModelArray["elements"] as $k=>$spec_item){
             if (strtolower($spec_item["spec"]["type"])=="dynamicarray"){
                 //массив дин. полей найден
@@ -186,11 +187,20 @@ class Zform
                 foreach ($spec_item["spec"]["fields"] as $field_item){
                     $elements[]=$field_item;
                 }
+                //аналогично добавляем входные фильтры и валидаторы
+                foreach ($spec_item["spec"]["input_filter"] as $field_item){
+                    $input_filter[]=$field_item;
+                }
+            
                 //выполним плагины, если они есть в ключе plugins
                 foreach ($spec_item["spec"]["plugins"]["read"] as $plugin=>$plugin_options){
                     $plugin=$this->plugin($plugin);
                     $plugin->setOptions($plugin_options);
-                    $elements=ArrayUtils::merge($elements,$plugin->ReadDynamicArray($spec_item["spec"]));
+                    $rez=ArrayUtils::merge($elements,$plugin->ReadDynamicArray($spec_item["spec"]));
+                    $elements=$rez["elements"];
+                    if (!empty($rez["input_filter"])){//если есть фильтры, добавим в общий массив
+                        $rowModelArray["input_filter"]=ArrayUtils::merge($rowModelArray["input_filter"],$rez["input_filter"]);
+                    }
                 }
             } else {
                 $elements[]=$spec_item;
