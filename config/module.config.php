@@ -180,17 +180,26 @@ return [
                             ],
                         ],
                     ],
-
-                            'tovar_category_parameters' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route'    => '/tovar_category_parameters',
-                                    'defaults' => [
-                                        'controller' => Controller\TovarController::class,
-                                        'action'     => 'index',
-                                    ],
-                                ],
+                    'tovar_category_parameters' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/tovar_category_parameters',
+                            'defaults' => [
+                                'controller' => Controller\TovarController::class,
+                                'action'     => 'index',
                             ],
+                        ],
+                    ],
+                    'zrkuaban' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/zrkuban',
+                            'defaults' => [
+                                'controller' => Controller\ZrkubanController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
 
                 ],//'child_routes'
             ],
@@ -275,6 +284,7 @@ return [
             Controller\LineController::class => Controller\Factory\LineControllerFactory::class,
             Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
             Controller\TovarController::class => Controller\Factory\TovarControllerFactory::class,
+            Controller\ZrkubanController::class => Controller\Factory\ZrkubanControllerFactory::class,
         ],
         
         //если у контроллера нет коннструктора или он не нужен или пустой
