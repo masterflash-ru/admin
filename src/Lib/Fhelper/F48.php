@@ -40,12 +40,18 @@ public function render()
    $out.='db_item48["'.$names_.'"]["columns"]="'.$this->properties['columns'].'";'."\n";
    $out.='db_item48["'.$names_.'"]["window"]=Array("'.$this->properties['window_width'].'","'.$this->properties['window_height'].'");'."\n";
     $out.='db_item48["'.$names_.'"]["function"]=new  Function(\'';
+    $print_rez=[];
 	for ($j=0;$j<count($this->sp);$j++)
 		{
 			$selected_flag=0;
 			$_text=htmlspecialchars($this->sp[$j],ENT_QUOTES);
 
-			if (in_array($this->sp_id[$j],$value)) {$selected_flag=1;} else {$selected_flag=0;}
+			if (in_array($this->sp_id[$j],$value)) {
+                $selected_flag=1;
+                $print_rez[]=$this->sp[$j];
+            } else {
+                $selected_flag=0;
+            }
 			$out.='db_item48["'.$names_.'"][db_item48["'.$names_.'"].length] = new db_record_item48("'.  htmlspecialchars($this->sp_id[$j],ENT_NOQUOTES).'","'.$_text.'","'.$selected_flag.'");';
 	  }
 	$out.='\');';
@@ -62,7 +68,7 @@ public function render()
 	$input->setValue($this->value);
 	$input->setAttribute("id",$name_id);
 
-	return $out."<span id=\"{$name_id}_text\"></span><br/>".$this->view->FormElement($input).
+	return $out."<span id=\"{$name_id}_text\">".implode(", ",$print_rez)."</span><br/>".$this->view->FormElement($input).
 		$this->view->FormElement($button);
 }
 

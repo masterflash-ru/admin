@@ -766,9 +766,11 @@ function create_window(win_name)
 columns=db_item48[win_name]["columns"]//кол-во колонок в окне
 if (columns==0 || columns=='') columns=2;//по умоляанию 2
 col=0;row=0;//текущее состояние
-out='<html><body><form><table width="100%" border=0 style="font-size:12px; font-family:Verdana, Arial, Helvetica, sans-serif">';
+out='<html><body><form><table width="100%" border=0 style="font-size:11px; font-family:Verdana">';
 i=0;
 row_no_end=true;
+ff=db_item48[win_name]["function"];
+ff();
 while (row_no_end)
 	{//цикл по строкам
 	out+='<tr>';
