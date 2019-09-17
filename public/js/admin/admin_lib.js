@@ -787,22 +787,23 @@ while (row_no_end)
 	out+='</tr>'
 	}
 
-out+='</table><div align="center"><input name="save48" type="button" value="'+db_item48[win_name]["button_caption"]+'" onClick="save()" /></div></form>';
+out+='</table></form>';
 out+='<scr'+'ipt type="text/javascript">'
-out+='function save()\\n'
+out+='function save48()'
 out+='{text_=[];value=[];kk=0;'
-out+='for (i=0;i<document.forms[0].elements.length-1;i++)\\n'
+out+='for (i=0;i<document.forms[0].elements.length-1;i++)'
 out+='{'
 out+='if (document.forms[0].elements[i].checked) {value[kk]=document.forms[0].elements[i].value;text_[kk]=document.getElementById("text__"+i).innerHTML;kk++;}'
 out+='}'
 
-out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'").value=value.join(",");\\n'
-out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'_text").innerHTML=text_.join(",");\\n';
-out+='window.close()}\\n'
-out+='window.moveTo(300,300);'
+out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'").value=value.join(",");'
+out+='opener.document.getElementById("'+db_item48[win_name]["io_item"]+'_text").innerHTML=text_.join(",");';
+out+='window.close()};'
+out+='window.moveTo(10,10);'
 out+='</sc'+'ript>'
-
+out+='<div align="center"><input name="save48" type="button" value="'+db_item48[win_name]["button_caption"]+'" onClick="save48()" /></div>';
 out+='</body></html>';
+
 ww=db_item48[win_name]["window"][0];//ширина окна
 hh=db_item48[win_name]["window"][1];//высота экрана
 if (ww==0 || ww=='') ww=400;
