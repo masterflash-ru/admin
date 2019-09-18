@@ -174,10 +174,8 @@ public function save()
 
 public function del()
 {
-
 	$ImagesLib=Simba::$container->get(ImagesLib::class);
 	$ImagesLib->deleteFile($this->properties["config_section"],$this->id);
-
 }
 
 /*перегруженный метод
