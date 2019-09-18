@@ -144,19 +144,10 @@ public function indexAction()
     {//\Zend\Debug\Debug::dump($id);
      //\Zend\Debug\Debug::dump($_POST);
         $id=(int)$id;
-        $this->Formitem->save_form_item($id,32,"storage_gallery","img",null,null,["gallery"]);
-        $rs=new RecordSet();
-        $rs->CursorType = adOpenKeyset;
-        $rs->open("SELECT * FROM storage_gallery where id=$id ",$this->connection);
-        if ($rs->EOF){
-            //новая
-            $rs->AddNew();
-            $rs->Fields->Item["razdel"]->Value=$razdel;
-            $rs->Fields->Item["razdel_id"]->Value=$razdel_id;
-            $rs->Fields->Item["gallery_index"]->Value=(int)$_POST["gallery_number"];
-        } 
-        $rs->Fields->Item["alt"]->Value=$_POST["alt"][$id];
-        $rs->Fields->Item["poz"]->Value=$_POST["poz"][$id];
-        $rs->Update();
+        $filename=$this->Formitem->save_form_item($id,33,"storage_gallery","img",null,null,["gallery"]);
+        if ($filename){
+            $this->GalleryLib->selectStorageItem("gallery");
+            $this->GalleryLib->saveFiles($filename,$id, $razdel, $razdel_id, (int)$_POST["gallery_number"], ["alt"=>$_POST["alt"][$id],"poz"=>$_POST["poz"][$id]]);
+        }
     }
 }
