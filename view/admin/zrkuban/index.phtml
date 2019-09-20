@@ -30,14 +30,14 @@ $tab->row_dop_value($this->gallery_number,0);
 $tab->caption('Выберите номер галереи для редактирования:','',0);
 	
 $tab->row_start_type(false,2,'poz[0]','size=4');
-$tab->row_start_type(false,32,'img[0]','',0,0,"",0,0,array("gallery","admin_img"));
+$tab->row_start_type(false,32,'img[0]','',0,0,"",0,0,array("gallery","310_232"));
 $tab->row_start_type(false,3,'alt[0]','cols=80 rows=4');
 $tab->row_start_type(false,19,'save[0]','',0,0,0,0,0,array(1,'Добавить'));
 
 
 
 $tab->row_def_type(false,2,$tab->create_array_names($this->items['id'],'poz'),'size=4');
-$tab->row_def_type(false,32,$tab->create_array_names($this->items['id'],'img'),'',0,0,"",0,0,array("gallery","admin_img"));
+$tab->row_def_type(false,32,$tab->create_array_names($this->items['id'],'img'),'',0,0,"",0,0,array("gallery","310_232"));
 $tab->row_def_type(false,3,$tab->create_array_names($this->items['id'],'alt'),'cols=80 rows=4');
 $tab->row_def_type(false,17,$tab->create_array_names($this->items['id'],'save','del'),'',0,0,0,0,0,array(1,0,'Сохранить,Удалить'));
 

@@ -145,9 +145,18 @@ public function indexAction()
      //\Zend\Debug\Debug::dump($_POST);
         $id=(int)$id;
         $filename=$this->Formitem->save_form_item($id,33,"storage_gallery","img",null,null,["gallery"]);
-        if ($filename){
-            $this->GalleryLib->selectStorageItem("gallery");
-            $this->GalleryLib->saveFiles($filename,$id, $razdel, $razdel_id, (int)$_POST["gallery_number"], ["alt"=>$_POST["alt"][$id],"poz"=>$_POST["poz"][$id]]);
+        $this->GalleryLib->setStorageItem("gallery");
+        $this->GalleryLib->setIndex((int)$_POST["gallery_number"]);
+        $this->GalleryLib->setMeta("alt", $_POST["alt"][$id]);
+        $this->GalleryLib->setMeta("poz", $_POST["poz"][$id]);
+        $this->GalleryLib->setRazdel($razdel);
+        $this->GalleryLib->setRazdelId($razdel_id);
+
+        if ($filename){//добавление или замена фото
+            $this->GalleryLib->saveFiles($filename,$id);
+        } else {
+            //просто обновление метаданных
+            $this->GalleryLib->updateMeta($id);
         }
     }
 }
