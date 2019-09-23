@@ -143,12 +143,24 @@ public function indexAction()
     protected function saveRow($id,$razdel,$razdel_id)
     {//\Zend\Debug\Debug::dump($id);
      //\Zend\Debug\Debug::dump($_POST);
+        
+        $rs=$this->connection->Execute("select public, date_public,alt,caption from {$razdel} where id={$razdel_id}");
+        if ($rs->Fields->Item["alt"]->Value){
+            $alt=$rs->Fields->Item["alt"]->Value;
+        } else {
+            $alt=$rs->Fields->Item["caption"]->Value;
+        }
+        
+        
         $id=(int)$id;
         $filename=$this->Formitem->save_form_item($id,33,"storage_gallery","img",null,null,["gallery"]);
         $this->GalleryLib->setStorageItem("gallery");
         $this->GalleryLib->setIndex((int)$_POST["gallery_number"]);
         $this->GalleryLib->setMeta("alt", $_POST["alt"][$id]);
         $this->GalleryLib->setMeta("poz", $_POST["poz"][$id]);
+        $this->GalleryLib->setMeta("date_public", $rs->Fields->Item["date_public"]->Value);
+        $this->GalleryLib->setMeta("public", $rs->Fields->Item["public"]->Value);
+       // $this->GalleryLib->setMeta("alt", $alt);
         $this->GalleryLib->setRazdel($razdel);
         $this->GalleryLib->setRazdelId($razdel_id);
 
