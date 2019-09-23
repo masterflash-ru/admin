@@ -106,7 +106,7 @@ public function indexAction()
     }
     $gallery_number=$this->Params()->fromPost('gallery_number', $session->gallery_numbers[0]);  //номер галереи
     
-    //$view->setVariable("items",$this->GalleryLib->getItemsArrayForName($razdel,$razdel_id,(int)$gallery_number,"admin_img"));
+
     $view->setVariable("gallery_numbers",$session->gallery_numbers);
     $view->setVariable("gallery_number",$gallery_index); //из выпадающего списка формы или 0
     
@@ -144,7 +144,7 @@ public function indexAction()
     {//\Zend\Debug\Debug::dump($id);
      //\Zend\Debug\Debug::dump($_POST);
         
-        $rs=$this->connection->Execute("select public, date_public,alt,caption from {$razdel} where id={$razdel_id}");
+        $rs=$this->connection->Execute("select public, date_public,alt,caption,url from {$razdel} where id={$razdel_id}");
         if ($rs->Fields->Item["alt"]->Value){
             $alt=$rs->Fields->Item["alt"]->Value;
         } else {
@@ -160,6 +160,7 @@ public function indexAction()
         $this->GalleryLib->setMeta("poz", $_POST["poz"][$id]);
         $this->GalleryLib->setMeta("date_public", $rs->Fields->Item["date_public"]->Value);
         $this->GalleryLib->setMeta("public", $rs->Fields->Item["public"]->Value);
+        $this->GalleryLib->setMeta("url", "/".$razdel."/".$rs->Fields->Item["url"]->Value);
        // $this->GalleryLib->setMeta("alt", $alt);
         $this->GalleryLib->setRazdel($razdel);
         $this->GalleryLib->setRazdelId($razdel_id);
