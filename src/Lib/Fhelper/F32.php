@@ -122,8 +122,7 @@ public function save()
 	$infa_=array();
 
 	
-	for($iq=0;$iq<$img_array;$iq++)
-	{
+	for($iq=0;$iq<$img_array;$iq++){
         //проверим флажки удаления, если они установлены, тогда обнуляем элемент
         if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id])){
             $this->del();
