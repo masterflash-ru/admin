@@ -156,12 +156,12 @@ public function indexAction()
         $filename=$this->Formitem->save_form_item($id,33,"storage_gallery","img",null,null,["gallery"]);
         $this->GalleryLib->setStorageItem("gallery");
         $this->GalleryLib->setIndex((int)$_POST["gallery_number"]);
-        $this->GalleryLib->setMeta("alt", $_POST["alt"][$id]);
+        $this->GalleryLib->setMeta("alt", ($_POST["alt"][$id]) ? $_POST["alt"][$id]:$alt );
         $this->GalleryLib->setMeta("poz", $_POST["poz"][$id]);
         $this->GalleryLib->setMeta("date_public", $rs->Fields->Item["date_public"]->Value);
         $this->GalleryLib->setMeta("public", $rs->Fields->Item["public"]->Value);
         $this->GalleryLib->setMeta("url", "/".$razdel."/".$rs->Fields->Item["url"]->Value);
-       // $this->GalleryLib->setMeta("alt", $alt);
+
         $this->GalleryLib->setRazdel($razdel);
         $this->GalleryLib->setRazdelId($razdel_id);
 
