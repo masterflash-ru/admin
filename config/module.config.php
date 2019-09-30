@@ -190,21 +190,8 @@ return [
                             ],
                         ],
                     ],
-                    'zrkuaban' => [
-                        'type' => Literal::class,
-                        'options' => [
-                            'route'    => '/zrkuban',
-                            'defaults' => [
-                                'controller' => Controller\ZrkubanController::class,
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
-
                 ],//'child_routes'
             ],
-
-            //форма входа
             'admin1' => [
                 'type' => Literal::class,
                 'options' => [
@@ -215,7 +202,6 @@ return [
                     ],
                 ],
             ],
-            //форма входа
             'admin' => [
                 'type' => Literal::class,
                 'options' => [
@@ -285,6 +271,7 @@ return [
             Controller\TreeController::class => Controller\Factory\TreeControllerFactory::class,
             Controller\TovarController::class => Controller\Factory\TovarControllerFactory::class,
             Controller\ZrkubanController::class => Controller\Factory\ZrkubanControllerFactory::class,
+            Controller\ZrkubanBlockController::class => Controller\Factory\ZrkubanBlockControllerFactory::class,
         ],
         
         //если у контроллера нет коннструктора или он не нужен или пустой
