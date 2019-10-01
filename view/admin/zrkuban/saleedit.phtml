@@ -106,7 +106,10 @@ if (is_array($s)) {
         $rs->Fields->Item["foto_exists"]->Value=0;
     }
     $rs->Update();
-    // чистим кеш
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems("sale");//ключи
+    $cache->clearByTags(["sale"],true);//теги
+
 }
 
 if (is_array($d))  {
@@ -130,8 +133,9 @@ if (is_array($d))  {
     $rs=new RecordSet();
     $rs->CursorType = adOpenKeyset;
     $rs->open("select * from sale_info where id=".(int)$sale_info_id,simba::$connection);
-    
-    //КЕШ
+    $cache=simba::$container->get('DefaultSystemCache');
+    $cache->removeItems("sale");//ключи
+    $cache->clearByTags(["sale"],true);//теги
 }				
 
 
