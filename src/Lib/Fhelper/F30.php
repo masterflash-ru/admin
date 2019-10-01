@@ -122,54 +122,56 @@ public function render()
 	$img_array=($this->properties['img_array']) ? $this->properties['img_array']:1;
 	$out='<table border="1" cellspacing="0" cellpadding="0">';
 	$vv=explode(',',$this->value);
-	for ($i=0;$i<$img_array;$i++)
-		{
-			if (empty($vv[$i]) && $this->default_value>'') {$vv[$i]=$this->default_value;}//если пусто, установить значение по умолчанию
-			$ss=@getimagesize($this->root_file_system.$this->const[1].$vv[$i]);
-			$sss=150;
-			if (isset($this->properties['img_size']) && !$this->properties['img_size']=='')  {$sss=(int)$this->properties['img_size'];}
-			if (isset($this->properties['img_size']) && $this->properties['img_size']==-1)
-				{
-					//вывод без масштабирования			
-					if ($vv[$i]) 
-						{
-							$out1="<img src=\"/".$this->const[1].$vv[$i]."\">";
-						}
-					else {$out="";}
-								
-				}
-				else 
-					{//масштабируем
-						if (!empty($vv[$i])) {$out1="<img alt=\"\" src=\"/".$this->const[1].$vv[$i]."\" style='max-width:".$sss."px'>";}
-										else $out1="";
-					}
-		$nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
+	for ($i=0;$i<$img_array;$i++){
+        if (empty($vv[$i]) && $this->default_value>'') {
+            //если пусто, установить значение по умолчанию
+            $vv[$i]=$this->default_value;
+        }
+        $ss=@getimagesize($this->root_file_system.$this->const[1].$vv[$i]);
+        $sss=150;
+        if (isset($this->properties['img_size']) && !$this->properties['img_size']=='') {
+            $sss=(int)$this->properties['img_size'];
+        }
+        if (isset($this->properties['img_size']) && $this->properties['img_size']==-1) {
+            //вывод без масштабирования
+            if ($vv[$i]) {
+                $out1="<img src=\"/".$this->const[1].$vv[$i]."\">";
+            } else {
+                $out="";
+            }
+        } else {//масштабируем
+            if (!empty($vv[$i])) {
+                $out1="<img alt=\"\" src=\"/".$this->const[1].$vv[$i]."\" style='max-width:".$sss."px'>";
+            } else {
+                $out1="";
+            }
+        }
+        $nnn=str_replace('[',$i.'[',$this->name[0]);//корректировать имя, что бы сделать псевдомассив внутри ячейки
 		//добавить крыжики удаления
 		
-		if (!empty($vv[$i]))
-			{
-				$checkbox = new Element\Checkbox("delete_".$nnn);
-				$checkbox->setUseHiddenElement(true);
-				$checkbox->setCheckedValue(1);
-				$checkbox->setUncheckedValue(0);
-				$out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
-				}
+		if (!empty($vv[$i])) {
+            $checkbox = new Element\Checkbox("delete_".$nnn);
+            $checkbox->setUseHiddenElement(true);
+            $checkbox->setCheckedValue(1);
+            $checkbox->setUncheckedValue(0);
+            $out1.='<br><label>'.$this->view->FormCheckbox($checkbox).'Удалить</label>';
+        }
 	
 		//справочно
 		$out2='';
-		if ($this->properties['help']==0) $out2='<br><b>Папка:'.$this->data_folder.'<br>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
-		if ($this->properties['help']==2) $out2='<b>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
-	
-	$out.="<tr>";
-	if ($img_array>1)  {$out.=" <th width=1>$i:</th>";}
-	
-	
-	//создаем элемент ФАЙЛ
-	$out.="	<td>".$this->view->FormElement(new Element\File($nnn))."<br>$out2</td>
-		<td>$out1</td>
-		  </tr>";
-		}
-
+		if ($this->properties['help']==0) {
+            $out2='<br><b>Папка:'.$this->data_folder.'<br>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
+        }
+		if ($this->properties['help']==2) {
+            $out2='<b>Файл: '.$vv[$i].', '.$ss[0].'x'.$ss[1].' px</b>';
+        }
+        $out.="<tr>";
+        if ($img_array>1)  {
+            $out.=" <th width=1>$i:</th>";
+        }
+        //создаем элемент ФАЙЛ
+        $out.="	<td>".$this->view->FormElement(new Element\File($nnn))."<br>$out2</td><td>$out1</td></tr>";
+    }
 	$h1 = new Element\Hidden("img_array_".$this->name[0]);
 	$h1->setValue($img_array);
 	$out.= $this->view->FormElement($h1);
@@ -177,11 +179,7 @@ public function render()
 	$h2 = new Element\Hidden("value_array_".$this->name[0]);
 	$h2->setValue($this->value);
 	$out.= $this->view->FormElement($h2);
-
-
 	return $out.'</table>';
-
-
 }
 
 
@@ -193,21 +191,21 @@ public function save()
 	$infa_old=explode (',',$_POST["value_array_".$this->col_name][$this->id]);
 	$infa_=array();
 
-	if ($this->properties['file_enable_extension']>'') {$file_enable_extension=explode('|',$this->properties['file_enable_extension']);}
-		else {$file_enable_extension=[];}
+	if ($this->properties['file_enable_extension']>'') {
+        $file_enable_extension=explode('|',$this->properties['file_enable_extension']);
+    } else {
+        $file_enable_extension=[];
+    }
 	
-	for($iq=0;$iq<$img_array;$iq++)
-	{
-	//проверим флажки удаления, если они установлены, тогда обнуляем элемент
-	if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]) && $this->public_folder )	
-		{
-			$infa_[$iq]='';
-			@unlink ($this->public_folder.$infa_old[$iq]);
-			$infa_old[$iq]='';
-		}
-	
-	
-	$rez=$this->file_upload(
+	for($iq=0;$iq<$img_array;$iq++){
+        //проверим флажки удаления, если они установлены, тогда обнуляем элемент
+        if (!empty($_POST['delete_'.$this->col_name.$iq][$this->id]) && $this->public_folder ) {
+            $infa_[$iq]='';
+            @unlink ($this->public_folder.$infa_old[$iq]);
+            $infa_old[$iq]='';
+        }
+        
+        $rez=$this->file_upload(
 						array($this->id=>$this->col_name.$iq),
 						$this->data_folder,
 						$file_enable_extension,
@@ -216,99 +214,78 @@ public function save()
 						$prefix,
 						$this->properties['names']
 						);
-
-	if ($rez['error']==0 && $rez['name']>'')
-		{
-		//проверим, изменилось ли имя файла, если да, тогда старый стереть!
-		 if ($this->public_folder) {@unlink ($this->public_folder.$infa_old[$iq]);}
-		//ошибки нет, записываем
-		$infa_[$iq]=$rez['name'];
-		
-		$FILTER_IMG_RESIZE_ADAPTER=$this->config["images"]['adapter'];
-		
-			switch ((string)$this->properties['img_resize_type'])
-				{
-				case 'w':
-						{//масштабно по ширине
-						$new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
-						$f=new ImgResize(
-													array
-														(
-															'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
-															'width' => $new_wh[0],	
-															'height' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-															'method' => IMG_METHOD_SCALE_FIT_W
-														)
-												);
-
-						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
-						break;
-						}
-				case 'h':
-						{//масштабно по высоте
-						$new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
-						$f=new ImgResize(
-												array
-													(
-														'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
-														'height' => $new_wh[0],	
-														'width' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
-														'method' => IMG_METHOD_SCALE_FIT_H
-													)
-												);
-
-						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
-						break;
-						}
-				case 'wh':
-						{
-						$new_wh=explode('x',$this->properties['img_new_size']);//получить новые размеры
-						  
-						$f=new ImgResize(
-													array
-															(
-																'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
-																'height' => $new_wh[1],	
-																'width' => $new_wh[0] ,
-																'method' =>IMG_METHOD_SCALE_WH_CROP
-															)
-												);
-
-						$f->filter($this->data_folder.$infa_[$iq]); //применить фильтр
-
-						
-						break;
-						}
-				
-				
+        if ($rez['error']==0 && $rez['name']>''){
+            //проверим, изменилось ли имя файла, если да, тогда старый стереть!
+            if ($this->public_folder) {
+                @unlink ($this->public_folder.$infa_old[$iq]);
+            }
+            //ошибки нет, записываем
+            $infa_[$iq]=$rez['name'];
+            
+            $FILTER_IMG_RESIZE_ADAPTER="Gd";
+            
+            switch ((string)$this->properties['img_resize_type']){
+                case 'w':{//масштабно по ширине
+                    $new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
+                    $f=new ImgResize(array
+                                     ('adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
+                                      'width' => $new_wh[0],	
+                                      'height' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
+                                      'method' => IMG_METHOD_SCALE_FIT_W
+                                     )
+                                    );
+                    $f->filter([$this->data_folder.$infa_[$iq]]); //применить фильтр
+                    break;
+                }
+				case 'h':{//масштабно по высоте
+                    $new_wh=preg_split ("/x/i", $this->properties['img_new_size']);//если указана и высота, тогда к урезанию изображения выполнить вырезку краев
+                    $f=new ImgResize(array
+                                     (
+                                         'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
+                                         'height' => $new_wh[0],	
+                                         'width' =>(isset($new_wh[1])) ? $new_wh[1] : 1,
+                                         'method' => IMG_METHOD_SCALE_FIT_H
+                                     )
+                                    );
+                    $f->filter([$this->data_folder.$infa_[$iq]]); //применить фильтр
+                    break;
+                }
+				case 'wh':{
+                    $new_wh=explode('x',$this->properties['img_new_size']);//получить новые размеры
+                    $f=new ImgResize(array
+                                     (
+                                         'adapter'=>$FILTER_IMG_RESIZE_ADAPTER,
+                                         'height' => $new_wh[1],	
+                                         'width' => $new_wh[0] ,
+                                         'method' =>IMG_METHOD_SCALE_WH_CROP
+                                     )
+                                    );
+                    $f->filter([$this->data_folder.$infa_[$iq]]); //применить фильтр
+                    break;
+                }
+            }
+            //проверим надо ли накладывать водяной знак
+            if (!empty($this->properties['watermark'])) {
+                $f=new Watermark(['waterimage'=>$this->data_folder.$this->properties['watermark']]);
+                $f->filter($this->data_folder.$infa_[$iq]);
+            }
+            //проверим надо ли оптимизировать изображение
+            if (!empty($this->properties['images_optimize'])) {
+                $f=new ImgOptimize($this->config["images"]["images_optimize"]);
+                $f->filter($this->data_folder.$infa_[$iq]);
+            }
+            //переносим в PUBLIC папку если она указана
+            if ($this->public_folder && !empty($this->properties['public_to_public'])){
+                foreach ($infa_ as $img_item){
+                    if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {
+                        echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";
+                    }
+                }
 			}
-		//проверим надо ли накладывать водяной знак
-		if (!empty($this->properties['watermark'])) 
-			{
-					$f=new Watermark(['waterimage'=>$this->data_folder.$this->properties['watermark']]);
-					$f->filter($this->data_folder.$infa_[$iq]);
-
-			}
-
-		//проверим надо ли оптимизировать изображение
-		if (!empty($this->properties['images_optimize'])) 
-			{
-				$f=new ImgOptimize($this->config["images"]["images_optimize"]);
-				$f->filter($this->data_folder.$infa_[$iq]);
-			}
-
-	//переносим в PUBLIC папку если она указана
-		if ($this->public_folder && !empty($this->properties['public_to_public']))
-			{
-				foreach ($infa_ as $img_item)
-					{
-						if (!rename($this->data_folder.$img_item,$this->public_folder.$img_item)) {echo "<br>Ошибка переноса файла в PUBLIC папку!<br>";}
-					}
-			}
-		}
-		else  $infa_[$iq]=$infa_old[$iq];
-	}
-	
+        } else {
+            $infa_[$iq]=$infa_old[$iq];
+        }
+    }
 	$infa=implode(',',$infa_);//упаковать
 	$this->infa=$infa;
 	return $this->infa;
@@ -319,16 +296,13 @@ public function del()
 {
 	$this->init();
 
-	if ($this->col_name  && empty($this->properties['sql_for_delete_foto']) && $this->public_folder  && !empty($this->properties['public_to_public'])) 
-		{
-			$n=simba::queryOneRecord('select '.$this->col_name.' from '.$this->tab_name.' where id='.$this->id);//получить имя файла (может быть список)
-			$infa=explode(',',$n[$this->col_name]);
-			for ($qi=0;$qi<count($infa);$qi++)		
-				{
-					@unlink ($this->public_folder.$infa[$qi]);
-				}
-		}
-
+	if ($this->col_name  && empty($this->properties['sql_for_delete_foto']) && $this->public_folder  && !empty($this->properties['public_to_public'])){
+        $n=simba::queryOneRecord('select '.$this->col_name.' from '.$this->tab_name.' where id='.$this->id);//получить имя файла (может быть список)
+        $infa=explode(',',$n[$this->col_name]);
+        for ($qi=0;$qi<count($infa);$qi++) {
+            @unlink ($this->public_folder.$infa[$qi]);
+        }
+    }
 }
 
 /*
@@ -339,13 +313,16 @@ public function init()
 	$this->root_file_system=getcwd().DIRECTORY_SEPARATOR;
 	$this->data_folder=getcwd().DIRECTORY_SEPARATOR.$this->const[0];
 	
-	if (!is_readable($this->data_folder)) {echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);}
-	$this->public_folder=NULL;
-	if ($this->const[1])
-		{
-			$this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
-			if (!is_readable($this->public_folder)) {echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);}
-		}
+	if (!is_readable($this->data_folder)) {
+        echo "<br>Папка <b>{$this->data_folder}</b> не существует! Создана!<br>";mkdir($this->data_folder,0777,true);
+    }
+    $this->public_folder=null;
+    if ($this->const[1]){
+        $this->public_folder=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR. $this->const[1];
+        if (!is_readable($this->public_folder)) {
+            echo "<br>Папка <b>{$this->public_folder}</b> не существует! Создана!<br>";mkdir($this->public_folder,0777,true);
+        }
+    }
 
 }
 }

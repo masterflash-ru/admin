@@ -172,4 +172,14 @@ public function indexAction()
             $this->GalleryLib->updateMeta($id);
         }
     }
+    
+    
+    /*модерация объявлений*/
+    public function saleeditAction()
+    {
+        $view=new ViewModel();
+        $view->setVariables(["container"=>$this->container]);
+        return $view;
+    }
+    
 }

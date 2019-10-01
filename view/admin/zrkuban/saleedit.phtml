@@ -1,0 +1,198 @@
+<?php
+use Admin\Lib\Tabadmin;
+use Admin\Lib\Simba;
+use ADO\Service\RecordSet;
+
+$this->config=$this->container->get("config");
+simba::$container=$this->container;
+Simba::$config=$this->config;
+$tab=new Tabadmin($this,$this->config);
+
+
+
+$sale_info_id=unserialize(base64_decode($_GET['get_interface_input'])); //ID редактиремой записи
+define('TOVAR_FOTO','pic/sale/');
+//echo '<pre>';
+//выборка
+$rs=new RecordSet();
+$rs->CursorType = adOpenKeyset;
+
+$rs->open("select * from sale_info where id=".(int)$sale_info_id,simba::$connection);
+
+$rs_sprav_all_type=new RecordSet();
+$rs_sprav_all_type->CursorType = adOpenKeyset;
+
+$rs_sprav_all_type->open("select * from sprav_all_type 
+        where sale_info_column!='public_to_date' and avto_type=".(int)$rs->Fields->Item['avto_type']->Value." order by poz",simba::$connection);
+
+
+$meta=$rs_sprav_all_type->GetRows (adGetRowsArrType);
+$meta['name'][]="Дата публикации";
+$meta['sale_info_column'][]="date_public";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+
+$meta['name'][]="Дата изменения записи<br>(по этому полю сортируется вывод<br>в обратной хронологии)";
+$meta['sale_info_column'][]="date_update";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+
+$meta['name'][]="Опубликовано до даты";
+$meta['sale_info_column'][]="public_to_date";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+$meta['name'][]="Выделено цветом до даты";
+$meta['sale_info_column'][]="color_to_date";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+$meta['name'][]="Всегда на верху (общий список) до даты";
+$meta['sale_info_column'][]="up_to_date";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+$meta['name'][]="Всегда на верху (список моделей) до даты";
+$meta['sale_info_column'][]="up_to_date1";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+$meta['name'][]="Спец предложение до даты";
+$meta['sale_info_column'][]="special_to_date";
+$type=$meta['widget_create'][]=27;
+$meta['id'][]=0;
+
+
+
+$meta['name'][]="Публиковать";
+$meta['sale_info_column'][]="public";
+$type=$meta['widget_create'][]=20;
+$meta['id'][]=0;
+
+
+
+
+$meta['name'][]="Фото превью";
+$meta['name'][]="Большие фото";
+$meta['name'][]="Операция";
+
+@$d=array_keys($_POST['del']); //определить какой идентификатор нужно обрабатывать
+
+@$s=array_keys($_POST['save']); //определить какой идентификатор нужно обрабатывать
+if (is_array($s)) {
+    //сохраняем/создаем новую
+	//echo '<pre>';
+	//print_r($_POST);
+	$id=(int)$sale_info_id; 
+    foreach ($meta['sale_info_column'] as $k=>$_name) {
+        $type=$meta['widget_create'][$k];   //код виджета ввода
+        switch ($type)  {
+            case 4:case 6:case 7:{$type=2;break;}
+            case 5:{$type=3;break;}
+            case 3:{$type=20;break;}
+            case 2:{$type=9;break;}
+            case 1:{$type=4;break;}
+        }
+        $rs->Fields->Item[$_name]->Value =$tab->save_field($type,$id,$_name);
+    }
+    //фото
+    $rs->Fields->Item["foto_list"]->Value =$tab->save_field(30,$id,'foto_list',['["sale"]["data"]','["sale"]["folder"]'],array(3,1,5,'','png|gif|jpg|jpeg','wh','140x107',9999999,"","","",1));
+    $rs->Fields->Item["foto_big_list"]->Value =$tab->save_field(30,$id,'foto_big_list',['["sale"]["data"]','["sale"]["folder"]'],array(3,1,5,'','png|gif|jpg|jpeg','wh','800x600',9999999,"","","",1));
+    if (mb_strlen($rs->Fields->Item["foto_list"]->Value,"UTF-8") > 10) {
+        $rs->Fields->Item["foto_exists"]->Value=1;
+    } else {
+        $rs->Fields->Item["foto_exists"]->Value=0;
+    }
+    $rs->Update();
+    // чистим кеш
+}
+
+if (is_array($d))  {
+    //удаляем запись
+    //вначале удалим старое, если есть
+    $_f=explode(",",$rs->Fields->Item["foto_list"]->Value);
+    foreach ($_f as $f) {
+        if ($f && is_readable($_SERVER['DOCUMENT_ROOT']."/".TOVAR_FOTO.$f)) {
+            @unlink($_SERVER['DOCUMENT_ROOT']."/".TOVAR_FOTO.$f);
+        }
+    }
+    $_f=explode(",",$rs->Fields->Item["foto_big_list"]->Value);
+    foreach ($_f as $f)  {
+        if ($f && is_readable($_SERVER['DOCUMENT_ROOT']."/".TOVAR_FOTO.$f)) {
+            @unlink($_SERVER['DOCUMENT_ROOT']."/".TOVAR_FOTO.$f);
+        }
+    }
+    $rs->delete();
+    $rs->Update();
+    //выборка
+    $rs=new RecordSet();
+    $rs->CursorType = adOpenKeyset;
+    $rs->open("select * from sale_info where id=".(int)$sale_info_id,simba::$connection);
+    
+    //КЕШ
+}				
+
+
+                
+                
+$tab->col_name=$meta['name'];
+//print_r($meta);
+
+$arr=$rs->GetRows (adGetRowsArrType);
+
+$tab->form_input_type=1;
+	$tab->button_create_new_item_flag=0;
+	$tab->buttons_jmp_flag=0;
+	//сама выборка
+$tab->caption='Редактор объявлений';
+foreach ($meta['sale_info_column'] as $k=>$_name){
+    //основная таблица значения
+    $tab->row_all_value (false,$arr[$_name]);
+    //первая строка
+    $tab->row_start_type(false,1,$_name.'[0]');
+    /*0- ничего
+    1-выпадающий список без добавления
+    2- тоже с добавлением
+    3- флажки
+    4 строчное поле
+    5- многострочное поле
+    */
+    $type=$meta['widget_create'][$k];   //код виджета ввода
+    $sprav_all_type_id=$meta['id'][$k];   //ID записи
+    $style='size=50 cols=50 rows=4';
+    $list=array();
+    switch ($type) {
+        case 4:
+        case 6:
+        case 7:{$type=2;break;}
+        case 5:{$type=3;break;}
+        case 3:{$type=20;$style="";break;}
+        case 2:{$type=9;}
+        case 1: {
+            if ($type==1) {$type=4;}
+            $style="";
+            //генерируем списки
+            $rs=new RecordSet();
+            $rs->CursorType = adOpenKeyset;
+            $rs->open("select item_text from sprav_all where type=".(int)$sprav_all_type_id." order by poz asc ,item_text asc",simba::$connection);
+            $l=$rs->GetRows (adGetRowsArrType);
+            $list=$l['item_text'];
+            break;
+        }
+            //default:$type=1;
+    }
+    //описания элемнтов
+    $tab->row_def_type(false,$type,$tab->create_array_names($arr['id'],$_name),$style,$list,$list);
+}
+
+
+$tab->row_all_value (false,$arr["foto_list"]);
+$tab->row_all_value (false,$arr["foto_big_list"]);
+$tab->row_def_type(false,30,$tab->create_array_names($arr['id'],'foto_list'),0,0,0,implode(",",simba::get_const(['["sale"]["data"]','["sale"]["folder"]'])),0,0,array(3,1,5,'','png|gif|jpg|jpeg','wh','140x107'));
+$tab->row_def_type(false,30,$tab->create_array_names($arr['id'],'foto_big_list'),0,0,0,implode(",",simba::get_const(['["sale"]["data"]','["sale"]["folder"]'])),0,0,array(3,1,5,'','png|gif|jpg|jpeg','wh','800x600'));
+//операция
+$tab->row_def_type(false,17,$tab->create_array_names($arr['id'],'save','del'),'',0,0,0,0,0,array(1,0,'Сохранить,Удалить'));
+	
+$tab->tab_print();

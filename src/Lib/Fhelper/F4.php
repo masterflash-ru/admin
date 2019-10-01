@@ -69,7 +69,7 @@ public function render()
             }
         }
         $zs=$this->zselect;
-        if ($this->properties['FlagNull']){
+        if (isset($this->properties['FlagNull']) && $this->properties['FlagNull']){
             $this->zselect=[$pusto=>"ПУСТО"];
         }
         foreach ($zs as $k=>$v) {

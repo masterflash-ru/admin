@@ -36,37 +36,35 @@ public static function get_const($sysname,$return_array_flag=false)
 //$return_array_flag - если false тогда возвращает список через запятую, иначе возвращает в виде массива
 //\Zend\Debug\Debug::dump($sysname);
 
-if (is_array($sysname))
-	{
-		$arr=[];
-		foreach ($sysname as $v) 
-			{
-				$v=str_replace("'",'"',trim($v));
-				if ($v) 
-					{
-						$k='return \Admin\Lib\Simba::$config'.$v.';';
-						$v=eval($k);
-						if (empty($v)) {echo "<h2>Константа {$v} не определена!</h2>";exit;}
-						$arr[]= rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-					}
-					else $arr[]="";
-			}
-	}
-	else 
-		{
-			$sysname=str_replace("'",'"',trim($sysname));
-			if ($sysname) 
-				{
-					$k='return \Admin\Lib\Simba::$config'.$sysname.';';
-					$v=eval($k);
-					if (empty($v)) {echo "<h2>Константа {$sysname} не определена!</h2>";exit;}
-					return rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-				}
-				else {return "";}
-		}
-
-return $arr;
-
+    if (is_array($sysname)){
+        $arr=[];
+        foreach ($sysname as $v) {
+            $v=str_replace("'",'"',trim($v));
+            if ($v) {
+                $k='return \Admin\Lib\Simba::$config'.$v.';';
+                $v=eval($k);
+                if (empty($v)) {
+                    echo "<h2>Константа {$v} не определена!</h2>";exit;
+                }
+                $arr[]= rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            } else {
+                $arr[]="";
+            }
+        }
+    } else {
+        $sysname=str_replace("'",'"',trim($sysname));
+        if ($sysname) {
+            $k='return \Admin\Lib\Simba::$config'.$sysname.';';
+            $v=eval($k);
+            if (empty($v)) {
+                echo "<h2>Константа {$sysname} не определена!</h2>";exit;
+            }
+            return rtrim($v,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return "";
+        }
+    }
+    return $arr;
 }
 
 
@@ -97,15 +95,15 @@ public static function queryAllRecords($queryString)
 	self::$rs->open($queryString,self::$connection);
 	
 	 $sqls=explode(self::$sql_delim,$queryString);
-	if ( count($sqls)>1) 
-		{
-			for($i=1;$i<count($sqls);$i++) 
-				{
-					//echo "<br>{$i} , COUNT= ";
-					if (trim($sqls[$i])) self::$rs->NextRecordset($RecordsAffected);
-					//echo self::$rs->RecordCount."<br>";
-				}
-		}
+	if ( count($sqls)>1) {
+        for($i=1;$i<count($sqls);$i++) {
+            //echo "<br>{$i} , COUNT= ";
+            if (trim($sqls[$i])) {
+                self::$rs->NextRecordset($RecordsAffected);
+            }
+            //echo self::$rs->RecordCount."<br>";
+        }
+    }
 	if (self::$rs->EOF) return NULL;
 	return self::$rs->GetRows (adGetRowsArrType);
 }
@@ -125,23 +123,19 @@ public static function queryOneRecord($queryString)
 	self::$rs->open($queryString,self::$connection);
 	
 	$sqls=explode(self::$sql_delim,$queryString);
-	if ( count($sqls)>1) 
-		{
-			for($i=1;$i<count($sqls);$i++) 
-				{
-					if (trim($sqls[$i])) self::$rs->NextRecordset($RecordsAffected);
-					
-				}
-		}
-if (self::$rs->EOF) return false;
-//цикл по колонкам которые имеются
-$rez=array();
-foreach (self::$rs->DataColumns as $DataColumn_item) 
-	{
-		$rez[$DataColumn_item->ColumnName]=self::$rs->Fields->Item[$DataColumn_item->ColumnName]->Value;
-	}
-	if (self::$rs->EOF) return NULL;
-	return $rez;
+	if ( count($sqls)>1) {
+        for($i=1;$i<count($sqls);$i++) {
+            if (trim($sqls[$i])) self::$rs->NextRecordset($RecordsAffected);
+        }
+    }
+    if (self::$rs->EOF) return false;
+    //цикл по колонкам которые имеются
+    $rez=array();
+    foreach (self::$rs->DataColumns as $DataColumn_item) {
+        $rez[$DataColumn_item->ColumnName]=self::$rs->Fields->Item[$DataColumn_item->ColumnName]->Value;
+    }
+    if (self::$rs->EOF) return NULL;
+    return $rez;
 }
 
 //запись информации в базу
