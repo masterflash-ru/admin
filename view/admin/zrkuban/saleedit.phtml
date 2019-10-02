@@ -9,7 +9,6 @@ Simba::$config=$this->config;
 $tab=new Tabadmin($this,$this->config);
 
 
-
 $sale_info_id=unserialize(base64_decode($_GET['get_interface_input'])); //ID редактиремой записи
 define('TOVAR_FOTO','pic/sale/');
 //echo '<pre>';
@@ -107,7 +106,7 @@ if (is_array($s)) {
     }
     $rs->Update();
     $cache=simba::$container->get('DefaultSystemCache');
-    $cache->removeItems("sale");//ключи
+    //$cache->removeItems("sale");//ключи
     $cache->clearByTags(["sale"],true);//теги
 
 }
@@ -134,7 +133,7 @@ if (is_array($d))  {
     $rs->CursorType = adOpenKeyset;
     $rs->open("select * from sale_info where id=".(int)$sale_info_id,simba::$connection);
     $cache=simba::$container->get('DefaultSystemCache');
-    $cache->removeItems("sale");//ключи
+    //$cache->removeItems("sale");//ключи
     $cache->clearByTags(["sale"],true);//теги
 }				
 
