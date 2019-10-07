@@ -41,8 +41,6 @@ public function __construct ($connection,$container)
         $block_id=(int)$this->Params()->fromQuery('id', 0);
         $rs=$this->connection->Execute("select id,model,type  from block where id=$block_id");
         
-        //\Zend\Debug\Debug::dump ( $rs->Fields->Item["model"]->Value);
-        
         //смотрим сценарий опций, если есть
         if (array_key_exists($rs->Fields->Item["model"]->Value,$this->config["blocks"]["options_tpl"])){
             $view->setTemplate($this->config["blocks"]["options_tpl"][$rs->Fields->Item["model"]->Value]);
@@ -54,7 +52,6 @@ public function __construct ($connection,$container)
         
         //записываем если пришел запрос
         if (isset($_POST["save"])){
-            //\Zend\Debug\Debug::dump ( $this->Params()->fromPost());
             $this->connection->Execute("delete from block_options where block_id={$block_id}",$a,adExecuteNoRecords);
 			$rso=new RecordSet();
 			$rso->CursorType =adOpenKeyset;
@@ -73,8 +70,8 @@ public function __construct ($connection,$container)
             }
             //чистим кеш
             $cache=Simba::$container->get('DefaultSystemCache');
-            $this->cache->removeItems("block_options");//ключи
-            $this->cache->clearByTags(["block_options"],true);//теги
+            //$cache->removeItems("block_options");//ключи
+            $cache->clearByTags(["block_options"],true);//теги
 
         }
         
