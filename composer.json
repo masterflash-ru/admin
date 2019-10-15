@@ -50,5 +50,8 @@
             "component": "Admin",
             "config-provider": "masterflash-ru\\Admin\\ConfigProvider"
         }
+    },
+    "scripts": {
+     "post-package-update":"echo 123"
     }
 }
