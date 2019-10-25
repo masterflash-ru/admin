@@ -33,7 +33,7 @@ class SelectFromDb extends AbstractPlugin
     public function colModel(array $colModel, array $toolbarData=[])
     {
         if ($this->options["emptyFirstItem"]){
-            $rez[$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
+            $rez[(int)$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
         } else {
             $rez=[];
         }
@@ -44,7 +44,7 @@ class SelectFromDb extends AbstractPlugin
         }
         
         $colModel["editoptions"]["value"]=$rez;
-        
+
         return $colModel;
     }
 

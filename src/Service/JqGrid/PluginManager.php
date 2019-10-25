@@ -64,6 +64,7 @@ class PluginManager extends AbstractPluginManager
         "lastmod" => Plugin\LastMod::class,
         
         "TreeAdjacency" => Plugin\TreeAdjacency::class,
+        "StringToArray"=> Plugin\StringToArray::class,
         
         //"Autocomplete" => Plugin\Autocomplete::class,
         //"autocomplete" => Plugin\Autocomplete::class,
@@ -82,6 +83,7 @@ class PluginManager extends AbstractPluginManager
         
         /*поэлементная обработка*/
         Plugin\Datetime::class => InvokableFactory::class,
+        Plugin\StringToArray::class => InvokableFactory::class,
         Plugin\Date::class => InvokableFactory::class,
         Plugin\Images::class => Plugin\Factory\Images::class,
         Plugin\Files::class => Plugin\Factory\Files::class,
