@@ -13,7 +13,7 @@ class StringToArray extends AbstractPlugin
     ];
 
     public function edit($value)
-    {echo $value;
+    {
         return explode($this->def_options["separator"],$value);    
     }
 

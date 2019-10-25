@@ -16,7 +16,7 @@ class SelectFromDb extends AbstractPlugin
         "field_label"=>"name",
         "emptyFirstItem"=>false,
         "emptyFirstItemLabel"=>"",
-        "emptyFirstItemValue"=>0
+        "emptyFirstItemValue"=>""
     ];
 
     public function __construct($connection) 
@@ -33,7 +33,7 @@ class SelectFromDb extends AbstractPlugin
     public function colModel(array $colModel, array $toolbarData=[])
     {
         if ($this->options["emptyFirstItem"]){
-            $rez[(int)$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
+            $rez[$this->options["emptyFirstItemValue"]]=$this->options["emptyFirstItemLabel"];
         } else {
             $rez=[];
         }
