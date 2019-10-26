@@ -177,17 +177,17 @@ $.extend($.fn.fmatter , {
 			oSelect= opts.colModel.editoptions.value;
 			sep = opts.colModel.editoptions.separator === undefined ? ":" : opts.colModel.editoptions.separator;
 		}
-    var ctl = '<div class="checklist">';
+    var ctl = '<div class="checklist py-1">';
     var aValues = [];
     if (cellval && cellval.length) {
         aValues = cellval.split(",");
     }
     for(var el in oSelect) {
-        ctl += '<label><input type="checkbox" disabled ';
+        ctl += '<input type="checkbox" disabled ';
         if (aValues.indexOf(el) != -1) {
             ctl += 'checked="checked" ';
         }
-        ctl += 'value="' + el + '"> ' + oSelect[el] + '</label><br/>';
+        ctl += 'value="' + el + '"> ' + oSelect[el] + '<br/>';
     }
     return ctl + '</div>';
 }
