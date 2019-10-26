@@ -166,7 +166,31 @@ $.extend($.fn.fmatter , {
 			str += "<div title='"+nav.deltitle+"' style='float:left;' class='ui-pg-div ui-inline-del' "+ocl+"><span class='" + common.icon_base +" "+classes.icon_del +"'></span></div>";
 		}
 		return "<div style='margin-left:8px;'>" + str + "</div>";
-	}
+	},
+    multicheckbox:function(cellval, opts) {
+		cellval = String(cellval);
+		var oSelect = false, ret=[], sep;
+		if(opts.colModel.formatoptions !== undefined){
+			oSelect= opts.colModel.formatoptions.value;/*весь список*/
+			sep = opts.colModel.formatoptions.separator === undefined ? ":" : opts.colModel.formatoptions.separator;
+		} else if(opts.colModel.editoptions !== undefined){
+			oSelect= opts.colModel.editoptions.value;
+			sep = opts.colModel.editoptions.separator === undefined ? ":" : opts.colModel.editoptions.separator;
+		}
+    var ctl = '<div class="checklist">';
+    var aValues = [];
+    if (cellval && cellval.length) {
+        aValues = cellval.split(",");
+    }
+    for(var el in oSelect) {
+        ctl += '<label><input type="checkbox" disabled ';
+        if (aValues.indexOf(el) != -1) {
+            ctl += 'checked="checked" ';
+        }
+        ctl += 'value="' + el + '"> ' + oSelect[el] + '</label><br/>';
+    }
+    return ctl + '</div>';
+}
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -201,12 +225,51 @@ $.extend($.fn.fmatter.seo , {
         return  cellval;
     }
 });
+$.extend($.fn.fmatter.multicheckbox , {
+    unformat : function (cellval, opts,cell) {
+     var items=[];
+    $("input[type=checkbox]:checked", elem).each(function (i, e) {
+        items[items.length]= e.value;
+    });
+     return items.join(",");
+    }
+});
 
 $.extend($.fn.fmatter.jscellactions , {
     unformat : function (cellval, opts,cell) {
         return  "";
     }
 });
+
+
+/*редаутирование для multicheckbox*/
+function multicheckboxEdit(cellval, opts)
+{
+    var ctl = '<div class="checklist">',oSelect=opts.value;
+    var aValues = [];
+    if (cellval && cellval.length) {
+        aValues = cellval.split(",");
+    }
+    for(var el in oSelect) {
+        ctl += '<label><input type="checkbox" ';
+        if (aValues.indexOf(el) != -1) {
+            ctl += 'checked="checked" ';
+        }
+        ctl += 'value="' + el + '"> ' + oSelect[el] + '</label><br/>';
+    }
+    return $(ctl + '</div>');
+
+}
+function multicheckboxSave(elem, operation, value)
+{
+ if(operation === 'get') {//запись на сервер
+     var items=[];
+    $("input[type=checkbox]:checked", elem).each(function (i, e) {
+        items[items.length]= e.value;
+    });
+     return items.join(",");
+    } 
+}
 
 
 /*расширение для редактирования image*/
