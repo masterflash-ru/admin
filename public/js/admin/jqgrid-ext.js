@@ -227,11 +227,11 @@ $.extend($.fn.fmatter.seo , {
 });
 $.extend($.fn.fmatter.multicheckbox , {
     unformat : function (cellval, opts,cell) {
-     var items=[];
-    $("input[type=checkbox]:checked", elem).each(function (i, e) {
-        items[items.length]= e.value;
+    var rez = [];
+    $("input[type=checkbox]:checked", cell).each(function (i, e) {
+        rez[rez.length]= e.value;
     });
-     return items.join(",");
+    return rez.join(",");
     }
 });
 
