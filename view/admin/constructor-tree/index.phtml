@@ -13,6 +13,8 @@ use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
 use Zend\Form\Element;
 
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 $GLOBALS["form_item"]=new form_item($this,$this->config);
 $dialog_massage="";
 $dialog_title="";

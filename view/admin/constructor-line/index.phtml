@@ -19,6 +19,8 @@ use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
 use Zend\Form\Element;
 
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 /*доступ к Admin\Controller\ConstructorLineController/index - это контроллер конструктора*/
 $acl=$this->acl("Admin\Controller\ConstructorLineController/index");
 
