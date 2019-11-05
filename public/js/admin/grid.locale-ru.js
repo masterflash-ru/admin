@@ -163,7 +163,7 @@ $.jgrid.regional["ru"] = {
 				YearMonth: "F, Y"
 			},
 			reformatAfterEdit : true,
-			userLocalTime : true
+			userLocalTime : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
