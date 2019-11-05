@@ -39,42 +39,35 @@ public function __construct($item_id)
 	
 public function render()
 {
-	if ($this->properties['item_list'])
-		{
-			//в разрезе элемента, просто группа
-			$value=explode(',',$this->value);
-			$arr=Fhelperabstract::load_text_for_htmlitem($this->properties['item_list'],true);//считаем параметры и заодно кешируем их
-			foreach ($arr["id"] as $k=>$id)
-				{
-					if (!isset($value[$k])) {$value[$k]=0;}
-					$r[$id]=$arr["name"][$k];
-				}
+	if (isset($this->properties['item_list']) && $this->properties['item_list']){
+        //в разрезе элемента, просто группа
+        $value=explode(',',$this->value);
+        $arr=Fhelperabstract::load_text_for_htmlitem($this->properties['item_list'],true);//считаем параметры и заодно кешируем их
+        foreach ($arr["id"] as $k=>$id)	{
+            if (!isset($value[$k])) {$value[$k]=0;}
+            $r[$id]=$arr["name"][$k];
+        }
 		$item_html=$this->view->formMultiCheckbox($this->name[0],$value,NULL,$r);
-		if ($this->properties['window_width']>0 && $this->properties['window_height']>0) 
-			{
-				$item_html='<div style="width:'.$this->properties['window_width'].'px; height:'.$this->properties['window_height'].'px; overflow:auto;">'.$item_html.'</div>';
-			}
-			
-			return $item_html;
-		}
-		else
-			{//в разрезе колонки, одиночный
-				$input = new Element\Checkbox($this->name[0]);
-				$input->setUseHiddenElement(true);
-				$input->setUncheckedValue(0);
-				$input->setCheckedValue(1);
-				$input->setValue((int)$this->value);
-				return $this->view->formCheckbox($input);
-			}
+		if ($this->properties['window_width']>0 && $this->properties['window_height']>0) {
+            $item_html='<div style="width:'.$this->properties['window_width'].'px; height:'.$this->properties['window_height'].'px; overflow:auto;">'.$item_html.'</div>';
+        }
+        return $item_html;
+    } else {//в разрезе колонки, одиночный
+        $input = new Element\Checkbox($this->name[0]);
+        $input->setUseHiddenElement(true);
+        $input->setUncheckedValue(0);
+        $input->setCheckedValue(1);
+        $input->setValue((int)$this->value);
+        return $this->view->formCheckbox($input);
+    }
 }
 
 /*обработчик записи, возвращает обработанное*/
 public function save()
 {
-	if ($this->properties['item_list'])
-		{
-			return implode(",",$this->infa);
-		}
+	if ($this->properties['item_list']) {
+        return implode(",",$this->infa);
+    }
 	return $this->infa;
 }
 
