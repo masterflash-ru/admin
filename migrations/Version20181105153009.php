@@ -5,7 +5,7 @@ namespace Admin;
 use Mf\Migrations\AbstractMigration;
 use Mf\Migrations\MigrationInterface;
 
-class Version20191105153009 extends AbstractMigration implements MigrationInterface
+class Version20181105153009 extends AbstractMigration implements MigrationInterface
 {
     public static $description = "Migration description";
 
