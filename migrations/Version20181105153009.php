@@ -4,103 +4,137 @@ namespace Admin;
 
 use Mf\Migrations\AbstractMigration;
 use Mf\Migrations\MigrationInterface;
+use Zend\Db\Sql\Ddl;
+use Zend\Db\Sql;
+
 
 class Version20181105153009 extends AbstractMigration implements MigrationInterface
 {
     public static $description = "Migration description";
 
-    public function up($schema)
+    public function up($schema, $adapter)
     {
-        switch ($this->db_type){
-            case "mysql":{
-                $this->addSql("CREATE TABLE `admin_menu` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Ключ',
-                      `name` char(255) NOT NULL COMMENT 'Текст элемента меню',
-                      `level` int(11) NOT NULL DEFAULT '0' COMMENT 'Уровень в дереве',
-                      `subid` int(11) NOT NULL DEFAULT '0' COMMENT 'Ссылка на родителя (ключ)',
-                      `url` char(255) DEFAULT NULL,
-                      PRIMARY KEY (`id`),
-                      KEY `level` (`level`),
-                      KEY `subid` (`subid`)
-                    ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
-                $this->addSql("INSERT INTO `admin_menu` (`id`, `name`, `level`, `subid`, `url`) VALUES 
-                      (1, 'Система управления', 0, 0, ''),
-                      (2, 'Меню администраторов', 1, 1, '/adm/universal-interface/admin_menu'),
-                      (3, 'Навигация/структура сайта', 0, 0, ''),
-                      (4, 'Резервир./восстановл. базы', 1, 1, '/adm/backuprestore'),
-                      (5, 'Меню сайта', 1, 3, '/adm/universal-interface/menu'),
-                      (6, 'Интерфейсы (устарело)', 1, 1, ''),
-                      (7, 'Линейные интерфейсы', 2, 6, '/adm/constructorline'),
-                      (8, 'Древовидные интерфесы', 2, 6, '/adm/constructortree'),
-                      (9, 'Генератор Entity', 1, 1,  '/adm/entity'),
-                      (10, 'Пользователи и группы', 1, 1,  ''),
-                      (11, 'Системные группы польз.', 2, 10,  '/adm/universal-interface/systemgroups'),
-                      (12, 'Группы пользователей', 2, 10,  '/adm/universal-interface/usergroups'),
-                      (13, 'Пользователи', 2, 10, '/adm/universal-interface/users'),
-                      (14, 'Доступы', 1, 1, ''),
-                      (15, 'Пользоват. доступы', 2, 14,  '/adm/universal-interface/permissions'),
-                      (16, 'Системные доступы', 2, 14,  '/adm/universal-interface/permissions_from_config')");
-                $this->addSql("CREATE TABLE `design_tables` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT,
-                      `interface_name` varchar(127) NOT NULL DEFAULT '' COMMENT 'Имя интерфеса',
-                      `table_name` varchar(255) NOT NULL DEFAULT '',
-                      `table_type` int(11) NOT NULL DEFAULT '0' COMMENT 'тип:0-line,1-tree,2-form_dialog,3-',
-                      `col_name` varchar(255) NOT NULL DEFAULT '',
-                      `caption_style` varchar(255)  DEFAULT '',
-                      `row_type` int(11)  DEFAULT '0',
-                      `col_por` int(11)  DEFAULT '0',
-                      `pole_spisok_sql` text NOT NULL,
-                      `pole_global_const` varchar(255)  DEFAULT '',
-                      `pole_prop` varchar(255)  DEFAULT '',
-                      `pole_type` varchar(255)  DEFAULT '',
-                      `pole_style` varchar(255) DEFAULT '',
-                      `pole_name` varchar(255)  DEFAULT '',
-                      `default_sql` text,
-                      `functions_befo` varchar(50) DEFAULT '',
-                      `functions_after` varchar(50) DEFAULT '',
-                      `functions_befo_out` varchar(50) DEFAULT '',
-                      `functions_befo_del` varchar(50) DEFAULT '',
-                      `properties` text,
-                      `value` varbinary(255) DEFAULT '',
-                      `validator` varchar(255) DEFAULT '',
-                      `sort_item_flag` int(11) DEFAULT '0' COMMENT 'флаг сортировки поля 0-нет,1 да',
-                      `col_function_array` text,
-                      PRIMARY KEY (`id`),
-                      KEY `table_name` (`table_name`),
-                      KEY `interface_name` (`interface_name`)
-                    ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
-                $this->addSql("CREATE TABLE `design_tables_text_interfase` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT,
-                      `language` char(10) NOT NULL,
-                      `table_type` tinyint(1) NOT NULL DEFAULT '0',
-                      `interface_name` varchar(255) NOT NULL DEFAULT '',
-                      `item_name` varchar(255) NOT NULL DEFAULT '',
-                      `text` text NOT NULL,
-                      PRIMARY KEY (`id`),
-                      KEY `language` (`language`),
-                      KEY `interface_name` (`interface_name`),
-                      KEY `item_name` (`item_name`)
-                    ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
-                break;
-            }
-            default:{
-                throw new \Exception("the database {$this->db_type} is not supported !");
-            }
-        }
+        $this->mysql_add_create_table=" ENGINE=MyIsam DEFAULT CHARSET=utf8";
+        
+        $table = new Ddl\CreateTable("admin_menu");
+        $table->addColumn(new Ddl\Column\Integer('id',false,null,["AUTO_INCREMENT"=>true]));
+        $table->addColumn(new Ddl\Column\Char('name', 255,true,null,["COMMENT"=>"Элемент меню"]));
+        $table->addColumn(new Ddl\Column\Char('url', 255,true,null,["COMMENT"=>"URL"]));
+        $table->addColumn(new Ddl\Column\Integer('level',false,0,["COMMENT"=>"уровень"]));
+        $table->addColumn(new Ddl\Column\Integer('subid',false,0,["COMMENT"=>"ID родителя"]));
+        $table->addConstraint(
+            new Ddl\Constraint\PrimaryKey(['id'])
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['level'],'level')
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['subid'],'subid')
+        );
+        $this->addSql($table);
+
+        $insert = new Sql\Insert("admin_menu");
+        $insert->columns(['id', 'name', 'level', 'subid', 'url']);
+        $insert->values([1, 'Система управления', 0, 0, '']);
+        $this->addSql($insert);
+        $insert->values([2, 'Меню администраторов', 1, 1, '/adm/universal-interface/admin_menu']);
+        $this->addSql($insert);
+        $insert->values([3, 'Навигация/структура сайта', 0, 0, '']);
+        $this->addSql($insert);
+        $insert->values([4, 'Резервир./восстановл. базы', 1, 1, '/adm/backuprestore']);
+        $this->addSql($insert);
+        $insert->values([5, 'Меню сайта', 1, 3, '/adm/universal-interface/menu']);
+        $this->addSql($insert);
+        $insert->values([6, 'Интерфейсы (устарело)', 1, 1, '']);
+        $this->addSql($insert);
+        $insert->values([7, 'Линейные интерфейсы', 2, 6, '/adm/constructorline']);
+        $this->addSql($insert);
+        $insert->values([8, 'Древовидные интерфесы', 2, 6, '/adm/constructortree']);
+        $this->addSql($insert);
+        $insert->values([9, 'Генератор Entity', 1, 1,  '/adm/entity']);
+        $this->addSql($insert);
+        $insert->values([10, 'Пользователи и группы', 1, 1,  '']);
+        $this->addSql($insert);
+        $insert->values([11, 'Системные группы польз.', 2, 10,  '/adm/universal-interface/systemgroups']);
+        $this->addSql($insert);
+        $insert->values([12, 'Группы пользователей', 2, 10,  '/adm/universal-interface/usergroups']);
+        $this->addSql($insert);
+        $insert->values([13, 'Пользователи', 2, 10, '/adm/universal-interface/users']);
+        $this->addSql($insert);
+        $insert->values([14, 'Доступы', 1, 1, '']);
+        $this->addSql($insert);
+        $insert->values([15, 'Пользоват. доступы', 2, 14,  '/adm/universal-interface/permissions']);
+        $this->addSql($insert);
+        $insert->values([16, 'Системные доступы', 2, 14,  '/adm/universal-interface/permissions_from_config']);
+        $this->addSql($insert);
+
+        $table = new Ddl\CreateTable("design_tables");
+        $table->addColumn(new Ddl\Column\Integer('id',false,null,["AUTO_INCREMENT"=>true]));
+        $table->addColumn(new Ddl\Column\Char('interface_name', 127,false,""));
+        $table->addColumn(new Ddl\Column\Char('table_name', 255,false,""));
+        $table->addColumn(new Ddl\Column\Integer('table_type',false,0));
+        $table->addColumn(new Ddl\Column\Char('col_name',255,false,""));
+        $table->addColumn(new Ddl\Column\Char('caption_style',255,true));
+        $table->addColumn(new Ddl\Column\Integer('row_type',true,0));
+        $table->addColumn(new Ddl\Column\Integer('col_por',true,0));
+        $table->addColumn(new Ddl\Column\Text('pole_spisok_sql',null,true));
+        $table->addColumn(new Ddl\Column\Char('pole_global_const',255,true));
+        $table->addColumn(new Ddl\Column\Char('pole_prop',255,true));
+        $table->addColumn(new Ddl\Column\Char('pole_type',255,true));
+        $table->addColumn(new Ddl\Column\Char('pole_style',255,true));
+        $table->addColumn(new Ddl\Column\Char('pole_name',255,true));
+        $table->addColumn(new Ddl\Column\Text('default_sql',null,true));
+        $table->addColumn(new Ddl\Column\Char('functions_befo',50,true));
+        $table->addColumn(new Ddl\Column\Char('functions_after',50,true));
+        $table->addColumn(new Ddl\Column\Char('functions_befo_out',50,true));
+        $table->addColumn(new Ddl\Column\Char('functions_befo_del',50,true));
+        $table->addColumn(new Ddl\Column\Text('properties',null,true));
+        $table->addColumn(new Ddl\Column\Char('value',255,true));
+        $table->addColumn(new Ddl\Column\Char('validator',255,true));
+        $table->addColumn(new Ddl\Column\Integer('sort_item_flag',true,0));
+        $table->addColumn(new Ddl\Column\Text('col_function_array',null,true));
+        
+        $table->addConstraint(
+            new Ddl\Constraint\PrimaryKey(['id'])
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['table_name'],'table_name')
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['interface_name'],'interface_name')
+        );
+        $this->addSql($table);
+        
+        $table = new Ddl\CreateTable("design_tables_text_interfase");
+        $table->addColumn(new Ddl\Column\Integer('id',false,null,["AUTO_INCREMENT"=>true]));
+        $table->addColumn(new Ddl\Column\Char('language', 10,false,""));
+        $table->addColumn(new Ddl\Column\Integer('table_type',false,0));
+        $table->addColumn(new Ddl\Column\Char('interface_name',255,false,""));
+        $table->addColumn(new Ddl\Column\Char('item_name',255,true));
+        $table->addColumn(new Ddl\Column\Text('text',null,true));
+        
+        $table->addConstraint(
+            new Ddl\Constraint\PrimaryKey(['id'])
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['language'],'language')
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['interface_name'],'interface_name')
+        );
+        $table->addConstraint(
+            new Ddl\Index\Index(['item_name'],'item_name')
+        );
+        $this->addSql($table);
     }
 
-    public function down($schema)
+    public function down($schema, $adapter)
     {
-        switch ($this->db_type){
-            case "mysql":{
-                $this->addSql("DROP TABLE IF EXISTS `admin_menu`");
-                $this->addSql("DROP TABLE IF EXISTS `design_tables`");
-                $this->addSql("DROP TABLE IF EXISTS `design_tables_text_interfase`");
-                break;
-            }
-            default:{
-                throw new \Exception("the database {$this->db_type} is not supported !");
-            }
-        }
+        $drop = new Ddl\DropTable('admin_menu');
+        $this->addSql($drop);
+        $drop = new Ddl\DropTable('design_tables');
+        $this->addSql($drop);
+        $drop = new Ddl\DropTable('design_tables_text_interfase');
+        $this->addSql($drop);
     }
 }
