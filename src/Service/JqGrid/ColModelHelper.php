@@ -200,6 +200,29 @@ class ColModelHelper
         }
         return $options;
     }
+    /**
+    * вывод массива флажков
+    * массив данных читается и передается прямо в сетку штатным форматтером
+    * есть недостаток, данные не меняются пока не будет перезагружена страница
+    */
+    public static function multicheckbox(string $name, array $options=[])
+    {
+        $def=[
+            "name" => $name,
+            "label"=>$name,
+            "editable" => true,
+            "formatter"=>"multicheckbox",
+            "edittype"=>"custom",
+            "editoptions"=>[
+                "custom_element"=>new Expr('multicheckboxEdit'),
+                "custom_value"=>new Expr('multicheckboxSave'),
+                "value"=>[],
+            ],
+
+        ];
+        $options=ArrayUtils::merge($def,$options);
+        return $options;
+    }
 
     /**
     * вывод редактора ckeditor
