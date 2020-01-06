@@ -4,7 +4,7 @@
 * на входе:
 * $options - опции из соответсвующей секции конфига
 * $interface -  это имя глобальное имя интерфейса
-* $form - сама форма в виде данных формата Zend
+* $form - сама форма в виде данных формата Laminas
 */
 
 $options=$this->options;
@@ -14,7 +14,7 @@ if (!empty($options["options"]["actionsEvent"])){
 } else {
     $actionEvent=[];
 }
-//\Zend\Debug\Debug::dump($options);
+//\Laminas\Debug\Debug::dump($options);
 
 
 $get="";

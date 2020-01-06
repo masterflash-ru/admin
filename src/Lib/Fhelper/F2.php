@@ -4,7 +4,7 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class F2 extends Fhelperabstract 
 {
@@ -57,9 +57,9 @@ public function __construct($item_id)
 	
 public function render()
 {
-	$element='\Zend\Form\Element\Text';
+	$element='\Laminas\Form\Element\Text';
 	if (!empty($this->properties['type'])) {
-        $element='\Zend\Form\Element\\'.$this->properties['type'];
+        $element='\Laminas\Form\Element\\'.$this->properties['type'];
     }
 	
 	$input = new $element($this->name[0]);

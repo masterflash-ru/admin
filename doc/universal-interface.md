@@ -13,7 +13,7 @@
 use Admin\Service\JqGrid\ColModelHelper;    //попомщник для создания колонок
 use Admin\Service\JqGrid\NavGridHelper;     //помощник для создания средств навигации сетки
 use Admin\Service\Zform\RowModelHelper;     //помощник для дополнения в шапке сетки форм
-use Zend\Json\Expr;                         //упаковка в формате json - для передачи функций JS
+use Laminas\Json\Expr;                         //упаковка в формате json - для передачи функций JS
 
 
 return [
@@ -198,7 +198,7 @@ return [
         ],
     ],
 ```
-Плагины оформляются как обычные объекты в Zend, с фабриками и т.д.
+Плагины оформляются как обычные объекты в Laminas, с фабриками и т.д.
 
 
 ## Формы

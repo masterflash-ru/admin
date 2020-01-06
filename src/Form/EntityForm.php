@@ -1,7 +1,7 @@
 <?php
 namespace Admin\Form;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 class EntityForm extends Form
 {

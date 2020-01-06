@@ -1,10 +1,10 @@
 <?php
 namespace Admin\Service\JqGrid\Plugin;
 
-use Zend\Filter;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\FileInput;
-use Zend\Validator;
+use Laminas\Filter;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\FileInput;
+use Laminas\Validator;
 use Exception;
 
 

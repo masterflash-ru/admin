@@ -7,9 +7,9 @@
 */
 namespace Admin\Service\JqGrid;
 
-use Zend\Stdlib\ArrayUtils;
-use Zend\Json\Expr;
-use Zend\Session\Container;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Json\Expr;
+use Laminas\Session\Container;
 
 
 class ColModelHelper

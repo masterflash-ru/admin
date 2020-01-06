@@ -6,8 +6,8 @@
 */
 namespace Admin\Service\JqGrid;
 
-use Zend\Stdlib\ArrayUtils;
-use Zend\Json\Expr;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Json\Expr;
 
 
 

@@ -6,7 +6,7 @@
 namespace Admin\Lib\Fhelper;
 
 use Admin\Lib\Simba;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 use Mf\Imglib\Filter\ImgResize;
 use Mf\Imglib\Filter\Watermark;
 use Mf\Imglib\Filter\ImgOptimize;

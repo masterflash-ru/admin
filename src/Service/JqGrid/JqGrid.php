@@ -3,15 +3,15 @@ namespace Admin\Service\JqGrid;
 
 /*
 */
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 use Exception;
 use DateTime;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 use Admin\Service\JqGrid\Exception as jqGridException;
-use Zend\InputFilter\Factory as FactoryInputFilter;
-use Zend\InputFilter\Input;
+use Laminas\InputFilter\Factory as FactoryInputFilter;
+use Laminas\InputFilter\Input;
 
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class JqGrid
 {

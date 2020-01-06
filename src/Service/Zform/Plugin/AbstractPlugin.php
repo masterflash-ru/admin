@@ -2,7 +2,7 @@
 
 namespace Admin\Service\Zform\Plugin;
 
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 abstract class AbstractPlugin implements ZformPluginInterface
 {

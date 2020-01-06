@@ -17,7 +17,7 @@
 */
 use Admin\Lib\Formitem as form_item;
 use Admin\Lib\Simba;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
@@ -573,7 +573,7 @@ if (value==2)
                 <tr>
                     <td><?php
          $permission_arr=unserialize($struct0['caption_style']);
-         //\Zend\Debug\Debug::dump($permission_arr);
+         //\Laminas\Debug\Debug::dump($permission_arr);
          if (empty($permission_arr['owner_user'])) {$permission_arr['owner_user']=0;}
          if(empty($permission_arr['owner_group'])){$permission_arr['owner_group']=0;}
          if (empty($permission_arr["permission"])){$permission_arr["permission"]=0740;}

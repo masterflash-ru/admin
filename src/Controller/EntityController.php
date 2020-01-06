@@ -5,14 +5,14 @@
 
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Admin\Form\EntityForm;
 
-use  Zend\Code\Generator\PropertyGenerator;
-use Zend\Code\Generator\ClassGenerator;
-use Zend\Code\Generator\MethodGenerator;
-use Zend\Code\Generator\DocBlockGenerator;
+use  Laminas\Code\Generator\PropertyGenerator;
+use Laminas\Code\Generator\ClassGenerator;
+use Laminas\Code\Generator\MethodGenerator;
+use Laminas\Code\Generator\DocBlockGenerator;
 
 class EntityController extends AbstractActionController
 {

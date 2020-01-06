@@ -5,7 +5,7 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 use Admin\Lib\Simba;
 
 class F45 extends Fhelperabstract 
@@ -24,7 +24,7 @@ public function __construct($item_id)
     
 /*обработчик записи, возвращает обработанное*/
 public function save()
-{//\Zend\Debug\Debug::dump(implode(",",$this->infa));
+{//\Laminas\Debug\Debug::dump(implode(",",$this->infa));
 	return implode(",",$this->infa);
 }
 

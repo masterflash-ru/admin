@@ -5,7 +5,7 @@ namespace Admin\Service\JqGrid\Plugin;
 */
 use ADO\Service\RecordSet;
 use ADO\Service\Command;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 use Exception;
 

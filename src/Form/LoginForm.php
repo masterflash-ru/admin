@@ -1,8 +1,8 @@
 <?php
 namespace Admin\Form;
 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
 
 class LoginForm extends Form
 {

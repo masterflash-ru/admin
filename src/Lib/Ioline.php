@@ -8,7 +8,7 @@ namespace Admin\Lib;
 use Admin\Lib\Tabadmin as tab_admin;
 use Admin\Lib\Formitem as form_item;
 use Exception;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 use ADO\Service\RecordSet;
 use Admin\Lib\Simba;
 
@@ -682,7 +682,7 @@ if ($this->struct0['functions_befo_out'])
 				
 				$arr=simba::queryAllRecords($sql);
 			}
-			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";\Zend\Debug\Debug::dump($sql); exit;}
+			catch (Exception $e){echo "<b>Ошибка в SQL запросе: </b>";var_dump($sql); exit;}
 			$count=simba::numRows();
 		}
 
@@ -741,7 +741,7 @@ if (isset($arr[$this->pole__id]) )
 				{
 					preg_match('/pole_dop([0-9]?)/',$nnn,$c) ;
 					if ($c[1]=='') {
-                            //\Zend\Debug\Debug::dump($struct3); exit;
+                            //\Laminas\Debug\Debug::dump($struct3); exit;
                         throw new \Exception('Ошибка в строке '.__LINE__);
                     }
 				}

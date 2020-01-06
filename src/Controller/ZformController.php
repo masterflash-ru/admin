@@ -5,11 +5,11 @@
 
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Exception;
 use Admin\Service\Zform\Exception as ZformException;
-use Zend\Form\Factory as FormFactory;
+use Laminas\Form\Factory as FormFactory;
 
 class ZformController extends AbstractActionController
 {

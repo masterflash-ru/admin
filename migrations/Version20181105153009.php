@@ -4,8 +4,8 @@ namespace Admin;
 
 use Mf\Migrations\AbstractMigration;
 use Mf\Migrations\MigrationInterface;
-use Zend\Db\Sql\Ddl;
-use Zend\Db\Sql;
+use Laminas\Db\Sql\Ddl;
+use Laminas\Db\Sql;
 
 
 class Version20181105153009 extends AbstractMigration implements MigrationInterface

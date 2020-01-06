@@ -4,7 +4,7 @@
 выпадающий список с мультивыбором
 */
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class F22 extends Fhelperabstract 
 {

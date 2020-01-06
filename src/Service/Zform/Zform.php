@@ -3,12 +3,12 @@ namespace Admin\Service\Zform;
 
 /*
 */
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
-use Zend\ServiceManager\ServiceManager;
-use Zend\Form\Factory as FormFactory;
-use Zend\Form\FormInterface;
-use Zend\Validator\AbstractValidator;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Form\Factory as FormFactory;
+use Laminas\Form\FormInterface;
+use Laminas\Validator\AbstractValidator;
 use Mf\Storage\Service\ImagesLib;
 
 class Zform
@@ -172,7 +172,7 @@ class Zform
 /*
 * обработчик динамических полей, подается конфигурация формы,
 * эта функция ищет объявления динамических полей и конвертирует в стандартную конфигурацию
-* для генерации штатной Zend фабрикой форм
+* для генерации штатной Laminas фабрикой форм
 **/
     public function handlingDynamicFields(array $rowModelArray)
     {

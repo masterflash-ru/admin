@@ -4,7 +4,7 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element\Text;
+use Laminas\Form\Element\Text;
 
 class F52 extends Fhelperabstract 
 {

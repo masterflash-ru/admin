@@ -5,7 +5,7 @@ namespace Admin\Service\Zform\Plugin;
 */
 use ADO\Service\RecordSet;
 use ADO\Service\Command;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 use Exception;
 
@@ -54,7 +54,7 @@ public function iread(array $get)
         }
     }
     
-    //\Zend\Debug\Debug::dump($sql);
+    //\Laminas\Debug\Debug::dump($sql);
     
     $rs->Open($sql,$this->connection);
     $rez=[];

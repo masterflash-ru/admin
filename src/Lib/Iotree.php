@@ -17,7 +17,7 @@ namespace Admin\Lib;
 use Admin\Lib\Tabadmin as tab_admin;
 use Admin\Lib\Formitem as form_item;
 use Exception;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 use ADO\Service\RecordSet;
 use Admin\Lib\Simba;
 use Admin\Lib\Tree;

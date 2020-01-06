@@ -1,14 +1,14 @@
 <?php
 namespace Admin\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Stdlib\ArrayUtils;
 use Exception;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 use Admin\Service\JqGrid\PluginManager;
 use Admin\Service\Zform\PluginManager as ZformPluginManager;
 use Admin\Service\Zform\Exception as ZformException;
-use Zend\Form\Factory as FormFactory;
+use Laminas\Form\Factory as FormFactory;
 
 
 /**
@@ -46,7 +46,7 @@ public function __invoke(string $interface)
     $options=include $options;
     $options=ArrayUtils::merge($this->def_options,$options["options"]);
     $toolbarData=[];
-    //формируем toolbar из элементов формы Zend, если есть
+    //формируем toolbar из элементов формы Laminas, если есть
     if (isset($options["layout"]["toolbarModel"]["rowModel"])){
         
         //при помощи плагина читаем содержимое

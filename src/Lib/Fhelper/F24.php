@@ -4,7 +4,7 @@ Cпециальное поле настройки СЕО параметров
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class F24 extends Fhelperabstract 
 {

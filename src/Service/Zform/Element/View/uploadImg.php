@@ -5,8 +5,8 @@
 
 namespace Admin\Service\Zform\Element\View;
 
-use Zend\Form\View\Helper\FormInput;
-use Zend\Form\ElementInterface;
+use Laminas\Form\View\Helper\FormInput;
+use Laminas\Form\ElementInterface;
 
 class uploadImg extends FormInput
 {

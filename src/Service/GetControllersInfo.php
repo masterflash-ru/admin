@@ -1,7 +1,7 @@
 <?php
 namespace Admin\Service;
 
-use Zend\Router\Exception\RuntimeException;
+use Laminas\Router\Exception\RuntimeException;
 /*
 сервис обработки прерывания GetControllersInfoAdmin simba.admin
 нужен для генерации ссылок для подстановки в меню сайта или админки для визуализации выбора

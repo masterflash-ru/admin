@@ -1,7 +1,7 @@
 <?php
 namespace Admin\Service\JqGrid\Plugin;
 
-use Zend\Form\FormInterface;
+use Laminas\Form\FormInterface;
 
 class Locale extends AbstractPlugin
 {

@@ -4,7 +4,7 @@ Cпециальное поле настройки банерных показо�
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class F25 extends Fhelperabstract 
 {

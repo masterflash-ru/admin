@@ -4,8 +4,8 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Form\Element;
+use Laminas\Crypt\Password\Bcrypt;
 
 class F21 extends Fhelperabstract 
 {

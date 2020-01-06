@@ -2,10 +2,10 @@
 namespace Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Admin\Controller\ConstructorLineController;
 
-use Zend\Session\SessionManager;
+use Laminas\Session\SessionManager;
 
 /**
  */

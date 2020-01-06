@@ -6,7 +6,7 @@
 namespace Admin\Service\Zform\Element\Form;
 
 
-use Zend\Form\Element\File;
+use Laminas\Form\Element\File;
 
 class uploadImg extends File
 {

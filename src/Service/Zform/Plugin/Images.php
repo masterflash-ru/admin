@@ -1,13 +1,13 @@
 <?php
 namespace Admin\Service\Zform\Plugin;
 
-use Zend\Filter;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\FileInput;
-use Zend\Validator;
+use Laminas\Filter;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\FileInput;
+use Laminas\Validator;
 use Exception;
-use Zend\Form\FormInterface;
-use \Zend\Filter\File\RenameUpload;
+use Laminas\Form\FormInterface;
+use Laminas\Filter\File\RenameUpload;
 
 
 class Images extends AbstractPlugin

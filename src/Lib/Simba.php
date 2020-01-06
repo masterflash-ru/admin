@@ -34,7 +34,7 @@ public static function setContainer($container)
 public static function get_const($sysname,$return_array_flag=false)
 {//получение глобальной константы по ее имени в таболице
 //$return_array_flag - если false тогда возвращает список через запятую, иначе возвращает в виде массива
-//\Zend\Debug\Debug::dump($sysname);
+//\Laminas\Debug\Debug::dump($sysname);
 
     if (is_array($sysname)){
         $arr=[];
@@ -160,7 +160,7 @@ public static function replaceRecord ($rec_array,$tablename)
         $s=substr($s,0,strlen($s)-1);
         $ss=substr($ss,0,strlen($ss)-1);
         $sql="replace into $tablename ($s) values ($ss)";
-        //\Zend\Debug\Debug::dump($sql);
+        //\Laminas\Debug\Debug::dump($sql);
         self::$connection->Execute($sql,$RecordsAffected,adExecuteNoRecords);
 	}
 

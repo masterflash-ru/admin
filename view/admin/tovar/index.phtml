@@ -128,7 +128,7 @@ function save_field ($combination,$tovar_id,$tovar_category,$money_type,$paramet
         if (is_array($value)){
             //если отмечено несколько флажков или несколько полей
             $value=implode("~",$value);
-        }//\Zend\Debug\Debug::dump($value);
+        }//\Laminas\Debug\Debug::dump($value);
                     Simba::ReplaceRecord([
                         "tovar_catalog"=>(int)$tovar_id,
                         "tovar_category"=>(int)$tovar_category,
@@ -165,7 +165,7 @@ function save_field ($combination,$tovar_id,$tovar_category,$money_type,$paramet
 
 
 
-//\Zend\Debug\Debug::dump($parameters);
+//\Laminas\Debug\Debug::dump($parameters);
 foreach ($parameters["field_type"] as $k=>$field){
     $list=explode("~",$parameters["list"][$k]);
     if ($field==4){
@@ -214,7 +214,7 @@ if (Simba::numRows()){
 
 
 
-//\Zend\Debug\Debug::dump($_POST);
+//\Laminas\Debug\Debug::dump($_POST);
 
 $val=[];
 $flag_null_value=false; //флаг наличия null в значениях, это отменяет вывод вариантов выбора

@@ -6,11 +6,11 @@
 
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use ADO\Service\RecordSet;
 use Admin\Lib\Simba;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 use Admin\Lib\Formitem;
 
 class ZrkubanBlockController extends AbstractActionController

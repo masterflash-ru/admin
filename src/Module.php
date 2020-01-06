@@ -5,9 +5,9 @@
 
 namespace Admin;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Session\Container;
-use Zend\EventManager\Event;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Session\Container;
+use Laminas\EventManager\Event;
 use Admin\Service\GetControllersInfo;
 
 

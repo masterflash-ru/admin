@@ -55,7 +55,7 @@ if (!$GLOBALS['for_menu_admin_interface_class'])
 						}
 				}
 		}
-	//\Zend\Debug\Debug::dump($obj->sp['sql'][$j__]);
+	//\Laminas\Debug\Debug::dump($obj->sp['sql'][$j__]);
 	
 }
 //$obj->sp['sql'][$j__]['sp_group_array']=array(1,2);

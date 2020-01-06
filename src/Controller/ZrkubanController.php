@@ -6,11 +6,11 @@
 
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use ADO\Service\RecordSet;
 use Admin\Lib\Simba;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 use Admin\Lib\Formitem;
 
 class ZrkubanController extends AbstractActionController
@@ -141,8 +141,8 @@ public function indexAction()
     * запись строки
     */
     protected function saveRow($id,$razdel,$razdel_id)
-    {//\Zend\Debug\Debug::dump($id);
-     //\Zend\Debug\Debug::dump($_POST);
+    {//\Laminas\Debug\Debug::dump($id);
+     //\Laminas\Debug\Debug::dump($_POST);
         
         $rs=$this->connection->Execute("select public, date_public,alt,caption,url from {$razdel} where id={$razdel_id}");
         if ($rs->Fields->Item["alt"]->Value){

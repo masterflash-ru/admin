@@ -5,13 +5,13 @@
 
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Mvc\MvcEvent;
 
 use Admin\Form\LoginForm;
 
-use Zend\Authentication\Result;
+use Laminas\Authentication\Result;
 
 
 

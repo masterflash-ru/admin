@@ -44,7 +44,7 @@ class GetAdminUrls extends AbstractPlugin
     public function colModel(array $colModel,array $toolbarData=[])
     {
         $rez[""]="";$locale="ru_RU";
-        foreach ($this->controllers_descriptions as $name=>$desc){//\Zend\Debug\Debug::dump($desc);
+        foreach ($this->controllers_descriptions as $name=>$desc){//\Laminas\Debug\Debug::dump($desc);
             //внутри контроллера
             if (is_array($desc) && !empty($desc)) {
                 foreach ($desc as $meta) {

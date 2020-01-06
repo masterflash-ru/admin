@@ -2,7 +2,7 @@
 namespace Admin\Service\JqGrid\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\Validator\Translator\TranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface;
 
 use Admin\Filter\FilterPluginManager;
 /*

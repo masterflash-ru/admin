@@ -1,8 +1,8 @@
 <?php
 namespace Admin\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Stdlib\ArrayUtils;
 use Exception;
 
 

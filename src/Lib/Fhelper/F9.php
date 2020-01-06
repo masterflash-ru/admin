@@ -4,7 +4,7 @@
 выпадающий список выбор в нем копирует значение в строковое поле рядом
 */
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class F9 extends Fhelperabstract 
 {

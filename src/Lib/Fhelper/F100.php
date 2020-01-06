@@ -5,7 +5,7 @@
 */
 
 namespace Admin\Lib\Fhelper;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 use Admin\Lib\Simba;
 
 class F100 extends Fhelperabstract 
@@ -29,7 +29,7 @@ $this->id - ID записи основной таблицы (товара)
 public function save()
 {
     
-//    \Zend\Debug\Debug::dump($_POST[$this->col_name][$this->id]);
+//    \Laminas\Debug\Debug::dump($_POST[$this->col_name][$this->id]);
     if (!is_array($_POST[$this->col_name][$this->id])){
         return;
     }
@@ -78,7 +78,7 @@ public function render()
                 group by p.id
         ");
 	
-    //\Zend\Debug\Debug::dump($parameters);
+    //\Laminas\Debug\Debug::dump($parameters);
     $out="<div class=\"f100-container\">";
     if (Simba::numRows()){
         foreach ($parameters["id"] as $k=>$v){

@@ -2,8 +2,8 @@
 namespace Admin\Service\Zform\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Translator\TranslatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Validator\Translator\TranslatorInterface;
 /*
 
 */

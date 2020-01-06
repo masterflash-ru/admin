@@ -4,9 +4,9 @@
 * на входе:
 * $options - опции из соответсвующей секции конфига
 * $interface -  это имя глобальное имя интерфейса
-* $toolbarForm - форма Zend для вывода в области toolbar или null
+* $toolbarForm - форма Laminas для вывода в области toolbar или null
 */
-use Zend\Json\Json;
+use Laminas\Json\Json;
 
 Json::$useBuiltinEncoderDecoder = !function_exists("json_encode");
 

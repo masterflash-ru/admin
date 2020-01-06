@@ -5,8 +5,8 @@
 
 namespace Admin\Service\Zform;
 
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 
 class PluginManager extends AbstractPluginManager

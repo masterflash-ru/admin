@@ -7,10 +7,10 @@
 */
 namespace Admin\Service\Zform;
 
-use Zend\Stdlib\ArrayUtils;
-use Zend\Session\Container;
-use Zend\Form\Element;
-use Zend\Validator\Hostname;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Session\Container;
+use Laminas\Form\Element;
+use Laminas\Validator\Hostname;
 
 //use Admin\Service\Zform\Element as myElement;
 
@@ -297,7 +297,7 @@ class RowModelHelper
     }
     
     /**
-    * вывод массива динамических полей, вид из допустимых Zend
+    * вывод массива динамических полей, вид из допустимых Laminas
     *  $name - имя группы, если пусто - внутреннее (пока нигде не используется)
     */
     public static function DynamicArray(string $name=null, array $options=[])
