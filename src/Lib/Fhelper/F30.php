@@ -204,7 +204,6 @@ public function save()
             @unlink ($this->public_folder.$infa_old[$iq]);
             $infa_old[$iq]='';
         }
-        
         $rez=$this->file_upload(
 						array($this->id=>$this->col_name.$iq),
 						$this->data_folder,
@@ -214,7 +213,7 @@ public function save()
 						$prefix,
 						$this->properties['names']
 						);
-        if ($rez['error']==0 && $rez['name']>''){
+        if (!empty($rez) && $rez['error']==0 && $rez['name']>''){
             //проверим, изменилось ли имя файла, если да, тогда старый стереть!
             if ($this->public_folder) {
                 @unlink ($this->public_folder.$infa_old[$iq]);

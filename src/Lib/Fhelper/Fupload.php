@@ -133,7 +133,9 @@ if ($FILE_ITEM_NAME)
 								'real_name'=>$real_name
 								);
 		//ошибок не обнаружено, загружаем
-		move_uploaded_file($FILE_ITEM_TMP_NAME,$path.$file_name);
+		if (!move_uploaded_file($FILE_ITEM_TMP_NAME,$path.$file_name)) {
+            echo "Ошибка загрузки файла из {$FILE_ITEM_TMP_NAME} в ".$path.$file_name;
+        }
 		chmod ($path.$file_name,$mode);
 		return array(//все хорошо с загрузкой
 					'error'=>0,
