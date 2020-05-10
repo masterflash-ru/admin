@@ -52,6 +52,7 @@ public function iread(array $get)
     $options=ArrayUtils::merge($this->def_options_read,$this->options);
     $rs=new RecordSet();
     $rs->CursorType =adOpenKeyset;
+    $rs->MaxRecords=0;
     $rs->PageSize=(int)$get["rows"];
 
     $sql=$options["sql"];
@@ -74,11 +75,37 @@ public function iread(array $get)
             $sql_sort[]=" $field ".$get["sord"][$k];
         }
     }
+    
+    
+    
+    
     if (!empty($sql_sort)){
         $sql.=" order by ".implode(",",$sql_sort);
     }
     //print_r($get);
     $rs->Open($sql,$this->connection);
+    
+    //если поиск, производим поиск в RS
+    if (!empty($get["searchField"]) && isset($get["searchString"]) && !empty($get["searchOper"])){
+        
+        $search_oper=[
+            "eq" => "='".$get["searchString"]."'",
+            "ne" => "!='".$get["searchString"]."'",
+            "lt" => "<'".$get["searchString"]."'",
+            "le" => "<='".$get["searchString"]."'",
+            "gt" => ">'".$get["searchString"]."'",
+            "ge" => ">='".$get["searchString"]."'",
+            
+            "cn" =>" like "."'%".$get["searchString"]."%'", //содержит
+            "bw" =>" like "."'".$get["searchString"]."%'", //начинается
+            "ew" =>" like "."'%".$get["searchString"]."'", //заканчивается
+            "nc" =>" not like "."'%".$get["searchString"]."%'", //НЕ содержит
+        ];
+        $rs->Filter=$get["searchField"].$search_oper[$get["searchOper"]];
+    }
+
+    
+    
     $rez["total"]=$rs->PageCount; //кол-во строк всего в базе
     $rez["records"]=$rs->RecordCount;
     $rez["total"]=$rs->PageCount;

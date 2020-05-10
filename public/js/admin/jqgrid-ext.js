@@ -2,6 +2,25 @@
 /*
 * Расширение для сетки jqGrid
 */
+
+/**
+* переопределение поиска
+*/
+$.jgrid.regional["ru"].search.odata= [
+    { oper:'eq', text:"равно"},
+    { oper:'ne', text:"не равно"},
+    { oper:'lt', text:"меньше"},
+    { oper:'le', text:"меньше или равно"},
+    { oper:'gt', text:"больше"},
+    { oper:'ge', text:"больше или равно"},
+    { oper:'bw', text:"начинается с"},
+    { oper:'ew', text:"заканчивается на"},
+    { oper:'cn', text:"содержит"},
+    { oper:'nc', text:"не содержит"},
+    /*{ oper:'nu', text:"равно NULL"},
+    { oper:'nn', text:"не равно NULL"}*/
+];
+
 var jq_overlay=$('<div class="ui-widget-overlay jqoverlay"><div class="row align-items-center w-100 h-100"><div class="col-12 align-self-center text-center"></div></div></div>');
 $.jgrid.ext = 
 {/*прокси*/

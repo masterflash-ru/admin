@@ -117,6 +117,7 @@ jqgridnavGrid.navButtonAdd('#<?=$options["container"]?>_pager',
     {
         return  ArrayUtils::merge([
             "multipleSearch"=>false,
+            "sopt"=>["eq","ne","lt","le","gt","ge","bw","ew","cn","nc"],
         ],$options);
     }
 
