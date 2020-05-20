@@ -158,6 +158,13 @@ $.extend($.fn.fmatter , {
                         val.get_parameters+="&"+g_item+"="+rwd[g_item];
                     });
                 }
+                //константы передаются так же через GET
+                if (val.get_parameters_constants){
+                    var add_get=val.get_parameters_constants;
+                    $.map(add_get,function(g_item,i){
+                        val.get_parameters+="&"+i+"="+g_item;
+                    });
+                }
                 btn.attr({onclick:"interfacesClick(this)","data-val":JSON.stringify(val)});
                 iwrap.append(btn);
             });

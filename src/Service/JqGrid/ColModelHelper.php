@@ -525,7 +525,8 @@ class ColModelHelper
                         "label"=>"Кнопка 1",
                         "interface"=>"/adm/universal-interface/_____",  //имя интерфейса для открытия
                         "get_parameter_name"=>"id",                     //имя GET параметра в который запишется ID из поля сетки $name (вх. параметр функции)
-                       // "get_parameters_array"=>[],                     //добавить в GET параметры значения из полей существующих в сетке
+                        // "get_parameters_array"=>[],                  //добавить в GET параметры значения из полей существующих в сетке
+                        //"get_parameters_constants"=>[],               //передаваемые константы через GET параметры
                         "icon"=> "ui-icon-heart",
                         "classes"=>[ "ui-button"=>""],
                         "dialog"=>[
