@@ -45,6 +45,10 @@ class PluginManager extends AbstractPluginManager
         
         "Permissions" => Plugin\Permissions::class,
         "permissions" => Plugin\Permissions::class,
+
+        "Options" => Plugin\Options::class,
+        "options" => Plugin\Options::class,
+
         
         "SelectFromDb" => Plugin\SelectFromDb::class,
         "selectFromDb" => Plugin\SelectFromDb::class,

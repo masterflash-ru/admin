@@ -549,4 +549,47 @@ class ColModelHelper
 
     }
 
+    /**
+    * массив разных опций (универсальный эл-т)
+    * 
+    */
+    public static function options(string $name, array $options=[])
+    {
+        $def=[
+            "name" => $name,
+            "label"=>$name,
+            "formatter" => "options",
+            "plugins"=>[
+                "read"=>[
+                    "Options" =>[],
+                ],
+                "edit"=>[
+                    "Options" =>[],
+                ],
+                "add"=>[
+                    "Options" =>[],
+                ],
+                "colModel"=>[//плагин срабатывает при генерации сетки, вызывается в помощнике сетки
+                    "Options"=>[]
+                ]
+            ],
+            "editable" => true,
+            "edittype"=>"custom",
+            "editoptions"=>[
+                "custom_element"=>new Expr('optionsEdit'),
+                "custom_value"=>new Expr('optionsSave'),
+                //собственно сами элементы HTML для выбора опций
+                "elements"=>[
+                ],
+            ],
+        ];
+        foreach (["read","add","edit","colModel"] as $act){
+            if (isset($options["plugins"][$act])){
+                unset($def["plugins"][$act]);
+            }
+        }
+        return ArrayUtils::merge($def,$options);
+
+    }
+
 }
