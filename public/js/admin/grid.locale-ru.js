@@ -9,6 +9,11 @@
  * http://www.gnu.org/licenses/gpl.html
 **/
 /*global jQuery, define */
+/**
+* версия для контроля
+*/
+const VERSION_JPGRID_LOCALE='1.0.1';
+
 (function( factory ) {
 	"use strict";
 	if ( typeof define === "function" && define.amd ) {

@@ -1,1 +1,27 @@
-<div style="text-align:center; font-weight:bold; font-size:18px">Используйте меню слева для перехода в нужный раздел</div>
+<h2 class="text-center">Используйте меню слева для перехода в нужный раздел</h2>
+
+<div class="alert alert-danger mt-5 d-none" role="alert"></div>
+<?php
+$this->inlineScript()->captureStart()?>
+"use strict";
+/**
+* требуемые версии
+*/
+const CURRENT_VERSIONS={
+'jqgrid-ext.js':"1.0.1",
+'admin-lib.js':"1.0.1",
+'grid.locale-ru.js':"1.0.1",
+'zform.js':"1.0.1"
+};
+var rez="",
+    message="Версия файла %0 устарела, обновите файлы из папки .....vendor/masterflash-ru/admin/public/js в папку ..../public-web/js/admin<br>";
+if (typeof(VERSION_JPGRID_EXT) == "undefined" || VERSION_JPGRID_EXT!=CURRENT_VERSIONS['jqgrid-ext.js'] ){rez+=message.replace('%0','jqgrid-ext.js');}
+if (typeof(VERSION_ADMIN_LIB) == "undefined" || VERSION_ADMIN_LIB!=CURRENT_VERSIONS['admin-lib.js'] ){rez+=message.replace('%0','admin-lib.js');}
+if (typeof(VERSION_JPGRID_LOCALE) == "undefined" || VERSION_JPGRID_LOCALE!=CURRENT_VERSIONS['grid.locale-ru.js'] ){rez+=message.replace('%0','grid.locale-ru.js');}
+if (typeof(VERSION_ZFORM) == "undefined" || VERSION_ZFORM!=CURRENT_VERSIONS['zform.js'] ){rez+=message.replace('%0','zform.js');}
+if (rez>""){
+$(".alert").html(rez).removeClass('d-none');
+}
+
+<?php
+$this->inlineScript()->captureEnd()?>

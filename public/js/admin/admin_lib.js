@@ -1,3 +1,7 @@
+/**
+* версия для контроля
+*/
+const VERSION_ADMIN_LIB='1.0.1';
 
 
 $(document).ready(function() {

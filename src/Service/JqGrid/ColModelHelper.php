@@ -559,20 +559,6 @@ class ColModelHelper
             "name" => $name,
             "label"=>$name,
             "formatter" => "options",
-            "plugins"=>[
-                "read"=>[
-                    "Options" =>[],
-                ],
-                "edit"=>[
-                    "Options" =>[],
-                ],
-                "add"=>[
-                    "Options" =>[],
-                ],
-                "colModel"=>[//плагин срабатывает при генерации сетки, вызывается в помощнике сетки
-                    "Options"=>[]
-                ]
-            ],
             "editable" => true,
             "edittype"=>"custom",
             "editoptions"=>[
@@ -580,6 +566,66 @@ class ColModelHelper
                 "custom_value"=>new Expr('optionsSave'),
                 //собственно сами элементы HTML для выбора опций
                 "elements"=>[
+                    /*
+                    //тип сериализатора serialize или json (по умолчанию)
+                    'serialize' => 'serialize',
+                    [ примеры конфига полей, все по аналогии с Laminas формами
+                        'spec' =>[
+                            "type" => "select",
+                            "name" => "target1",
+                            'options' => [
+                                'label' => 'Цель',
+                                'empty_option' => 'По умолчанию',
+                                'value_options' => [
+                                    '_blank' => 'Новое окно',
+                                    '_top' => 'Главное окно',
+                                    '_self' => 'Текущее окно',
+                                    '_parent' => 'Родительское окно',
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'spec' =>[
+                            "type" => "multicheckbox", //можно radio
+                            "name" => "target2",
+                            'options' => [
+                                'label' => 'Цель',
+                                'empty_option' => 'По умолчанию',
+                                'value_options' => [
+                                    '_blank' => 'Новое окно',
+                                    '_top' => 'Главное окно',
+                                    '_self' => 'Текущее окно',
+                                    '_parent' => 'Родительское окно',
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'spec' =>[
+                            "type" => "textarea", //можно text
+                            "name" => "target3",
+                            'options' => [
+                                'label' => 'Цель',
+                            ],
+                            'attributes'=> [
+                                'cols' => 40,
+                                'rows' => 5,
+                                'class' =>'new'
+                            ],
+                        ],
+                    ],
+                    [
+                        'spec' =>[
+                            "type" => "checkbox",
+                            "name" => "target",
+                            'options' => [
+                                'label' => 'Цель',
+                                'checked_value' => '_blank', //значение для установленного, по умолчанию 1
+                                'unchecked_value' => 'no',   // для сброшенного флажка, по умолчанию 0
+                            ],
+                        ],
+                    ],*/
                 ],
             ],
         ];

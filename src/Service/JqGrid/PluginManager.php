@@ -46,8 +46,8 @@ class PluginManager extends AbstractPluginManager
         "Permissions" => Plugin\Permissions::class,
         "permissions" => Plugin\Permissions::class,
 
-        "Options" => Plugin\Options::class,
-        "options" => Plugin\Options::class,
+        //"Options" => Plugin\Options::class,
+        //"options" => Plugin\Options::class,
 
         
         "SelectFromDb" => Plugin\SelectFromDb::class,
@@ -99,6 +99,7 @@ class PluginManager extends AbstractPluginManager
         Plugin\Permissions::class => Plugin\Factory\Permissions::class,
         Plugin\Locale::class => Plugin\Factory\Locale::class,
         Plugin\TreeLevel::class => Plugin\Factory\TreeLevel::class,
+       // Plugin\Options::class => InvokableFactory::class,
        // Plugin\Autocomplete::class => Plugin\Factory\Autocomplete::class,
     ];
 

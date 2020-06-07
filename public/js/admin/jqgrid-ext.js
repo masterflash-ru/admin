@@ -4,6 +4,11 @@
 */
 
 /**
+* версия для контроля
+*/
+const VERSION_JPGRID_EXT='1.0.1';
+
+/**
 * переопределение поиска
 */
 $.jgrid.regional["ru"].search.odata= [
@@ -127,7 +132,7 @@ $.extend($.fn.fmatter , {
         } 
             return "";
     },
-    seo : function(cellval, opts, rwd, act) {
+    seo : function(cellval, opts, rwd, act) {//УСТАРЕЛ используйте options
         if(!$.fmatter.isEmpty(cellval)) {
             var seo=unserialize(cellval);
             var out=((seo.robots=="noindex")?"Запрет индексации,<br>\n":"")+
@@ -216,7 +221,43 @@ $.extend($.fn.fmatter , {
         ctl += 'value="' + el + '"> ' + oSelect[el] + '<br/>';
     }
     return ctl + '</div>';
-}
+},
+    options : function(cellval, opts, rwd, act) {
+        /**
+        * cellval - значение поля
+        * opts - опции
+        * возвращает текст/html, который выводится в сетке
+        */
+        //парсим значение
+        
+        opts.colModel.editoptions.serialize=opts.colModel.editoptions.serialize || "json"; 
+        var v;
+        if (act=="add"){//когда создается сетка, значение в виде строки
+            if (opts.colModel.editoptions.serialize=="json" || opts.colModel.editoptions.serialize==''){
+                try{
+                    v= JSON.parse(cellval || '{}');
+                } catch (e){
+                    v={};
+                    cellval='{}';
+                    console.error("Ошибка десериализации строки из формата JSON");
+                }
+            } else {
+                try{
+                    v= unserialize(cellval || 'N;') || {};
+                } catch (e){
+                    v={};
+                    cellval='{}';
+                    console.error("Ошибка десериализации строки из формата функции serialize из PHP");
+                }
+            }
+        } else {//созранили/отменили редактирование, значение в виде объекта
+            v=cellval;
+        }
+        cellval=cellval || '{}';
+        var w=$("<div>").attr("data-options",cellval);
+        w.append(createElementsSpec(opts.colModel.editoptions.elements,v,true)).wrap("<div></div>");
+        return w.parent().html();
+    },
 });
 $.extend($.fn.fmatter.datetime , {
     unformat : function (cellval, opts) {
@@ -247,6 +288,15 @@ $.extend($.fn.fmatter.seo , {
     unformat : function (cellval, opts,cell) {
         if(!$.fmatter.isEmpty(cellval)) {
            return $('div', cell).data("seo");
+        }
+        return  cellval;
+    }
+});
+$.extend($.fn.fmatter.options , {
+    unformat : function (cellval, opts,cell) {
+        if(!$.fmatter.isEmpty(cellval)) {
+            var r=$('div', cell).eq(0).data("options");
+           return r;
         }
         return  cellval;
     }
@@ -325,7 +375,7 @@ function fileSave(elem, operation, value)
     }
 }
 
-/*расширение для редактирования SEO*/
+/*расширение для редактирования Доступов*/
 function permissionsEdit(value, options)
 {
 var ptable=$("<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" class=\"permission_editor\">\
@@ -412,7 +462,7 @@ if(operation === 'set'){
     }
 }
 
-/*расширение для редактирования SEO*/
+/*расширение для редактирования SEO УСТАРЕЛО*/
 function seoEdit(value, options)
 {
     var v=unserialize(stripslashes(value)),
@@ -435,6 +485,7 @@ if(operation === 'set'){
     $("#canonical",elem).val(seo.canonical);
 } 
 }
+
 
 /*обработка кликов на кнопки открытия нового интерфейса*/
 function interfacesClick(buttonItem)
@@ -484,6 +535,225 @@ function interfacesClick(buttonItem)
     $("#interfacesDialog").load(opt.interface+"?"+opt.get_parameter_name+"="+opt.cellval+opt.get_parameters);
     return false;
 }
+
+/*расширение для редактирования опций (универсальный элмент)*/
+function optionsEdit(value, options)
+{
+    /*добавим в форму скрытое поле с в котором храним тип сериализации
+    из-за того что при созранении формы по другому не передать эту опцию*/
+    options.elements.push({spec:{type:"hidden",name:"__serialize__"}});
+    value["__serialize__"]=options.serialize;
+    var r=createElementsSpec(options.elements,value);
+    options.elements.splice(options.elements.length-1,1)
+    delete(value["__serialize__"]);
+    return r;
+ }
+
+function optionsSave(elem, operation, value)
+{
+ if(operation === 'get') {//запись на сервер
+     //получим тип сериализатора
+     var ser=elem.find("[name=__serialize__]").val(),rez={},
+         arr=elem.find('INPUT[type=text],TEXTAREA,SELECT,input:checked,input[type=hidden][name!=__serialize__]').parent().parent().parent().wrap("<form>").parent().serializeArray();
+     for(var r of arr){
+         if ( r.name.search(/\[\]/)>0 ){
+             //массив флажков
+             let i=r.name.substring(0,r.name.length-2);
+             if (!rez[i]){
+                 rez[i]=[];
+             }
+             rez[i].push(r.value);
+         } else {
+             rez[r.name]=r.value;
+         }
+     }
+     if (ser=="json" || ser==""){
+         return JSON.stringify(rez);
+     }
+     var r=serialize(rez);
+     return r.replace('O:6:"Object"',"a");
+    }
+}
+
+/**
+* создает HTML элементы из массива spec, аналогичных Laminas элементов формы
+* value - значение
+* elements массив описателей элментов
+* disabled - true - элменты только для чтения
+* возвращает jQuery элемент со всеми элементами формы
+*/
+function createElementsSpec(elements,value,disabled)
+{
+    var rez=$("<div>");
+    for (var el of elements){//
+        if (!el.spec){
+            throw "Не верно описан элемент в опциях, должен быть ключ spec, по аналогии с Laminas";
+        }
+        if (!el.spec.type){
+            throw "Не верно описан элемент в опциях, не указан тип элемента, по аналогии с Laminas";
+        }
+        if (!el.spec.name){
+            throw "Не верно описан элемент в опциях, не указано имя элемента, по аналогии с Laminas";
+        }
+        
+        var rezl=$("<label>").attr("class","font-weight-bold d-block"),
+            opt=el.spec.options || [],
+            el_value=value[el.spec.name] || null;
+        if (opt.label) {
+            //надпись элемента, если есть
+            rezl.text(opt.label);
+        }
+        el.spec.options=el.spec.options || [];
+        el.spec.attributes=el.spec.attributes || [];
+        if (disabled){
+            el.spec.attributes['disabled']='disabled';
+        } else {
+            delete (el.spec.attributes['disabled'])
+        }
+
+        switch (el.spec.type){
+            case 'select':{
+                let e=$("<select>").attr({name:el.spec.name,class:"FormElement ui-widget-content ui-corner-all ml-1"});
+                if (opt.empty_option){
+                    //пустой первый элемент
+                    e.append('<option value="">'+opt.empty_option+'</option>');
+                }
+                opt.value_options=opt.value_options ||[];
+                for (let s in opt.value_options){
+                    e.append($("<option>").val(s).text(opt.value_options[s]));
+                }
+                for (let a in el.spec.attributes){
+                    if (a=='class'){
+                        e.addClass(el.spec.attributes[a]);
+                    } else {
+                        e.attr(a,el.spec.attributes[a]);
+                    }
+                }
+                rezl.append(e);
+                $("option[value=" + el_value + "]",e).attr('selected', 'true');
+                e.val(el_value);
+                break;
+            }
+            case 'multicheckbox':{
+                var rezl=$("<div>").attr("class","font-weight-bold"),l,e;
+                if (opt.label) {
+                    //надпись элемента, если есть
+                    rezl.text(opt.label);
+                }
+                rez.append(rezl);rezl=$("<div>");
+                opt.value_options=opt.value_options ||[];
+                var c=$("<div>").addClass("pl-3");
+                for (let s in opt.value_options){
+                    l=$("<label>").text(opt.value_options[s]),e=$("<input>").attr({name:el.spec.name+'[]',type:"checkbox",class:"mr-1 mb-1"}).val(s);
+                    for (let a in el.spec.attributes){
+                        if (a=='class'){
+                            e.addClass(el.spec.attributes[a]);
+                        } else {
+                            e.attr(a,el.spec.attributes[a]);
+                        }
+                    }
+
+                    c.append(l.prepend(e));
+                    c.append("<br>");
+                }
+                /*на всякий случай проверяем, что бы не было ошибок при не верных данных*/
+                
+                if(Array.isArray(el_value) || typeof (el_value)=="object"){
+                    $.map(el_value,function(vv,index){
+                       $("input[value=" + vv + "]",c).attr('checked', 'true');
+                       $("input[value=" + vv + "]",c).prop('checked', 'true');
+                    })
+                } else {
+                    $("input[value=" + el_value + "]",c).attr('checked', 'true');
+                    $("input[value=" + el_value + "]",c).prop('checked', 'true');
+                }
+                rezl.append(c);
+                break;
+            }
+            case 'radio':{
+                var rezl=$("<div>").attr("class","font-weight-bold");
+                if (opt.label) {
+                    //надпись элемента, если есть
+                    rezl.text(opt.label);
+                }
+                rez.append(rezl);rezl=$("<div>");
+                if (opt.value_options){
+                    var c=$("<div>").addClass("pl-3"),l,e;
+                    if (opt.empty_option){
+                        //пустой первый элемент
+                       l=$("<label>").text(opt.empty_option),e=$("<input>").attr({name:el.spec.name,type:"radio",class:"mr-1 mb-1"});
+                        c.append(l.prepend(e));
+                        c.append("<br>");
+                    }
+                    for (let s in opt.value_options){
+                        l=$("<label>").text(opt.value_options[s]),e=$("<input>").attr({name:el.spec.name,type:"radio",class:"mr-1 mb-1"}).val(s);
+                        c.append(l.prepend(e));
+                        c.append("<br>");
+                    }
+                     $("input[value=" + el_value + "]",c).attr('checked', 'true');
+                    $("input[value=" + el_value + "]",c).prop('checked', 'true');
+                    rezl.append(c);
+                }
+                break;
+            }
+            case 'text':{
+                let e=$("<input>").attr({name:el.spec.name,class:"FormElement ui-widget-content ui-corner-all ml-1",value:el_value});
+                for (let a in el.spec.attributes){
+                    if (a=='class'){
+                        e.addClass(el.spec.attributes[a]);
+                    } else {
+                        e.attr(a,el.spec.attributes[a]);
+                    }
+                }
+                rezl.append(e);
+                break;
+            }
+            case 'textarea':{
+                let e=$("<textarea>").attr({name:el.spec.name,class:"FormElement ui-widget-content ui-corner-all ml-1"});
+                for (let a in el.spec.attributes){
+                    if (a=='class'){
+                        e.addClass(el.spec.attributes[a]);
+                    } else {
+                        e.attr(a,el.spec.attributes[a]);
+                    }
+                }
+                e.text(el_value);
+                rezl.append(e);
+                break;
+            }
+            case 'checkbox':{
+                let h=$("<input>").attr({name:el.spec.name,type:"hidden"}),
+                    e=$("<input>").attr({name:el.spec.name,type:"checkbox",class:"FormElement ui-widget-content ui-corner-all ml-1"}),
+                    set=el.spec.options.checked_value || 1,unset=el.spec.options.unchecked_value || 0;
+                h.val(unset);
+                e.val(set);
+                for (let a in el.spec.attributes){
+                    if (a=='class'){
+                        e.addClass(el.spec.attributes[a]);
+                    } else {
+                        e.attr(a,el.spec.attributes[a]);
+                    }
+                }
+                if (set==el_value){
+                    e.attr('checked', 'true');
+                    e.prop('checked', 'true');
+                }
+                rezl.append(h).append(e);
+                break;
+            }
+            case 'hidden':{
+                let e=$("<input>").attr({name:el.spec.name,type:"hidden"});
+                rezl.append(e);
+                e.val(el_value);
+                break;
+            }
+
+        }
+        rez.append(rezl.wrap("<div>"));
+    }
+    return rez;
+}
+
 
 function permissionToText($perms)
 {
