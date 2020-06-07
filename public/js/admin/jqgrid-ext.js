@@ -541,6 +541,7 @@ function optionsEdit(value, options)
 {
     /*добавим в форму скрытое поле с в котором храним тип сериализации
     из-за того что при созранении формы по другому не передать эту опцию*/
+    value=value || {};
     options.elements.push({spec:{type:"hidden",name:"__serialize__"}});
     value["__serialize__"]=options.serialize;
     var r=createElementsSpec(options.elements,value);
@@ -554,8 +555,9 @@ function optionsSave(elem, operation, value)
  if(operation === 'get') {//запись на сервер
      //получим тип сериализатора
      var ser=elem.find("[name=__serialize__]").val(),rez={},
-         arr=elem.find('INPUT[type=text],TEXTAREA,SELECT,input:checked,input[type=hidden][name!=__serialize__]').parent().parent().parent().wrap("<form>").parent().serializeArray();
+         arr=elem.find('INPUT[type=text],TEXTAREA,SELECT,input:checked,input[type=hidden]').parent().parent().parent().wrap("<form>").parent().serializeArray();
      for(var r of arr){
+         if (r.name=="__serialize__"){continue;}
          if ( r.name.search(/\[\]/)>0 ){
              //массив флажков
              let i=r.name.substring(0,r.name.length-2);
